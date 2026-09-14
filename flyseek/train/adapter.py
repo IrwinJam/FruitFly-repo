@@ -51,7 +51,33 @@ ROUTE_PARAMS = _DECODER_PARAMS + [
     Param("policy:lookahead_units", 0.5, 4.0, 1.5, log=True),
 ]
 
-PARAM_SETS = {"ray": EXPLORE_PARAMS, "route": ROUTE_PARAMS}
+# Phase 5 role adapters (flyseek/agents/role_policy.py). Decoder and route inits are
+# overridden by the graph's own Phase 4 explorer (--init-from), see es.py.
+SEEKER_PARAMS = ROUTE_PARAMS + [
+    Param("gain:target", 0.0, 2.0, 1.0),  # LC10a channel
+    Param("policy:chase_lookahead", 0.3, 3.0, 1.0, log=True),
+    Param("policy:memory_s", 0.0, 15.0, 4.0),
+    Param("policy:ping_follow", 0.0, 1.0, 0.75),
+]
+
+HIDER_PARAMS = _DECODER_PARAMS + [
+    Param("gain:loom", 0.0, 2.0, 1.0),  # LC4 / LPLC2
+    Param("gain:danger", 0.0, 2.0, 1.0),  # aversive-odor ORNs (danger meter)
+    Param("policy:w_far", 0.0, 4.0, 2.0),
+    Param("policy:w_conceal", 0.0, 4.0, 1.0),
+    Param("policy:w_vent", 0.0, 4.0, 0.5),
+    Param("policy:w_dist", 0.0, 4.0, 1.0),
+    Param("policy:camp_s", 1.0, 40.0, 10.0, log=True),
+    Param("policy:camp_speed", 0.0, 1.0, 0.2),
+    Param("policy:flee_danger", 0.05, 1.0, 0.4),
+    Param("policy:lookahead_units", 0.5, 4.0, 1.5, log=True),
+]
+
+PARAM_SETS = {"ray": EXPLORE_PARAMS, "route": ROUTE_PARAMS, "seeker": SEEKER_PARAMS, "hider": HIDER_PARAMS}
+
+
+def gain_values(values: dict) -> dict:
+    return {name.split(":", 1)[1]: v for name, v in values.items() if name.startswith("gain:")}
 
 
 def to_unit(params: list[Param], values: dict | None = None) -> np.ndarray:

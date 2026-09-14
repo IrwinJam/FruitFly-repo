@@ -177,10 +177,22 @@ Trained real vs every control: −2.85 to −3.88 rooms for the control, paired 
 **Not fixed by Phase 4:** hunting and hiding skill (Phase 5), escape timing calibration, retinotopic vision.
 
 ### Phase 5 — Role training · ~2 sessions + ~2–4 nights of GPU
-- [ ] **R1:** train the Seeker adapter against scripted Hiders, and the Hider adapter against a scripted Seeker. Rough estimate: 15–30 h of GPU per role. Use shorter episodes (90 s) first to halve that.
-- [ ] **R2:** self-play league with a hall of fame of past adapters. Open-ended; stop when win rates plateau.
-- [ ] Win-rate curves and a comparison table against the baselines.
-- [ ] **Controls for publication:** the shuffled connectome trained with the same budget, adapter-on-noise, and circuit ablations (LC10a silenced for the Seeker; LC4/LPLC2/DNp01 silenced for Hiders) evaluated on a held-out seed set.
+
+**Design (revised 2026-09-14, after Phase 4).** Same split as Phase 4: an engineered, disclosed **role policy** decides *where* to go using only game-legal information, the frozen connectome decides *how* to steer (EPG/FC2 → PFL3 → DNs, plus the sensory pathways), and CMA-ES learns the policy weights, channel gains and decoder. Each role starts from its graph's own Phase 4 explorer (`explore_navcore`, or `explore_shuf0` for the shuffled control).
+
+| Role | Information the policy may use | Trainable |
+|---|---|---|
+| Seeker | own position, hiders currently in sight (≤ 6 units, line of sight), Final Hide pings | LC10a target gain, chase lookahead, last-seen memory, ping following, explore weights, decoder |
+| Hider | own position, the seeker when in sight, the danger meter, vent locations (map knowledge) | LC4/LPLC2 loom gain, danger (odor) gain, hiding-spot weights (far from seeker / concealed / near vent / travel cost), camp time, camp speed, flee threshold, decoder |
+
+Camping (a hider standing still) scales the engineered forward speed; this is disclosed, like the scripted hider's pauses. Fitness: Seeker = Σ caught × (1 + time left / round) / hiders; Hider = mean survival fraction + 0.5 × survived. Episodes use the short preset (90 s, 5 s freeze); matches run in parallel (Seeker: 48 matches per generation, 1 brain vs 3 scripted Hiders; Hider: 24 matches, 3 brain Hiders vs 1 scripted Seeker). Measured cost ≈ 8–10 min per generation, 25 generations per run.
+
+- [ ] Batched role environment (`flyseek/train/role_env.py`) and role policies (`flyseek/agents/role_policy.py`), with scripted and random-walk controllers for baselines.
+- [ ] **R1:** train `seeker_navcore` and `hider_navcore` against scripted opponents (night 1).
+- [ ] Controls with the same budget: `seeker_shuf0`, `hider_shuf0` (night 2).
+- [ ] Held-out evaluation (40 matches, unseen seeds): trained vs Phase 4 explorer (no role training) vs random walk vs scripted; ablations LC10a silenced and PFL3 silenced (Seeker), LC4+LPLC2 silenced, DNp01 silenced and PFL3 silenced (Hiders).
+- [ ] Win-rate/fitness curves and a comparison table; showcase replays.
+- [ ] **R2 (optional):** trained Seeker vs trained Hiders, alternating fine-tunes with a hall of fame. Only if R1 works.
 
 **Done when:** the trained Seeker beats scripted Hiders more often than a random-walk Seeker does, and trained Hiders survive longer than a random baseline.
 

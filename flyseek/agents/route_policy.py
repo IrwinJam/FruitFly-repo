@@ -22,6 +22,25 @@ from flyseek.world.grid import OccupancyGrid
 from flyseek.world.pathing import GridPaths, _NEIGH
 
 
+def lookahead(grid: OccupancyGrid, field: np.ndarray, x: float, y: float, units: float, target) -> float:
+    """World direction from (x, y) to the point `units` ahead along the descent path of a distance field."""
+    cy, cx = grid._cell(x, y)
+    steps = max(1, int(round(units / grid.res)))
+    for _ in range(steps):
+        best, nxt = field[cy, cx], None
+        for dy, dx in _NEIGH:
+            r, c = cy + dy, cx + dx
+            if 0 <= r < field.shape[0] and 0 <= c < field.shape[1] and field[r, c] < best:
+                best, nxt = field[r, c], (r, c)
+        if nxt is None:
+            break
+        cy, cx = nxt
+    px, py = grid.x0 + cx * grid.res, grid.y0 + cy * grid.res
+    if abs(px - x) < 1e-6 and abs(py - y) < 1e-6:
+        px, py = target
+    return float(np.arctan2(py - y, px - x))
+
+
 class RouteGoalPolicy:
     def __init__(self, n: int, grid: OccupancyGrid, paths: GridPaths, rooms: np.ndarray, params: dict,
                  n_candidates: int = 24, bin_units: float = 1.0, seed: int = 0):
@@ -77,23 +96,7 @@ class RouteGoalPolicy:
         self.next_plan[i] = self.t + self._param("replan_s", i)
 
     def _lookahead(self, i, x, y) -> float:
-        f = self.field[i]
-        g = self.grid
-        cy, cx = g._cell(x, y)
-        steps = max(1, int(round(self._param("lookahead_units", i) / g.res)))
-        for _ in range(steps):
-            best, nxt = f[cy, cx], None
-            for dy, dx in _NEIGH:
-                r, c = cy + dy, cx + dx
-                if 0 <= r < f.shape[0] and 0 <= c < f.shape[1] and f[r, c] < best:
-                    best, nxt = f[r, c], (r, c)
-            if nxt is None:
-                break
-            cy, cx = nxt
-        px, py = g.x0 + cx * g.res, g.y0 + cy * g.res
-        if abs(px - x) < 1e-6 and abs(py - y) < 1e-6:
-            px, py = self.target[i]
-        return float(np.arctan2(py - y, px - x))
+        return lookahead(self.grid, self.field[i], x, y, self._param("lookahead_units", i), self.target[i])
 
     def step(self, x, y, heading, dt: float, active: np.ndarray | None = None) -> np.ndarray:
         active = np.ones(self.n, bool) if active is None else active

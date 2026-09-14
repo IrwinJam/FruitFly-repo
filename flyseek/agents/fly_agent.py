@@ -84,15 +84,15 @@ class FlyPopulation:
         on = np.ones(self.n, bool) if sensing is None else np.asarray(sensing, bool)
         parts = []
         sign = c.get("heading_sign", 1)
-        if self.channel_gain.get("compass", 1.0) > 0 and len(self.epg_idx):
+        if np.any(np.asarray(self.channel_gain.get("compass", 1.0)) > 0) and len(self.epg_idx):
             h_nom = sign * heading
             r = c["r_max_hz"] * np.exp(c["kappa"] * (np.cos(self.epg_phase[None, :] - h_nom[:, None]) - 1))
-            parts.append((self.epg_idx, r * on[:, None] * self.channel_gain.get("compass", 1.0)))
-        if goal is not None and self.channel_gain.get("goal", 1.0) > 0 and len(self.fc2_idx):
+            parts.append((self.epg_idx, r * on[:, None] * np.reshape(self.channel_gain.get("compass", 1.0), (-1, 1))))
+        if goal is not None and np.any(np.asarray(self.channel_gain.get("goal", 1.0)) > 0) and len(self.fc2_idx):
             has = on & np.isfinite(goal)
             g_nom = sign * np.where(has, goal, 0.0) + np.deg2rad(c["goal_offset_deg"])
             r = c["r_max_hz"] * np.exp(c["kappa"] * (np.cos(self.fc2_phase[None, :] - g_nom[:, None]) - 1))
-            parts.append((self.fc2_idx, r * has[:, None] * self.channel_gain.get("goal", 1.0)))
+            parts.append((self.fc2_idx, r * has[:, None] * np.reshape(self.channel_gain.get("goal", 1.0), (-1, 1))))
         neu, cols, rr = [], [], []
         for idx, rates in parts:
             keep = rates >= 1.0
@@ -103,8 +103,8 @@ class FlyPopulation:
     def _set_stimulus(self, rates: dict, extra: tuple | None = None):
         neu, cols, rr = ([], [], []) if extra is None else (list(extra[0]), list(extra[1]), list(extra[2]))
         for ch, sides in rates.items():
-            gain = self.channel_gain.get(ch, 1.0)
-            if gain == 0 or ch not in self.chan_idx:
+            gain = self.channel_gain.get(ch, 1.0)  # scalar or per-fly [A]
+            if not np.any(np.asarray(gain) != 0) or ch not in self.chan_idx:
                 continue
             for s in "LR":
                 idx = self.chan_idx[ch][s]

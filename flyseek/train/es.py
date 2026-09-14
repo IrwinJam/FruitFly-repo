@@ -12,6 +12,8 @@ Usage:
   python -m flyseek.train.es --run explore_navcore --graph navcore --generations 60
   python -m flyseek.train.es --run explore_shuf0 --graph navcore_shuf0 --generations 60   # control
   python -m flyseek.train.es --run explore_pfl3off --graph navcore --silence PFL3          # control
+  python -m flyseek.train.es --run seeker_navcore --policy seeker --init-from explore_navcore --seeds-per-candidate 4
+  python -m flyseek.train.es --run hider_navcore --policy hider --init-from explore_navcore   # 3 brain hiders per match
 """
 from __future__ import annotations
 
@@ -27,6 +29,7 @@ from flyseek.brain.lif_torch import LIFBrain
 from flyseek.paths import RESULTS_DIR
 from flyseek.train.adapter import PARAM_SETS, decode, to_unit
 from flyseek.train.explore_env import run_episode
+from flyseek.train.role_env import run_role_episode
 
 
 def main():
@@ -41,6 +44,8 @@ def main():
     ap.add_argument("--sigma", type=float, default=0.2)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--policy", default="route", choices=list(PARAM_SETS))
+    ap.add_argument("--init-from", default=None, help="start from this run's best.json (e.g. the Phase 4 explorer)")
+    ap.add_argument("--preset", default="short", help="game preset for role episodes")
     args = ap.parse_args()
 
     out = RESULTS_DIR / "train" / args.run
@@ -52,7 +57,8 @@ def main():
         opt, gen0, best = state["opt"], state["generation"] + 1, state["best"]
         print(f"resuming {args.run} at generation {gen0}", flush=True)
     else:
-        opt = CMA(mean=to_unit(params), sigma=args.sigma, bounds=np.array([[0.0, 1.0]] * len(params)),
+        init = json.loads((RESULTS_DIR / "train" / args.init_from / "best.json").read_text())["values"] if args.init_from else None
+        opt = CMA(mean=to_unit(params, init), sigma=args.sigma, bounds=np.array([[0.0, 1.0]] * len(params)),
                   population_size=args.pop, seed=args.seed)
         gen0, best = 0, {"fitness": -np.inf}
         (out / "config.json").write_text(json.dumps({**vars(args), "params": [p.__dict__ for p in params]}, indent=2))
@@ -62,13 +68,21 @@ def main():
     for gen in range(gen0, args.generations):
         t0 = time.perf_counter()
         cands = [opt.ask() for _ in range(opt.population_size)]
-        unit = np.repeat(np.stack(cands), E, axis=0)  # [P*E, D]
+        role = args.policy in ("seeker", "hider")
+        per_match = 3 if args.policy == "hider" else 1  # brain flies per match
+        unit = np.repeat(np.stack(cands), E * per_match, axis=0)  # [P*E*per_match, D]
         # fresh episode seeds each generation (same seeds for every candidate in a generation)
         seeds = [args.seed * 100000 + gen * 1000 + e for _ in cands for e in range(E)]
+        if role:
+            seeds = [s + 300000 for s in seeds]  # disjoint from exploration and held-out (50000+/70000+) seeds
         values = decode(params, unit)
-        res = run_episode(args.graph, values, seeds, seconds=args.seconds, silence=args.silence or None, brain=brain,
-                          policy_kind=args.policy)
-        fit = res["fitness"].reshape(len(cands), E).mean(axis=1)
+        if role:
+            res = run_role_episode(args.graph, args.policy, values, seeds, preset=args.preset,
+                                   silence=args.silence or None, brain=brain)
+        else:
+            res = run_episode(args.graph, values, seeds, seconds=args.seconds, silence=args.silence or None, brain=brain,
+                              policy_kind=args.policy)
+        fit = res["fitness"].reshape(len(cands), -1).mean(axis=1)
         opt.tell([(c, -float(f)) for c, f in zip(cands, fit)])
 
         i = int(np.argmax(fit))
@@ -77,15 +91,23 @@ def main():
                     "values": {k: float(v) for k, v in decode(params, cands[i]).items()}}
         mean_vals = {k: float(v) for k, v in decode(params, opt.mean).items()}
         entry = {"generation": gen, "fitness_mean": float(fit.mean()), "fitness_max": float(fit.max()),
-                 "rooms_mean": float(res["rooms"].mean()), "coverage_mean": float(res["coverage"].mean()),
                  "stuck_s_mean": float(res["stuck_s"].mean()), "best_so_far": best["fitness"],
                  "cma_mean": mean_vals, "wall_s": round(time.perf_counter() - t0, 1)}
+        if role:
+            entry["seeker_win_rate"] = float(res["seeker_win"].mean())
+            if args.policy == "hider":
+                entry["hider_survival_s_mean"] = float(res["survival_s"].mean())
+            summary = f"seeker wins {entry['seeker_win_rate']:.2f}" + (
+                f" survival {entry['hider_survival_s_mean']:.1f}s" if args.policy == "hider" else "")
+        else:
+            entry["rooms_mean"], entry["coverage_mean"] = float(res["rooms"].mean()), float(res["coverage"].mean())
+            summary = f"rooms {entry['rooms_mean']:.2f} cov {entry['coverage_mean']:.3f}"
         with open(log_path, "a") as f:
             f.write(json.dumps(entry) + "\n")
         ckpt.write_bytes(pickle.dumps({"opt": opt, "generation": gen, "best": best}))
         (out / "best.json").write_text(json.dumps(best, indent=2))
         print(f"[{args.run}] gen {gen:3d} | fitness mean {entry['fitness_mean']:.2f} max {entry['fitness_max']:.2f} "
-              f"| rooms {entry['rooms_mean']:.2f} cov {entry['coverage_mean']:.3f} stuck {entry['stuck_s_mean']:.1f}s "
+              f"| {summary} stuck {entry['stuck_s_mean']:.1f}s "
               f"| best {best['fitness']:.2f} | {entry['wall_s']}s", flush=True)
 
 
