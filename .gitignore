@@ -31,3 +31,6 @@ replays/
 # OS
 Thumbs.db
 .DS_Store
+
+# third-party reference screenshots (other creators' content) -- local only, never pushed
+Untitled_Message/

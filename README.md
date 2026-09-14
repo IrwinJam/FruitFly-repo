@@ -1,4 +1,4 @@
-# FlySeek
+# FlySeek (FruitFly Amogus)
 
 This project uses a connectome-constrained model of the fruit fly central nervous system (MaleCNS v1.0) to play Among Us Hide n Seek on The Skeld. Each fly gets a live brain-activity panel.
 
@@ -38,4 +38,4 @@ cd viewer && npm install && npm run dev
 
 - **MaleCNS v1.0 connectome:** HHMI Janelia FlyEM, Google Research, and the University of Cambridge. Licensed CC-BY 4.0. <https://male-cns.janelia.org/>
 - **Among Us and The Skeld:** © Innersloth. This is a non-commercial fan research project, and no game assets are distributed. `skeld_map.json` holds walkable-area geometry only.
-- **Reference screenshots** in `Untitled_Message/` are other creators' content, kept for design reference only. Remove them before making this repo public.
+- **Design reference screenshots** (IMG_0897–0902, mentioned in the plan) are other creators' content. They are kept locally only and not included in this repo.
