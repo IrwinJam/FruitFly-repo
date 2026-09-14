@@ -1,0 +1,31 @@
+# secrets
+cave-secret.json
+*.token
+.env
+config/local.yaml
+
+# data (lives outside the repo, junctioned in)
+data/
+*.feather
+*.parquet
+
+# python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# node / viewer
+viewer/node_modules/
+viewer/dist/
+
+# logs, checkpoints, replays
+runs/
+checkpoints/
+replays/
+*.log
+
+# OS
+Thumbs.db
+.DS_Store
