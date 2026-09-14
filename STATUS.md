@@ -84,7 +84,16 @@ mocked numbers except where explicitly labeled "synthetic"/"demo".
     (randomized, role-biased spike bursts) — it is NOT yet wired to the real brain
     simulator or game world. That's the honest state; see "Not done" below.
 
-### M3 — Sanity circuits (W0) 🟡 core checks done, with caveats
+### M3 — Sanity circuits (W0) ⚠️ re-reviewed: evidence is weak, treat as NOT done
+
+> **Correction (re-review, same day):** the table below overstates things.
+> `steering_readout` and `backward_readout` drive the same neurons they read, so
+> they only test the spike counter. The pursuit result is **16 vs 6 spikes**
+> (1 seed, no baseline), which is too few to separate from noise. The looming
+> result (490 Hz) sits at the refractory ceiling, which means the drive was
+> saturating. See [GAMEPLAN.md §1.1](GAMEPLAN.md) and Phase 1 for the redo. The
+> original write-up is kept below for the record.
+
 [flyseek/brain/sanity_checks.py](flyseek/brain/sanity_checks.py), results in
 [docs/sanity_check_results.json](docs/sanity_check_results.json). **All 4 checks
 passed** on the `full` graph:
@@ -151,8 +160,7 @@ session. Concretely, still open:
 - **`flyseek/server/ws_server.py`** (live brain → viewer streaming) doesn't exist;
   the viewer's "live" data is a synthetic stand-in, clearly labeled as such on
   screen.
-- **`config/motors.yaml`** and **`config/game.yaml`** (referenced in the plan)
-  haven't been written yet.
+- **`config/motors.yaml`** (referenced in the plan) hasn't been written yet.
 
 ## Honest assessment
 
@@ -166,6 +174,10 @@ adapters actually learn to navigate) are exactly the parts marked "not done" abo
 they were easy.
 
 ## Next session's concrete first steps
+
+**Superseded by [GAMEPLAN.md](GAMEPLAN.md)**, which starts with Phase 1: making
+the brain trustworthy (stability test, then sanity checks redone with statistics).
+The list below is the older plan.
 
 1. Wire one sensory encoder (vision) and one motor decoder (steering) end-to-end
    on a single fly in an empty arena — the first real closed loop. Use realistic
