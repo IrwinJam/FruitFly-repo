@@ -26,6 +26,7 @@ def main():
     ap.add_argument("--hiders", type=int, default=3)
     ap.add_argument("--out", default="phase4_baseline_matrix")
     ap.add_argument("--resume", action="store_true")
+    ap.add_argument("--nav", default=None, help="trained exploration run for brain agents (after-training matrix)")
     args = ap.parse_args()
 
     path = DOCS_DIR / f"{args.out}.json"
@@ -39,7 +40,7 @@ def main():
                     continue
                 t0 = time.perf_counter()
                 s = run_match(args.hiders, parse_brains(b, 1 + args.hiders), args.graph, args.preset, seed, name,
-                              record_spikes=False, spawn=spawn)
+                              record_spikes=False, spawn=spawn, nav=args.nav)
                 s["brains_spec"] = b
                 done.append(s)
                 path.write_text(json.dumps(done, indent=2, default=str))

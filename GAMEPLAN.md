@@ -127,38 +127,52 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 | Turn / dash / speed decoding | Existing motor decoder (forward speed stays an engineered constant) |
 
 **4.0 — Baseline and spawn-preset experiment** (runs in background while 4.1–4.3 are built)
-- [ ] Add a `spread` spawn preset: agents start in random rooms instead of all in Cafeteria. Default stays Cafeteria (the real Among Us rule).
-- [ ] Add coverage metrics to every match: rooms visited per agent, fraction of the map within 1 unit of an agent's path, time to first sighting.
-- [ ] Run the untrained baseline matrix: {default, spread} × {all brains, brain Seeker vs scripted, scripted vs brain Hiders} × 3 seeds = 18 matches (~1 h GPU). This is the "before" for the trained "after".
+- [x] Add a `spread` spawn preset: agents start in random rooms instead of all in Cafeteria. Default stays Cafeteria (the real Among Us rule).
+- [x] Add coverage metrics to every match: rooms visited per agent, fraction of the map within 1 unit of an agent's path, time to first sighting.
+- [x] Run the untrained baseline matrix: {default, spread} × {all brains, brain Seeker vs scripted, scripted vs brain Hiders} × 3 seeds = 18 matches (~1 h GPU). This is the "before" for the trained "after".
 
 **4.1 — Map the compass circuit onto real neurons**
-- [ ] From MaleCNS annotations (`instance` / glomerulus / column labels), give every EPG, FC2 (A/B/C) and PFL3 neuron an angular position (protocerebral-bridge glomerulus or fan-shaped-body column → angle).
-- [ ] Check that the intermediate neurons (Δ7, P-EN, LAL, PFL2) exist, and build **navcore-v2** including the full EPG/FC2 → PFL3 → DN pathway. Rebuild its shuffles.
+- [x] From MaleCNS annotations (`instance` / glomerulus / column labels), give every EPG, FC2 (A/B/C) and PFL3 neuron an angular position (protocerebral-bridge glomerulus or fan-shaped-body column → angle).
+- [x] (navcore already contains the full pathway, so no v2 rebuild was needed) Check that the intermediate neurons (Δ7, P-EN, LAL, PFL2) exist, and build **navcore-v2** including the full EPG/FC2 → PFL3 → DN pathway. Rebuild its shuffles.
 
 **4.2 — Test the circuit before using it (Phase 1 style)**
-- [ ] Inject an EPG bump at heading h and an FC2 bump at goal g, sweeping g − h over 360°. Expect PFL3 left−right and DNa02/DNa03 left−right to follow the sign of sin(g − h), i.e. turn toward the goal.
-- [ ] 10 replicates per offset, vs 100 shuffled navcore-v2 graphs, plus an FC2-silenced control.
-- [ ] **Go/no-go:** if steering doesn't follow the goal offset in the real wiring and not in shuffles, report it and fall back to injecting the goal signal at PFL3 (disclosed), or to the target-channel adapter.
+- [x] Inject an EPG bump at heading h and an FC2 bump at goal g, sweeping g − h over 360°. Expect PFL3 left−right and DNa02/DNa03 left−right to follow the sign of sin(g − h), i.e. turn toward the goal.
+- [x] (10 shuffles; passed: DNa02 L−R 22.5 Hz, R² 0.35 vs shuffles ≤ 1.9 Hz / R² ≤ 0.06) 10 replicates per offset, vs 100 shuffled navcore-v2 graphs, plus an FC2-silenced control.
+- [x] **Go/no-go (GO):** if steering doesn't follow the goal offset in the real wiring and not in shuffles, report it and fall back to injecting the goal signal at PFL3 (disclosed), or to the target-channel adapter.
 
 **4.3 — Closed-loop goal navigation**
-- [ ] Compass + goal channels in `FlyPopulation`.
-- [ ] Arena test: reach a goal that is **out of sight** (goal direction given, no target visible). Measure success vs blind-goal, shuffled wiring and CX-silenced.
+- [x] Compass + goal channels in `FlyPopulation`.
+- [x] (real 75% vs no-goal 15%, PFL3 silenced 15%, shuffles 5–38%) Arena test: reach a goal that is **out of sight** (goal direction given, no target visible). Measure success vs blind-goal, shuffled wiring and CX-silenced.
 - [ ] Skeld test: follow a scripted route of room waypoints via the goal channel alone.
 
 **4.4 — Training infrastructure**
-- [ ] `flyseek/train/es.py`: CMA-ES over adapter parameters (EPG/FC2 injection gains, goal-policy weights, decoder weights). Population = GPU batch.
-- [ ] Goal policy features: free distance per direction (rays), visit novelty map, room-exit directions, seen-fly bearing.
+- [x] `flyseek/train/es.py`: CMA-ES over adapter parameters (EPG/FC2 injection gains, goal-policy weights, decoder weights). Population = GPU batch.
+- [x] (replaced by the map-based route planner, `flyseek/agents/route_policy.py`) Goal policy features: free distance per direction (rays), visit novelty map, room-exit directions, seen-fly bearing.
 - [ ] Rewards and curriculum (W2: Cafeteria → room + corridor → full map), checkpoint/resume, headless CLI, Kaggle notebook, configurable data paths (done).
 
 **4.5 — Training runs and controls**
-- [ ] W2 exploration training on navcore-v2 (overnight).
-- [ ] Same budget on shuffled navcore-v2, and with the CX silenced (the fly then relies on the goal policy + decoder alone).
-- [ ] Re-run the 4.0 match matrix with trained adapters and report before/after coverage and outcomes.
+- [x] W2 exploration training on navcore-v2 (overnight).
+- [x] Same budget on shuffled navcore-v2, and with the CX silenced (the fly then relies on the goal policy + decoder alone).
+- [ ] (running: `match_matrix --nav explore_navcore --out phase4_trained_matrix`) Re-run the 4.0 match matrix with trained adapters and report before/after coverage and outcomes.
 
 **Done when:**
 - Trained brain flies visit **≥ 5 of the 14 rooms** on average in a 90 s match starting in Cafeteria.
 - They beat untrained, shuffled-wiring and CX-silenced flies.
 - 4.2 shows the circuit steers toward goals in the real wiring but not in shuffles.
+
+**Held-out results (40 unseen 45 s episodes from Cafeteria; `docs/phase4_eval_real.json`, `docs/phase4_eval_controls.json`):**
+
+| Condition | Rooms (95% CI) | Wall contact (s of 45) |
+|---|---|---|
+| Real wiring, untrained | 3.40 [2.91, 3.90] | 21.0 |
+| **Real wiring, trained** | **5.25 [4.72, 5.78]** | 21.7 |
+| Shuffled wiring, untrained | 1.93 [1.48, 2.37] | 41.4 |
+| Shuffled wiring, trained (same budget) | 2.38 [1.90, 2.85] | 39.7 |
+| PFL3 silenced, untrained | 1.38 [1.14, 1.61] | 32.2 |
+| PFL3 silenced, trained (same budget) | 2.40 [1.93, 2.87] | 36.1 |
+| Real-trained adapter, PFL3 silenced at test | 1.73 [1.43, 2.02] | 27.8 |
+
+Trained real vs every control: −2.85 to −3.88 rooms for the control, paired t p ≤ 3e-9. Room criterion (≥ 5) is met in half the match length; wall contact is not yet reduced.
 
 **Not fixed by Phase 4:** hunting and hiding skill (Phase 5), escape timing calibration, retinotopic vision.
 
