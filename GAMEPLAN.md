@@ -10,7 +10,7 @@
 | Area | State | Honest note |
 |---|---|---|
 | Data (MaleCNS v1.0) | ✅ Done | Downloaded, byte-verified, and the graph matches published edge counts |
-| Brain simulator | ✅ Runs | GPU LIF. **No synaptic delay yet.** The effective refractory period is 1.5 ms, not 2 ms (it counts down in the same step it's set) |
+| Brain simulator | ✅ Runs | GPU LIF. **No synaptic delay yet.** (An earlier note here claimed a refractory countdown bug; tracing it step by step showed it wasn't one.) |
 | Benchmark | ✅ Done | pruned5: 0.46× real time with 1 fly. full: 0.048× with 6 flies. **The network was silent during the benchmark** (0 spikes), so these are speeds for a quiet network |
 | Cell types | ✅ Resolved | P1 → `pIP1` and forward drive → `DNg100`/`DNp09` are both **unverified guesses** |
 | Brain panel viewer | ✅ Looks right | **Fake activity only.** Not connected to the simulator |
@@ -57,7 +57,7 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 *Goal: know, with real statistics, whether senses reach motor neurons at realistic drive levels.*
 
 - [ ] **Stability test.** Put sustained, moderate drive (5–20 Hz) on the sensory populations for 5 s. Record the total firing rate over time. Pass: activity settles instead of exploding. If it runs away, add global inhibition, lower `mv_per_synapse`, or use `pruned5`.
-- [ ] **Fix the refractory countdown** (1.5 ms → the configured 2 ms). Decide whether synaptic delay matters: run the checks with and without a fixed 2-step delay buffer.
+- [x] **Match the Shiu reference model**: refractory 2.2 ms (Brian2 semantics), 1.8 ms synaptic delay buffer, exact integration, 68.75 mV stimulus kicks. Covered by unit tests (`tests/test_lif.py`).
 - [ ] **Rewrite the sanity checks properly:**
   - [ ] An undriven baseline for every check, with the **same random seed**.
   - [ ] 20 trials per condition with different seeds. Report mean ± spread and a simple test (e.g. a t-test on L−R).
@@ -153,7 +153,7 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 | 6 Showcase | 1–2 | a few hours | 3-Hider video, then 5-Hider video, plus write-up |
 | **Total** | **~10–13 sessions** | **~4–7 nights** | |
 
-No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Kaggle's free ~30 h/week where they fit in 12 h chunks, and to TTU HPCC once an account is approved. The publication controls in §6.2 (shuffled connectome, ablations) add roughly **+50–100% training compute** on top of these numbers.
+No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Kaggle's free ~30 h/week where they fit in 12 h chunks (no HPCC access). The publication controls in §6.2 (shuffled connectome, ablations) add roughly **+50–100% training compute** on top of these numbers.
 
 ---
 
@@ -167,7 +167,7 @@ No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Ka
 | 4 | Guessed cell-type identities are wrong (pIP1 as P1, DNg100 as forward) | Open | Phase 1 checks whether they respond at all. Swap candidates if not |
 | 5 | Replay files too large | Unmeasured | Measure in Phase 3, with a quantized-heat fallback |
 | 6 | Two copies of the repo drift apart | Resolved | `FruitFly/` is canonical, backed up to GitHub |
-| 7 | Free-tier limits (Kaggle 12 h sessions, HPCC approval time) | Likely | Resumable training; request HPCC access now |
+| 7 | Free compute is tight (local GPU + Kaggle's 30 h/week, 12 h sessions; no HPCC) | Likely | Resumable training; navcore for all training; shorter episodes; keep the `full` graph for evaluation/showcase only |
 | 8 | The shuffled connectome performs just as well | Unknown, **and a legitimate result** | Test early in Phase 1; report it either way |
 
 ---
@@ -177,7 +177,7 @@ No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Ka
 | # | Decision | What it means for the plan |
 |---|---|---|
 | 1 | **`FruitFly/` is the canonical folder**, backed up to a **private GitHub repo** | All work happens in `FruitFly/`. `FruitFly-repo/` is redundant and can be deleted. The data (~1.4 GB) isn't pushed; [README.md](README.md) documents how to rebuild it |
-| 2 | **No paid compute** | See §6.1. Azure's free and student tiers don't allow GPU VMs, so the plan uses the local 2060 Super, then Kaggle's free tier, then TTU HPCC |
+| 2 | **No paid compute** | See §6.1. Azure's free and student tiers don't allow GPU VMs, so the plan uses the local 2060 Super plus Kaggle's free tier (the user has no TTU HPCC access) |
 | 3 | **Showcase with 3 Hiders first, then 5** | Adapters are trained **per role, not per fly**, so the 5-Hider match reuses the same trained Hider adapter. Scaling up costs compute, not retraining. A short fine-tune may be needed if 5 Hiders behave differently (e.g. crowding) |
 | 4 | **Aim for publishable results** | See §6.2. This adds controls and ablations to Phases 1, 4 and 5, and keeps bypasses **visibly labeled** |
 | — | "Feel" values (speed, vision radius, kill distance) | Picked by eye in Phase 3, then **frozen and reported** so results can be reproduced |
@@ -189,11 +189,11 @@ No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Ka
 | Azure free trial / Azure for Students | GPU VM series (NC etc.) not available on trial or student subscriptions; student quota is 3 vCPUs | ❌ Doesn't work for GPU |
 | **Local RTX 2060 Super** | 8 GB, always available, overnight runs | ✅ Default for Phases 1–3 and short training runs |
 | **Kaggle Notebooks** | ~30 GPU-hours/week free (P100 16 GB or 2× T4), 12 h max per session; runs continue after closing the tab | ✅ Offload for Phase 4–5 training. Needs checkpoint/resume (a 12 h cap per run) and the data uploaded as a private Kaggle dataset (~1.4 GB) |
-| **TTU HPCC (RedRaider: Matador/Toreador GPU partitions)** | Free for TTU students **with faculty sponsorship**, fair-share queue | ⭐ Best option for Phase 5 and the full-graph showcase. A faculty sponsor also helps with publishing. **Action: find a sponsor and request an account early**, since approval takes time |
+| TTU HPCC | Free only with faculty sponsorship | ❌ Not available to the user |
 
 **Implications for the code:**
 - Training scripts must be **headless and resumable**, checkpointing every N generations.
-- Data paths must be **configurable**. They're hard-coded to `C:\flyseek-data` today, which breaks on Kaggle/HPCC (Linux).
+- Data paths must be **configurable**. They're hard-coded to `C:\flyseek-data` today, which breaks on Kaggle (Linux).
 - Both changes are added to Phase 4.
 
 ### 6.2 What "publishable" adds

@@ -1,0 +1,112 @@
+[
+  {
+    "tag": "pruned5",
+    "n_stimulated": 3436,
+    "seconds": 1.0,
+    "dt_ms": 0.5,
+    "wall_seconds": 4.8,
+    "real_time_factor": 0.2094,
+    "batch": 3,
+    "results": [
+      {
+        "input_rate_hz": 5,
+        "measured_stim_rate_hz": 4.770663562281723,
+        "pop_rate_hz_first20pct": 9.275566101074219,
+        "pop_rate_hz_last20pct": 11.47954273223877,
+        "pop_rate_hz_max_bin": 11.519603729248047,
+        "late_over_early": 1.2376110101688893,
+        "frac_nonstim_neurons_active": 0.11914451467659537,
+        "mean_rate_nonstim_hz": 11.125273678611629,
+        "top_superclass_rates_hz": {
+          "efferent_ascending": 121.0,
+          "vnc_endocrine": 72.545,
+          "cb_intrinsic": 44.257,
+          "vnc_efferent": 37.628,
+          "vnc_motor": 35.84,
+          "visual_centrifugal": 35.291,
+          "cb_motor": 24.215,
+          "descending_neuron": 23.214
+        },
+        "pop_rate_trace_hz": [
+          7.1244,
+          11.4267,
+          11.4372,
+          11.4614,
+          11.2847,
+          11.4311,
+          11.5196,
+          11.2863,
+          11.4627,
+          11.4963
+        ],
+        "verdict": "STABLE"
+      },
+      {
+        "input_rate_hz": 20,
+        "measured_stim_rate_hz": 20.095750873108265,
+        "pop_rate_hz_first20pct": 9.836787223815918,
+        "pop_rate_hz_last20pct": 11.642059326171875,
+        "pop_rate_hz_max_bin": 11.805150985717773,
+        "late_over_early": 1.183522532436729,
+        "frac_nonstim_neurons_active": 0.12007223878381554,
+        "mean_rate_nonstim_hz": 11.11368949692614,
+        "top_superclass_rates_hz": {
+          "efferent_ascending": 117.375,
+          "vnc_endocrine": 73.091,
+          "cb_intrinsic": 44.404,
+          "visual_centrifugal": 35.302,
+          "vnc_motor": 34.924,
+          "vnc_efferent": 33.883,
+          "cb_motor": 24.888,
+          "descending_neuron": 23.078
+        },
+        "pop_rate_trace_hz": [
+          7.9478,
+          11.7258,
+          11.8052,
+          11.5813,
+          11.5456,
+          11.741,
+          11.7367,
+          11.6384,
+          11.6904,
+          11.5937
+        ],
+        "verdict": "STABLE"
+      },
+      {
+        "input_rate_hz": 50,
+        "measured_stim_rate_hz": 53.29598370197905,
+        "pop_rate_hz_first20pct": 10.583508491516113,
+        "pop_rate_hz_last20pct": 12.505541801452637,
+        "pop_rate_hz_max_bin": 12.559501647949219,
+        "late_over_early": 1.1816064409526625,
+        "frac_nonstim_neurons_active": 0.11973207327783482,
+        "mean_rate_nonstim_hz": 11.230162166173942,
+        "top_superclass_rates_hz": {
+          "efferent_ascending": 118.5,
+          "vnc_endocrine": 70.909,
+          "cb_motor": 50.542,
+          "cb_intrinsic": 45.231,
+          "visual_centrifugal": 35.336,
+          "vnc_motor": 31.973,
+          "vnc_efferent": 31.67,
+          "descending_neuron": 22.96
+        },
+        "pop_rate_trace_hz": [
+          8.6493,
+          12.5177,
+          12.5347,
+          12.5026,
+          12.4834,
+          12.4304,
+          12.4522,
+          12.4736,
+          12.4516,
+          12.5595
+        ],
+        "verdict": "STABLE"
+      }
+    ]
+  }
+]

@@ -45,9 +45,10 @@ import numpy as np
 import pandas as pd
 from scipy import ndimage
 
-MAP_PATH = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\skeld_map.json")
-EXTRAS_OUT = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\config\skeld_extras.json")
-CACHE_DIR = Path(r"C:\flyseek-data\cache")
+from flyseek.paths import CACHE_DIR, CONFIG_DIR, REPO_ROOT
+
+MAP_PATH = REPO_ROOT / "skeld_map.json"
+EXTRAS_OUT = CONFIG_DIR / "skeld_extras.json"
 
 ROOM_ALIASES = {
     "UpperEngine": "Upper Engine",

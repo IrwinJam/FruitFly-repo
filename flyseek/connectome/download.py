@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 BASE_URL = "https://storage.googleapis.com/flyem-male-cns/v1.0/connectome-data/flat-connectome"
 
-DATA_DIR = Path(r"C:\flyseek-data\raw\malecns_v1")
+from flyseek.paths import RAW_DIR as DATA_DIR
 
 
 @dataclass

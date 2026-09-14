@@ -45,9 +45,9 @@ import numpy as np
 import pandas as pd
 import yaml
 
-RAW_DIR = Path(r"C:\flyseek-data\raw\malecns_v1")
-CACHE_DIR = Path(r"C:\flyseek-data\cache")
-CONFIG_PATH = Path(__file__).resolve().parents[2] / "config" / "brain.yaml"
+from flyseek.paths import CACHE_DIR, CONFIG_DIR, RAW_DIR
+
+CONFIG_PATH = CONFIG_DIR / "brain.yaml"
 
 ANNOTATIONS_FILE = RAW_DIR / "body-annotations-male-cns-v1.0-minconf-0.5.feather"
 NT_FILE = RAW_DIR / "body-neurotransmitters-male-cns-v1.0.feather"

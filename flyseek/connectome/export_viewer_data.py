@@ -12,8 +12,8 @@ import pandas as pd
 
 from flyseek.connectome.layout import DISPLAY_GROUPS, build_layout
 
-CACHE_DIR = Path(r"C:\flyseek-data\cache")
-OUT_DIR = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\viewer\public\data")
+from flyseek.paths import CACHE_DIR
+from flyseek.paths import VIEWER_DATA_DIR as OUT_DIR
 
 
 def export():
@@ -36,7 +36,6 @@ def export():
         "group_colors": [DISPLAY_GROUPS[g]["color"] for g in group_names],
         "group_counts": {g: int((group_ids == i).sum()) for g, i in name_to_id.items()},
     }
-    stats_path = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\docs\bench_results.json")
     build_stats_path = CACHE_DIR / "build_stats.json"
     if build_stats_path.exists():
         stats = json.loads(build_stats_path.read_text())

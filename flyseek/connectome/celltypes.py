@@ -56,7 +56,8 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA_DIR = Path(r"C:\flyseek-data\raw\malecns_v1")
+from flyseek.paths import CACHE_DIR, DOCS_DIR
+from flyseek.paths import RAW_DIR as DATA_DIR
 ANNOTATIONS_FILE = DATA_DIR / "body-annotations-male-cns-v1.0-minconf-0.5.feather"
 
 # role -> (list of `type` values, human note)
@@ -209,11 +210,11 @@ def write_body_id_map(out_path: Path, resolved: dict[str, ResolvedRole]) -> None
 
 if __name__ == "__main__":
     resolved = resolve_roles()
-    report_path = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\docs\celltypes_report.md")
+    report_path = DOCS_DIR / "celltypes_report.md"
     report_path.parent.mkdir(parents=True, exist_ok=True)
     write_report(report_path, resolved)
 
-    cache_path = Path(r"C:\flyseek-data\cache\role_body_ids.json")
+    cache_path = CACHE_DIR / "role_body_ids.json"
     cache_path.parent.mkdir(parents=True, exist_ok=True)
     write_body_id_map(cache_path, resolved)
 

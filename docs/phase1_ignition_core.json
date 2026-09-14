@@ -1,0 +1,192 @@
+{
+  "baseline_core": {
+    "n_active_gt1hz": 16704,
+    "mean_rate_active_hz": 110.94657441016335,
+    "nt_counts_active": {
+      "acetylcholine": 5416,
+      "gaba": 3993,
+      "dopamine": 3590,
+      "glutamate": 2824,
+      "unclear": 673,
+      "serotonin": 138,
+      "octopamine": 62,
+      "histamine": 8
+    },
+    "nt_counts_all": {
+      "acetylcholine": 99985,
+      "glutamate": 29527,
+      "gaba": 21725,
+      "histamine": 6008,
+      "dopamine": 4452,
+      "unclear": 2376,
+      "missing": 502,
+      "serotonin": 450,
+      "octopamine": 97
+    },
+    "frac_nt_confident_active": 0.9597102490421456,
+    "frac_nt_confident_all": 0.9825704630515619,
+    "superclass_active": {
+      "cb_intrinsic": 11326,
+      "vnc_intrinsic": 2158,
+      "ol_intrinsic": 1673,
+      "ascending_neuron": 339,
+      "descending_neuron": 331,
+      "visual_projection": 249,
+      "vnc_motor": 248,
+      "visual_centrifugal": 135,
+      "cb_sensory": 115,
+      "vnc_efferent": 43,
+      "cb_motor": 30,
+      "sensory_ascending": 25
+    },
+    "top_types_by_rate": [
+      {
+        "type": "il3LN6",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "l2LN21",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "l2LN22",
+        "count": 3,
+        "mean": 400.0
+      },
+      {
+        "type": "lLN10",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON06",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON05",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON09",
+        "count": 4,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON07",
+        "count": 4,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON14",
+        "count": 4,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON13",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON11",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON12",
+        "count": 4,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON22",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON32",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON31",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON30",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "MBON21",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "M_imPNl92",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "M_l2PNl23",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "M_l2PNl21",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "VL2a_adPN",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "VL2p_adPN",
+        "count": 2,
+        "mean": 400.0
+      },
+      {
+        "type": "lLN1_bc",
+        "count": 30,
+        "mean": 400.0
+      },
+      {
+        "type": "M_l2PNm16",
+        "count": 4,
+        "mean": 400.0
+      },
+      {
+        "type": "lLN2F_a",
+        "count": 4,
+        "mean": 400.0
+      }
+    ]
+  },
+  "variants": {
+    "baseline": {
+      "n_active_gt1hz": 16704,
+      "pop_rate_hz": 11.223529141770136
+    },
+    "modulatory_zero": {
+      "n_active_gt1hz": 7754,
+      "pop_rate_hz": 2.027298475959402
+    },
+    "unclear_zero": {
+      "n_active_gt1hz": 13377,
+      "pop_rate_hz": 7.961411626108671
+    },
+    "both_zero": {
+      "n_active_gt1hz": 11982,
+      "pop_rate_hz": 5.590972926557015
+    },
+    "no_vnc": {
+      "n_active_gt1hz": 16357,
+      "pop_rate_hz": 11.336657616473689
+    }
+  }
+}

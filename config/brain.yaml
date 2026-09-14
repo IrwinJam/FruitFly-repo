@@ -1,32 +1,58 @@
-# LIF brain-model parameters. Values follow Shiu et al. 2024 / the flypoke
-# reference implementation (see PROJECT_PLAN.md section 3.2 for sources).
+# LIF brain-model parameters. Values match the Shiu et al. 2024 reference model
+# (philshiu/Drosophila_brain_model, model.py default_params), checked 2026-09-13.
 
 lif:
-  v_rest_mv: -52.0
-  v_threshold_mv: -45.0
-  v_reset_mv: -52.0
-  tau_m_ms: 20.0
-  tau_syn_ms: 5.0
-  refractory_ms: 2.0
-  synaptic_delay_ms: 1.8
-  mv_per_synapse: 0.275
+  v_rest_mv: -52.0 # v_0
+  v_threshold_mv: -45.0 # v_th
+  v_reset_mv: -52.0 # v_rst
+  tau_m_ms: 20.0 # t_mbr
+  tau_syn_ms: 5.0 # tau
+  refractory_ms: 2.2 # t_rfc
+  synaptic_delay_ms: 1.8 # t_dly
+  mv_per_synapse: 0.275 # w_syn
+  poisson_weight_factor: 250 # f_poi: a stimulus spike adds w_syn * f_poi = 68.75 mV to g
+
+# Dataset calibration (Phase 1 finding). w_syn=0.275 mV was calibrated by Shiu et al.
+# on FlyWire (~50M synapses / 139,255 neurons ~ 359 input synapses per neuron). The
+# MaleCNS brain has ~698 input synapses per neuron (101M / 144,760), so the same
+# w_syn couples the network ~1.95x more strongly. connectome_weight_scale multiplies
+# every connectome synapse weight (NOT the stimulus kick). 359/698 = 0.514 matches
+# FlyWire's mean synaptic drive per neuron.
+#
+# Set to 0.514 on 2026-09-13 from dataset statistics ALONE (not tuned for any
+# behavioral effect). The regime sweep (docs/phase1_regime_sweep.json) confirmed:
+# at 1.0 a 50 ms single-neuron pulse ignites a self-sustained ~11 Hz state across
+# ~17k neurons and DN readouts stop tracking input; at 0.514 there is no ignition
+# and LC10a/looming drive produce side-specific DN responses. Smaller scales (0.3)
+# give larger effects but were deliberately NOT chosen, to avoid tuning to the result.
+connectome_weight_scale: 0.514
+# Sign for dopamine/serotonin/octopamine synapses: +1 (excitatory, the reference
+# rule), 0 (excluded: slow neuromodulation with no fast effect). At the calibrated
+# scale the sweep shows results are nearly identical either way; kept at +1 to
+# match the reference model, and 0 is reported as a sensitivity check.
+modulatory_sign: 1
 
 sim:
-  dt_ms: 0.5 # validate against Shiu's sugar->MN9 result in Milestone M3; drop to 0.25ms if needed
-  brain_ms_per_game_tick: 20.0 # 1 game tick = 20ms brain time (40 steps at dt=0.5ms)
+  # Shiu runs Brian2 at its default 0.1 ms. We use 0.5 ms for speed; integration is
+  # exact for the linear (v, g) system between spikes, and Phase 1 checks that key
+  # results don't change at 0.1 ms (flyseek/brain/dt_check.py).
+  dt_ms: 0.5
+  brain_ms_per_game_tick: 20.0 # 1 game tick = 20 ms brain time (40 steps at dt=0.5 ms)
   dn_ema_tau_ms: 100.0 # smoothing window for descending-neuron rate readout
+  # spike propagation: "spmm" (sparse matmul every step), "event" (only spiking
+  # neurons' out-edges), or "auto" (event-driven when activity is sparse)
+  propagation: auto
 
 graphs:
   full:
     edge_min_synapses: 0
-    description: "All MaleCNS edges (~25.6M). Showcase replay only."
+    description: "All traced-to-traced MaleCNS edges (25.6M). Evaluation and showcase."
   pruned5:
     edge_min_synapses: 5
-    description: "Edges with >=5 synapses (~6.3M, matches fly-brain-minecraft). Default."
+    description: "Edges with >=5 synapses (6.2M). Default working graph."
   navcore:
-    description: "k-hop subgraph around sensory roles + upstream of motor DNs (~10-30k neurons). Training only."
-    k_hops: 4
+    description: "Subgraph between sensory roles and motor DNs. Training only. Built by flyseek/brain/navcore.py."
 
-backend: torch # torch | brian2 (torch is primary; see flyseek/brain/lif_torch.py)
+backend: torch
 device: cuda
-batch_max_flies: 6 # GPU memory budget on RTX 2060 Super (8GB)
+batch_max_flies: 6

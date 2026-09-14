@@ -37,8 +37,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-CACHE_DIR = Path(r"C:\flyseek-data\cache")
-DOCS_DIR = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\docs")
+from flyseek.paths import CACHE_DIR, DOCS_DIR
 
 # display group -> (role names from celltypes.py, color hint for the viewer)
 # Colors chosen to match the IMG_0897/0900/0901 reference palette: green/blue
