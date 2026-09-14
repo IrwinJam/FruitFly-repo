@@ -26,6 +26,8 @@ CHANNEL_ROLES = {
     "target": ["target_motion_detector"],
     "loom": ["looming_expansion", "looming_size"],
     "photo": ["photoreceptor_achromatic", "photoreceptor_color"],
+    "danger": ["aversive_odor"],  # hider danger meter (navcore only: odor ignites the MB on full/pruned5)
+    "ping": ["attractive_odor"],  # seeker Final Hide pings, lateralized by bearing
 }
 
 
@@ -84,11 +86,25 @@ class FlyPopulation:
         else:
             self.brain.clear_stimulus()
 
-    def tick(self, objects: list[VisualObject], record_all_spikes: bool = False):
+    def tick(self, objects: list[VisualObject], record_all_spikes: bool = False, extra_rates: dict | None = None,
+             base_speed: np.ndarray | None = None, movable: np.ndarray | None = None,
+             sensing: np.ndarray | None = None):
+        """
+        extra_rates: additional channels, e.g. {"danger": {"L": [A], "R": [A]}}.
+        base_speed:  per-fly engineered forward speed (overrides config/motors.yaml).
+        movable:     per-fly bool; False = frozen (dead, in a vent, or seeker during hide phase).
+        sensing:     per-fly bool; False = all sensory input off (e.g. a caught fly).
+        """
         dt_s = self.tick_ms / 1000.0
         b = self.body
         vis = self.vision.encode(b.x, b.y, b.heading, objects, self.grid, dt_s)
-        self._set_stimulus(vis.rates)
+        rates = dict(vis.rates)
+        if extra_rates:
+            rates.update(extra_rates)
+        if sensing is not None:
+            on = np.asarray(sensing, dtype=float)
+            rates = {ch: {s: np.asarray(v[s]) * on for s in "LR"} for ch, v in rates.items()}
+        self._set_stimulus(rates)
 
         out = self.brain.run(self.steps_per_tick, count_neurons=None if record_all_spikes else self._readout_tensor())
         counts = out["counts"]
@@ -109,9 +125,12 @@ class FlyPopulation:
         dn_hz = {t: {s: (dn_counts[t][s].mean(axis=0) if len(dn_counts[t][s]) else np.zeros(self.n)) / dt_s
                      for s in "LR"} for t in READOUT_TYPES}
         self.decoder.update_rates(dn_hz, self.tick_ms)
-        cmd = self.decoder.decode()
+        cmd = self.decoder.decode(base_speed=base_speed)
+        if movable is not None:
+            cmd.speed = np.where(movable, cmd.speed, 0.0)
+            cmd.omega = np.where(movable, cmd.omega, 0.0)
         b.step(cmd.speed, cmd.omega, dt_s, self.grid)
-        return TickResult(vis.rates, dn_hz, cmd), all_counts
+        return TickResult(rates, dn_hz, cmd), all_counts
 
     def _readout_tensor(self) -> torch.Tensor:
         if not hasattr(self, "_ro_t"):

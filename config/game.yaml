@@ -1,34 +1,59 @@
-# Among Us Hide n Seek rules, as far as they're documented (PROJECT_PLAN.md
-# section 3.7). Values marked "documented" come from Innersloth's own announcement
-# or the community wiki; values marked "undocumented default" are our own choice
-# because no source gives a numeric default -- change these freely, they're just
-# a reasonable starting point.
+# Among Us Hide n Seek rules (PROJECT_PLAN.md section 3.7).
+# Labels: "documented" = Innersloth announcement or community wiki;
+# "undocumented default" = no published number, our own choice;
+# "by eye" = chosen so matches look like Among Us, frozen and reported.
 
 players:
   seekers: 1
-  hiders: 5 # capped by GPU memory on the RTX 2060 Super, see docs/bench_results.json
+  hiders: 3 # showcase plan: 3 hiders first, then 5 reusing the same role adapters
 
 timers:
-  hide_phase_s: 90 # undocumented default: time hiders get to scatter before seeking starts
-  round_length_s: 300 # undocumented default: total match length hiders must survive
-  final_hide_s: 120 # documented (Innersloth announcement / community wiki)
-  final_hide_speed_multiplier: 1.5 # documented: seeker gets a speed boost in Final Hide; exact multiplier not published, using a plausible value
-  ping_interval_s: 6 # documented: Final Hide pings reveal all living hiders' locations, default ~6s
+  hide_phase_s: 10 # undocumented default: seeker frozen at spawn while hiders scatter
+  round_length_s: 300 # undocumented default: total match length (including hide phase)
+  final_hide_s: 120 # documented: last part of the round
+  final_hide_speed_multiplier: 1.5 # documented boost; exact multiplier not published
+  ping_interval_s: 6 # documented: Final Hide pings reveal living hiders' locations
+
+# Short preset for untrained demo matches and quick iteration. Select with --preset short.
+presets:
+  short:
+    hide_phase_s: 5
+    round_length_s: 90
+    final_hide_s: 30
 
 vents:
   max_uses_per_hider: 3 # undocumented default
   max_time_inside_s: 5 # undocumented default
+  use_radius_units: 0.6 # by eye
+  # Brains can't press "vent". An engineered auto-vent rule (disclosed) makes a hider
+  # vent when it stands on a vent, has uses left, and the seeker is within this range.
+  auto_vent_danger_range_units: 4.0
 
-# Hide n Seek's task rules are ambiguous across sources -- see the docstring in
-# flyseek/world/skeld.py for the two conflicting descriptions found during
-# research. Defaulting to disabled (the simpler, unambiguous ruleset); no task
-# stations are modeled in skeld_extras.json.
+# Task rules are ambiguous across sources (see flyseek/world/skeld.py docstring).
 tasks_enabled: false
 
 speed:
-  base_units_per_s: null # not measured yet -- Among Us speed is host-configurable 0.5x-3.0x of an internal base; calibrate against skeld_map.json's world-unit scale once the kinematic body (flyseek/motors/body_kinematic.py) exists
+  # Among Us map units match skeld_map.json. Crossing The Skeld (~41 units) takes
+  # roughly 15-20 s at 1.0x, i.e. ~2-2.7 units/s. By eye; not measured from the game.
+  hider_units_per_s: 2.0
+  seeker_units_per_s: 2.0
+
+kill_radius_units: 0.6 # by eye
+body_radius_units: 0.25 # by eye
+
+vision:
+  hider_range_units: 6.0 # by eye (radial vision, flashlight mode off)
+  seeker_range_units: 6.0 # by eye
 
 danger_meter:
-  max_range_units: 8.0 # undocumented default: distance at which the danger meter starts filling
+  max_range_units: 8.0 # undocumented default: meter starts filling inside this distance
 
-flashlight_mode: false # radial vision by default; cone vision is a documented alternative setting
+flashlight_mode: false # documented alternative setting; not modeled yet
+
+# Engineered reflexes for brain-driven flies (disclosed in every replay's metadata).
+reflexes:
+  # A brain fly that touches a wall turns by a random angle. Without it, untrained
+  # flies with constant forward speed pin themselves into corners. Phase 4 training
+  # is meant to make it unnecessary; matches report whether it was on.
+  wall_bump_turn: true
+  wall_bump_turn_deg: [60, 150]

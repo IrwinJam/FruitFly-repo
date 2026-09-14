@@ -97,7 +97,9 @@ class VisionEncoder:
                 best_target_strength = np.maximum(best_target_strength, strength)
             elif obj.kind == "threat":
                 prev = self._prev_threat_size.get(oi)
-                expansion = np.zeros(A) if prev is None else (ang_size - prev) / dt_s
+                # no expansion on the first frame an object becomes visible (prev == 0),
+                # otherwise appearing from behind a wall reads as an explosive loom
+                expansion = np.zeros(A) if prev is None else np.where(prev > 0, (ang_size - prev) / dt_s, 0.0)
                 self._prev_threat_size[oi] = np.where(visible, ang_size, 0.0)
                 r = c.loom_max_hz * np.clip(expansion / np.deg2rad(c.loom_ref_deg_per_s), 0, 1)
                 rates["loom"]["L"] = np.maximum(rates["loom"]["L"], np.where(left, r, 0))

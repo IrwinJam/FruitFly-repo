@@ -23,9 +23,9 @@ viewer/node_modules/
 viewer/dist/
 
 # logs, checkpoints, replays
-runs/
-checkpoints/
-replays/
+/runs/
+/checkpoints/
+/replays/ # raw match recordings live in C:\flyseek-data; viewer/public/replays (small exports) IS tracked
 *.log
 
 # OS

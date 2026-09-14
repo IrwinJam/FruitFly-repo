@@ -38,6 +38,7 @@ const VERTEX_SHADER = `
 `;
 
 const FRAGMENT_SHADER = `
+  uniform float uRestAlpha;
   varying float vHeat;
   varying vec3 vColor;
   void main() {
@@ -51,7 +52,9 @@ const FRAGMENT_SHADER = `
     // overlapping points, even a modest per-point alpha saturates to solid white
     // once dozens of points overlap in a screen pixel. Keep resting points faint
     // so colored activity glows still read as distinct against the point cloud.
-    float alpha = falloff * (0.035 + vHeat * 0.9);
+    // uRestAlpha shrinks with panel area (see render()), since small panels pack
+    // more points into each pixel.
+    float alpha = falloff * (uRestAlpha + vHeat * 0.9);
     gl_FragColor = vec4(color * (0.35 + vHeat * 1.3), alpha);
   }
 `;
@@ -93,6 +96,7 @@ export class BrainPanel {
       uniforms: {
         uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) },
         uBaseSize: { value: 1.6 },
+        uRestAlpha: { value: 0.035 },
       },
       transparent: true,
       depthTest: false,
@@ -123,10 +127,39 @@ export class BrainPanel {
     this.heatAttr.needsUpdate = true;
   }
 
+  /** Decay all heat by elapsed time (call once per frame). */
+  decay(dtMs: number) {
+    const k = Math.exp(-dtMs * this.decayPerMs);
+    for (let i = 0; i < this.heat.length; i++) this.heat[i] *= k;
+    this.heatAttr.needsUpdate = true;
+  }
+
+  /** Add heat for neurons that spiked (may be called several times per frame). */
+  bump(spikeIndices: Uint32Array | number[]) {
+    for (let i = 0; i < spikeIndices.length; i++) {
+      const idx = spikeIndices[i];
+      if (idx < this.heat.length) this.heat[idx] = Math.min(1.0, this.heat[idx] + 0.9);
+    }
+    this.heatAttr.needsUpdate = true;
+  }
+
+  clear() {
+    this.heat.fill(0);
+    this.heatAttr.needsUpdate = true;
+  }
+
+  /** x, y, w, h in CSS pixels with y measured from the TOP of the canvas. */
   render(renderer: THREE.WebGLRenderer, x: number, y: number, w: number, h: number) {
-    const pr = renderer.getPixelRatio();
-    renderer.setViewport(x * pr, y * pr, w * pr, h * pr);
-    renderer.setScissor(x * pr, y * pr, w * pr, h * pr);
+    // WebGL viewports are measured from the bottom edge; flip so layout rects line up with
+    // overlays. three.js applies the pixel ratio itself, so these stay in CSS pixels.
+    const yGl = renderer.domElement.clientHeight - y - h;
+    // 0.035 looked right on a ~700x800 panel. Linear scaling with area made small panels
+    // vanish; square-root scaling keeps them visible without washing out.
+    const area = Math.min(w, h * 0.77) * h;
+    (this.points.material as THREE.ShaderMaterial).uniforms.uRestAlpha.value =
+      Math.min(0.035, Math.max(0.006, 0.035 * Math.sqrt(area / 560000)));
+    renderer.setViewport(x, yGl, w, h);
+    renderer.setScissor(x, yGl, w, h);
     renderer.setScissorTest(true);
     // orthographic: adjust left/right to preserve aspect without distortion
     const half = 4.2;

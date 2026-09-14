@@ -95,34 +95,72 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 - Escape triggers too early (~1.6 s before contact); the looming gain and dash threshold need calibration for gameplay.
 - Retinotopic vision.
 
-### Phase 3 — First watchable match (vertical slice) · ~2–3 sessions
+### Phase 3 — First watchable match (vertical slice) · ✅ core done 2026-09-14
 *Goal: 1 Seeker + 3 Hiders play Hide n Seek on The Skeld, recorded and replayed in the viewer with real spikes.*
 
-- [ ] `flyseek/world/rules.py`: hide phase → seek → Final Hide, kill radius, vents (limited uses and time), pings, win check.
-- [ ] Scripted agents (`scripted_seeker.py`, `scripted_hider.py`) as opponents and baselines.
-- [ ] Senses for the game: looming for Hiders, danger → aversive odor, pings → attractive odor L/R, wall touch.
-- [ ] **Replay format.** Per tick: all agent states, plus spike indices per fly (delta-encoded, compressed). Measure the file size per minute of match. If a 5-minute, 4-fly match is over ~500 MB, fall back to per-neuron heat quantized to 8 bits at 10 fps.
-- [ ] **Viewer:**
-  - [ ] A Skeld map panel in the center: walls, players, vision radius, vents, timer, danger ring.
-  - [ ] Replay loading and playback controls (play/pause, speed, scrub).
-  - [ ] **Remove the synthetic activity** and drive the brain panels from the replay's real spikes.
-  - [ ] Change the disclaimer from "DEMO" to the plan's model disclaimer.
-- [ ] Run matches of untrained brains vs scripted opponents, and brains vs brains.
+- [x] `flyseek/world/rules.py`: hide → seek → Final Hide, kill radius, auto-vent rule (disclosed), pings, danger meter, win check. 4 unit tests.
+- [x] Scripted agents (`flyseek/agents/scripted.py`) with geodesic pathfinding (`flyseek/world/pathing.py`).
+- [x] Game senses: Seeker sees Hiders (LC10a), Hiders see the Seeker loom (LC4/LPLC2), danger → aversive ORNs, pings → attractive ORNs L/R. Odor only on navcore. Caught flies stop sensing. **Wall touch not modeled**; a disclosed wall-bump turn reflex is used instead.
+- [x] Replay format + exporter: ~0.4–1.4 MB per 90 s, 4-fly match. Far below the 500 MB fallback.
+- [x] Viewer: Skeld map panel (walls, vents, agents, vision rings, kills, pings, phase clock), playback controls, brain panels driven by real recorded spikes, model disclaimer. Fixed a WebGL viewport-flip bug and a double pixel-ratio bug.
+- [x] Matches recorded (short preset, seed 0, navcore):
+  - `match01_all_brains`: Hiders win, 2 of 3 caught
+  - `match02_brain_seeker_vs_scripted`: Hiders win, 0 caught
+  - `match03_scripted_seeker_vs_brain_hiders`: Seeker wins in 14 s
 
-**Done when:** you can load a replay and watch a full match, with brain panels lighting up from real simulated activity and the game ending on a real win condition.
+**Done when:** you can load a replay and watch a full match, with brain panels lighting up from real simulated activity and the game ending on a real win condition. **Met.**
+
+**What the first matches showed:** untrained brain flies bounce around Cafeteria ("Pac-Man"). Brains only turn when they see another fly, and the wall reflex makes the rest a random walk. That's the Phase 4 problem.
 
 > 🎉 **This is the point where the project "exists."** Everything after this makes the flies play better.
 
-### Phase 4 — Training infrastructure + walking/navigation · ~2 sessions + ~1–2 nights of GPU
-- [ ] `flyseek/train/es.py`: CMA-ES over the adapter parameters (encoder gains, biases, decoder weights). The population runs as the GPU batch.
-- [ ] Rewards, curricula, checkpoints, and evaluation against baselines (random walk, zero-gain, scripted).
-- [ ] **W1 (arena phototaxis)** on navcore. Rough estimate: 1–2 h of GPU.
-- [ ] **W2 (Skeld navigation curriculum)**: Cafeteria → room + corridor → full map. Rough estimate: 7–15 h of GPU.
-- [ ] Check transfer: the best adapter from navcore evaluated on `pruned5`.
-- [ ] **Portability for free compute:** configurable data paths (no hard-coded `C:\`), headless CLI, checkpoint/resume, and a Kaggle notebook that pulls the repo plus a private Kaggle dataset.
-- [ ] Run W2 on the shuffled connectome too, with the same budget, for the §6.2 control.
+### Phase 4 — Navigation with the central complex · revised 2026-09-14 · ~3–4 sessions + ~2 nights of GPU
+*Goal: brain-driven flies leave Cafeteria and move around The Skeld with purpose, using the fly's own compass → goal → steering circuit (EPG → FC2 → PFL3 → steering DNs).* Biology: EPG neurons carry a heading bump, FC2 neurons carry a goal direction, and PFL3 neurons compare them to produce a left/right steering signal (Mussells Pires et al. 2024; Westeinde et al. 2024).
 
-**Done when:** a trained fly reaches a random room within 90 s in ≥ 60% of trials and beats a random walk.
+**What is connectome vs engineered in this design (disclosed):**
+
+| Piece | Source |
+|---|---|
+| Heading → EPG bump | Engineered **idealized compass**: the body's true heading injected as an EPG activity bump (real flies use landmarks + self-motion) |
+| Goal → FC2 bump | Engineered **goal policy** chooses a direction (e.g. toward unexplored space, a hiding spot, or a hider), injected as an FC2 bump. Its weights are what training learns |
+| Heading vs goal → steering | **Connectome**: EPG/FC2 → PFL3 → LAL → DNa02/DNa03 and others |
+| Turn / dash / speed decoding | Existing motor decoder (forward speed stays an engineered constant) |
+
+**4.0 — Baseline and spawn-preset experiment** (runs in background while 4.1–4.3 are built)
+- [ ] Add a `spread` spawn preset: agents start in random rooms instead of all in Cafeteria. Default stays Cafeteria (the real Among Us rule).
+- [ ] Add coverage metrics to every match: rooms visited per agent, fraction of the map within 1 unit of an agent's path, time to first sighting.
+- [ ] Run the untrained baseline matrix: {default, spread} × {all brains, brain Seeker vs scripted, scripted vs brain Hiders} × 3 seeds = 18 matches (~1 h GPU). This is the "before" for the trained "after".
+
+**4.1 — Map the compass circuit onto real neurons**
+- [ ] From MaleCNS annotations (`instance` / glomerulus / column labels), give every EPG, FC2 (A/B/C) and PFL3 neuron an angular position (protocerebral-bridge glomerulus or fan-shaped-body column → angle).
+- [ ] Check that the intermediate neurons (Δ7, P-EN, LAL, PFL2) exist, and build **navcore-v2** including the full EPG/FC2 → PFL3 → DN pathway. Rebuild its shuffles.
+
+**4.2 — Test the circuit before using it (Phase 1 style)**
+- [ ] Inject an EPG bump at heading h and an FC2 bump at goal g, sweeping g − h over 360°. Expect PFL3 left−right and DNa02/DNa03 left−right to follow the sign of sin(g − h), i.e. turn toward the goal.
+- [ ] 10 replicates per offset, vs 100 shuffled navcore-v2 graphs, plus an FC2-silenced control.
+- [ ] **Go/no-go:** if steering doesn't follow the goal offset in the real wiring and not in shuffles, report it and fall back to injecting the goal signal at PFL3 (disclosed), or to the target-channel adapter.
+
+**4.3 — Closed-loop goal navigation**
+- [ ] Compass + goal channels in `FlyPopulation`.
+- [ ] Arena test: reach a goal that is **out of sight** (goal direction given, no target visible). Measure success vs blind-goal, shuffled wiring and CX-silenced.
+- [ ] Skeld test: follow a scripted route of room waypoints via the goal channel alone.
+
+**4.4 — Training infrastructure**
+- [ ] `flyseek/train/es.py`: CMA-ES over adapter parameters (EPG/FC2 injection gains, goal-policy weights, decoder weights). Population = GPU batch.
+- [ ] Goal policy features: free distance per direction (rays), visit novelty map, room-exit directions, seen-fly bearing.
+- [ ] Rewards and curriculum (W2: Cafeteria → room + corridor → full map), checkpoint/resume, headless CLI, Kaggle notebook, configurable data paths (done).
+
+**4.5 — Training runs and controls**
+- [ ] W2 exploration training on navcore-v2 (overnight).
+- [ ] Same budget on shuffled navcore-v2, and with the CX silenced (the fly then relies on the goal policy + decoder alone).
+- [ ] Re-run the 4.0 match matrix with trained adapters and report before/after coverage and outcomes.
+
+**Done when:**
+- Trained brain flies visit **≥ 5 of the 14 rooms** on average in a 90 s match starting in Cafeteria.
+- They beat untrained, shuffled-wiring and CX-silenced flies.
+- 4.2 shows the circuit steers toward goals in the real wiring but not in shuffles.
+
+**Not fixed by Phase 4:** hunting and hiding skill (Phase 5), escape timing calibration, retinotopic vision.
 
 ### Phase 5 — Role training · ~2 sessions + ~2–4 nights of GPU
 - [ ] **R1:** train the Seeker adapter against scripted Hiders, and the Hider adapter against a scripted Seeker. Rough estimate: 15–30 h of GPU per role. Use shorter episodes (90 s) first to halve that.
