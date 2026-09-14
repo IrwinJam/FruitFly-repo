@@ -1,0 +1,55 @@
+# Sensory encoders: game signal -> Poisson drive rate on target cell-type roles.
+# Role names must exist in flyseek/connectome/celltypes.py ROLES and resolve via
+# `python -m flyseek.connectome.celltypes` (see docs/celltypes_report.md).
+#
+# gain_hz: Poisson rate (Hz) at encoder value == 1.0 (i.e. max brightness / closest
+# distance / full danger). These are STARTING points, not validated constants --
+# they live in the trainable adapter (PROJECT_PLAN.md section 5) and will be tuned
+# in Stage W0/W1.
+
+vision:
+  n_rays: 96
+  fov_deg: 270
+  role_brightness: photoreceptor_achromatic # type: R1-R6
+  role_color: photoreceptor_color # types: R7d/p/y, R8d/p/y
+  gain_hz: 120.0
+  max_range_units: 12.0 # ~ half the Skeld's longest room span
+
+target_feature:
+  description: "Angular position/size of nearest visible other player, injected retinotopically"
+  role: target_motion_detector # LC10a
+  applies_to: [seeker]
+  gain_hz: 150.0
+  bypass_downstream: false # if W0 shows the signal dies before reaching DNs, set true and inject at pursuit_relay (AOTU019/025) instead
+
+looming:
+  role_expansion: looming_expansion # LC4
+  role_size: looming_size # LPLC2
+  applies_to: [hider]
+  gain_hz: 180.0
+  expansion_window_ms: 200
+
+arousal:
+  role: arousal_gain # pIP1 (uncertain, see celltypes.py docstring)
+  applies_to: [seeker]
+  tonic_hz_hide_phase: 20.0
+  tonic_hz_seek_phase: 40.0
+  tonic_hz_final_hide: 70.0
+
+ping:
+  description: "Final Hide pings -> lateralized attractive odor toward the ping source (left/right antenna rate split by bearing)"
+  role: attractive_odor # ORN_VA2 (Or92a) + ORN_DM1 (Or42b), see celltypes.py note
+  applies_to: [seeker]
+  gain_hz: 100.0
+  decay_ms: 800
+
+danger:
+  description: "Danger-meter value -> aversive odor, mirrors the in-game danger curve"
+  role: aversive_odor # ORN_DA2 (Or56a/geosmin) + ORN_V (CO2), see celltypes.py note
+  applies_to: [hider]
+  gain_hz: 140.0
+
+wall_touch:
+  applies_to: [all]
+  burst_hz: 200.0
+  burst_ms: 50
