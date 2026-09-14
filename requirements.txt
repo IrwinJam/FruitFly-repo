@@ -1,0 +1,13 @@
+numpy
+pandas
+pyarrow
+scipy
+requests
+tqdm
+pyyaml
+websockets
+msgpack
+matplotlib
+cmaes
+neuprint-python
+pytest

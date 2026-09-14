@@ -1,0 +1,58 @@
+[
+  {
+    "tag": "pruned5",
+    "batch_size": 1,
+    "n_neurons": 165122,
+    "n_edges": 6235682,
+    "n_steps": 200,
+    "wall_seconds": 0.2154,
+    "steps_per_sec": 928.6,
+    "ms_per_step": 1.0769,
+    "brain_ms_simulated": 100.0,
+    "real_time_factor": 0.4643,
+    "mean_spikes_per_step": 0.0,
+    "device": "cuda"
+  },
+  {
+    "tag": "pruned5",
+    "batch_size": 6,
+    "n_neurons": 165122,
+    "n_edges": 6235682,
+    "n_steps": 200,
+    "wall_seconds": 0.6614,
+    "steps_per_sec": 302.39,
+    "ms_per_step": 3.307,
+    "brain_ms_simulated": 100.0,
+    "real_time_factor": 0.1512,
+    "mean_spikes_per_step": 0.0,
+    "device": "cuda"
+  },
+  {
+    "tag": "full",
+    "batch_size": 1,
+    "n_neurons": 165122,
+    "n_edges": 25563197,
+    "n_steps": 200,
+    "wall_seconds": 0.389,
+    "steps_per_sec": 514.08,
+    "ms_per_step": 1.9452,
+    "brain_ms_simulated": 100.0,
+    "real_time_factor": 0.257,
+    "mean_spikes_per_step": 0.0,
+    "device": "cuda"
+  },
+  {
+    "tag": "full",
+    "batch_size": 6,
+    "n_neurons": 165122,
+    "n_edges": 25563197,
+    "n_steps": 200,
+    "wall_seconds": 2.0875,
+    "steps_per_sec": 95.81,
+    "ms_per_step": 10.4375,
+    "brain_ms_simulated": 100.0,
+    "real_time_factor": 0.0479,
+    "mean_spikes_per_step": 0.0,
+    "device": "cuda"
+  }
+]

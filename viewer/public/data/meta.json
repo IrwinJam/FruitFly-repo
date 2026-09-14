@@ -1,0 +1,34 @@
+{
+  "n_neurons": 165122,
+  "n_edges_full": 25563197,
+  "group_names": [
+    "vision",
+    "pursuit",
+    "looming_escape",
+    "steering",
+    "locomotion",
+    "navigation",
+    "olfaction",
+    "other"
+  ],
+  "group_colors": [
+    "#4ade80",
+    "#f472b6",
+    "#facc15",
+    "#60a5fa",
+    "#38bdf8",
+    "#a78bfa",
+    "#22d3ee",
+    "#9ca3af"
+  ],
+  "group_counts": {
+    "vision": 3176,
+    "pursuit": 285,
+    "looming_escape": 313,
+    "steering": 4,
+    "locomotion": 8,
+    "navigation": 162,
+    "olfaction": 260,
+    "other": 160914
+  }
+}

@@ -1,0 +1,32 @@
+# LIF brain-model parameters. Values follow Shiu et al. 2024 / the flypoke
+# reference implementation (see PROJECT_PLAN.md section 3.2 for sources).
+
+lif:
+  v_rest_mv: -52.0
+  v_threshold_mv: -45.0
+  v_reset_mv: -52.0
+  tau_m_ms: 20.0
+  tau_syn_ms: 5.0
+  refractory_ms: 2.0
+  synaptic_delay_ms: 1.8
+  mv_per_synapse: 0.275
+
+sim:
+  dt_ms: 0.5 # validate against Shiu's sugar->MN9 result in Milestone M3; drop to 0.25ms if needed
+  brain_ms_per_game_tick: 20.0 # 1 game tick = 20ms brain time (40 steps at dt=0.5ms)
+  dn_ema_tau_ms: 100.0 # smoothing window for descending-neuron rate readout
+
+graphs:
+  full:
+    edge_min_synapses: 0
+    description: "All MaleCNS edges (~25.6M). Showcase replay only."
+  pruned5:
+    edge_min_synapses: 5
+    description: "Edges with >=5 synapses (~6.3M, matches fly-brain-minecraft). Default."
+  navcore:
+    description: "k-hop subgraph around sensory roles + upstream of motor DNs (~10-30k neurons). Training only."
+    k_hops: 4
+
+backend: torch # torch | brian2 (torch is primary; see flyseek/brain/lif_torch.py)
+device: cuda
+batch_max_flies: 6 # GPU memory budget on RTX 2060 Super (8GB)
