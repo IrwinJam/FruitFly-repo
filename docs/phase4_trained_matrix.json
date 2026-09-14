@@ -1,0 +1,1580 @@
+[
+  {
+    "name": "phase4_trained_matrix_default_all_s0",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 239.3,
+    "survivors": [
+      1,
+      3
+    ],
+    "kills": [
+      {
+        "tick": 1166,
+        "kind": "kill",
+        "victim": 2,
+        "x": 0.8038614865836833,
+        "y": -11.880475189121771
+      }
+    ],
+    "vents": 2,
+    "pings": 5,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "O2",
+        "Storage"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      9,
+      12,
+      5,
+      13
+    ],
+    "coverage_frac": [
+      0.1129,
+      0.2218,
+      0.0594,
+      0.2
+    ],
+    "npz_bytes": 106671,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_default_all_s1",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "seeker",
+    "sim_seconds": 72.44,
+    "wall_seconds": 184.7,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 406,
+        "kind": "kill",
+        "victim": 2,
+        "x": -5.863859362278527,
+        "y": 0.8197973876285456
+      },
+      {
+        "tick": 528,
+        "kind": "kill",
+        "victim": 3,
+        "x": -4.085754472317599,
+        "y": 0.5087265535438363
+      },
+      {
+        "tick": 3621,
+        "kind": "kill",
+        "victim": 1,
+        "x": 2.080183585319193,
+        "y": 4.929608801405398
+      }
+    ],
+    "vents": 0,
+    "pings": 3,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Weapons"
+      ],
+      [
+        "Cafeteria"
+      ],
+      [
+        "Cafeteria"
+      ]
+    ],
+    "n_rooms_visited": [
+      5,
+      2,
+      1,
+      1
+    ],
+    "coverage_frac": [
+      0.095,
+      0.0673,
+      0.0257,
+      0.0337
+    ],
+    "npz_bytes": 48483,
+    "n_ticks": 3621,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_default_all_s2",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 239.3,
+    "survivors": [
+      1,
+      2
+    ],
+    "kills": [
+      {
+        "tick": 1564,
+        "kind": "kill",
+        "victim": 3,
+        "x": 1.865562501603846,
+        "y": 2.2941113686675485
+      }
+    ],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Cafeteria",
+        "O2"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "MedBay",
+        "O2",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Storage"
+      ]
+    ],
+    "n_rooms_visited": [
+      2,
+      10,
+      9,
+      5
+    ],
+    "coverage_frac": [
+      0.1188,
+      0.1683,
+      0.1406,
+      0.0614
+    ],
+    "npz_bytes": 109368,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_default_seeker_s0",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 200.0,
+    "survivors": [
+      3
+    ],
+    "kills": [
+      {
+        "tick": 571,
+        "kind": "kill",
+        "victim": 1,
+        "x": -5.852272707251327,
+        "y": 4.240799559790713
+      },
+      {
+        "tick": 571,
+        "kind": "kill",
+        "victim": 2,
+        "x": -5.848707894256026,
+        "y": 4.270160990600452
+      }
+    ],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Cafeteria"
+      ],
+      [
+        "Cafeteria"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "MedBay",
+        "O2",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      9,
+      1,
+      1,
+      9
+    ],
+    "coverage_frac": [
+      0.1465,
+      0.0277,
+      0.0218,
+      0.1703
+    ],
+    "npz_bytes": 55358,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_default_seeker_s1",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 204.0,
+    "survivors": [
+      1,
+      2,
+      3
+    ],
+    "kills": [],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Cafeteria",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Upper Engine"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      7,
+      10,
+      10,
+      10
+    ],
+    "coverage_frac": [
+      0.1446,
+      0.1525,
+      0.1663,
+      0.1703
+    ],
+    "npz_bytes": 87031,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_default_seeker_s2",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 238.0,
+    "survivors": [
+      1,
+      2,
+      3
+    ],
+    "kills": [],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Upper Engine"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage"
+      ]
+    ],
+    "n_rooms_visited": [
+      6,
+      6,
+      10,
+      10
+    ],
+    "coverage_frac": [
+      0.1129,
+      0.0931,
+      0.1822,
+      0.1723
+    ],
+    "npz_bytes": 87233,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_default_hiders_s0",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "seeker",
+    "sim_seconds": 42.06,
+    "wall_seconds": 119.0,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 503,
+        "kind": "kill",
+        "victim": 3,
+        "x": -12.172409986003812,
+        "y": 1.5688702364692568
+      },
+      {
+        "tick": 1814,
+        "kind": "kill",
+        "victim": 2,
+        "x": 1.207104978622651,
+        "y": 0.4465824168513803
+      },
+      {
+        "tick": 2102,
+        "kind": "kill",
+        "victim": 1,
+        "x": -3.7359786617092006,
+        "y": -0.20876814177787037
+      }
+    ],
+    "vents": 0,
+    "pings": 0,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Upper Engine"
+      ]
+    ],
+    "n_rooms_visited": [
+      6,
+      4,
+      2,
+      4
+    ],
+    "coverage_frac": [
+      0.1149,
+      0.0812,
+      0.0356,
+      0.0337
+    ],
+    "npz_bytes": 38442,
+    "n_ticks": 2102,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  },
+  {
+    "name": "phase4_trained_matrix_default_hiders_s1",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "seeker",
+    "sim_seconds": 30.08,
+    "wall_seconds": 83.9,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 319,
+        "kind": "kill",
+        "victim": 2,
+        "x": -0.07789346206711766,
+        "y": 4.283789941703455
+      },
+      {
+        "tick": 777,
+        "kind": "kill",
+        "victim": 3,
+        "x": -6.6990455534056075,
+        "y": 1.5572707684679512
+      },
+      {
+        "tick": 1503,
+        "kind": "kill",
+        "victim": 1,
+        "x": 0.5161818907842587,
+        "y": -11.826548722121654
+      }
+    ],
+    "vents": 0,
+    "pings": 0,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "Storage"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "O2",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Cafeteria"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay"
+      ]
+    ],
+    "n_rooms_visited": [
+      4,
+      6,
+      1,
+      3
+    ],
+    "coverage_frac": [
+      0.1089,
+      0.0693,
+      0.0139,
+      0.0317
+    ],
+    "npz_bytes": 33156,
+    "n_ticks": 1503,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  },
+  {
+    "name": "phase4_trained_matrix_default_hiders_s2",
+    "spawn": "default",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "seeker",
+    "sim_seconds": 13.66,
+    "wall_seconds": 36.4,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 254,
+        "kind": "kill",
+        "victim": 3,
+        "x": -3.5031917209733687,
+        "y": 0.474542278017682
+      },
+      {
+        "tick": 307,
+        "kind": "kill",
+        "victim": 1,
+        "x": -4.854055795455365,
+        "y": 1.147754431552703
+      },
+      {
+        "tick": 682,
+        "kind": "kill",
+        "victim": 2,
+        "x": -3.0699946313895694,
+        "y": -9.526644296281322
+      }
+    ],
+    "vents": 0,
+    "pings": 0,
+    "first_sighting_s": 5.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "Storage"
+      ],
+      [
+        "Cafeteria"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "Storage"
+      ],
+      [
+        "Cafeteria"
+      ]
+    ],
+    "n_rooms_visited": [
+      4,
+      1,
+      4,
+      1
+    ],
+    "coverage_frac": [
+      0.0396,
+      0.0218,
+      0.0396,
+      0.0198
+    ],
+    "npz_bytes": 16769,
+    "n_ticks": 682,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_all_s0",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 242.0,
+    "survivors": [
+      1,
+      2,
+      3
+    ],
+    "kills": [],
+    "vents": 3,
+    "pings": 5,
+    "first_sighting_s": 24.26,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Hallway",
+        "Lower Engine",
+        "Reactor",
+        "Security"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage"
+      ]
+    ],
+    "n_rooms_visited": [
+      12,
+      4,
+      4,
+      8
+    ],
+    "coverage_frac": [
+      0.2238,
+      0.0356,
+      0.0337,
+      0.1089
+    ],
+    "npz_bytes": 87951,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_all_s1",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 210.7,
+    "survivors": [
+      1,
+      2
+    ],
+    "kills": [
+      {
+        "tick": 3072,
+        "kind": "kill",
+        "victim": 3,
+        "x": -4.029221466666898,
+        "y": -11.946836724144948
+      }
+    ],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 60.86,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Navigation"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "O2",
+        "Storage",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      11,
+      1,
+      13,
+      7
+    ],
+    "coverage_frac": [
+      0.202,
+      0.0198,
+      0.1861,
+      0.1287
+    ],
+    "npz_bytes": 115314,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_all_s2",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 200.3,
+    "survivors": [
+      2
+    ],
+    "kills": [
+      {
+        "tick": 1824,
+        "kind": "kill",
+        "victim": 1,
+        "x": -14.92996477992472,
+        "y": 1.714962410764105
+      },
+      {
+        "tick": 3954,
+        "kind": "kill",
+        "victim": 3,
+        "x": -4.611200082109334,
+        "y": 2.555004907676321
+      }
+    ],
+    "vents": 2,
+    "pings": 5,
+    "first_sighting_s": 9.04,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Upper Engine"
+      ],
+      [
+        "Hallway",
+        "Lower Engine",
+        "Reactor",
+        "Security",
+        "Upper Engine"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "O2",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "Storage"
+      ]
+    ],
+    "n_rooms_visited": [
+      8,
+      5,
+      8,
+      6
+    ],
+    "coverage_frac": [
+      0.1584,
+      0.0535,
+      0.1248,
+      0.1267
+    ],
+    "npz_bytes": 105334,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_seeker_s0",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 211.0,
+    "survivors": [
+      1,
+      2,
+      3
+    ],
+    "kills": [],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 62.62,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Security",
+        "Shields",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Security",
+        "Shields",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Reactor",
+        "Security",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      14,
+      11,
+      13,
+      13
+    ],
+    "coverage_frac": [
+      0.2257,
+      0.1861,
+      0.202,
+      0.2178
+    ],
+    "npz_bytes": 91049,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_seeker_s1",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 247.8,
+    "survivors": [
+      3
+    ],
+    "kills": [
+      {
+        "tick": 3597,
+        "kind": "kill",
+        "victim": 2,
+        "x": -5.884217201806502,
+        "y": 4.260788946543661
+      },
+      {
+        "tick": 3750,
+        "kind": "kill",
+        "victim": 1,
+        "x": -2.628086084359557,
+        "y": 0.8896197448045522
+      }
+    ],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 67.72,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      9,
+      5,
+      6,
+      6
+    ],
+    "coverage_frac": [
+      0.1842,
+      0.0851,
+      0.1307,
+      0.0911
+    ],
+    "npz_bytes": 79149,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_seeker_s2",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      0
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 246.3,
+    "survivors": [
+      1,
+      2,
+      3
+    ],
+    "kills": [],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": null,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "Storage"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Security",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "O2",
+        "Security",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      4,
+      8,
+      7,
+      12
+    ],
+    "coverage_frac": [
+      0.0594,
+      0.1446,
+      0.1426,
+      0.1703
+    ],
+    "npz_bytes": 73291,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "seeker"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_hiders_s0",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "seeker",
+    "sim_seconds": 77.66,
+    "wall_seconds": 211.5,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 2309,
+        "kind": "kill",
+        "victim": 2,
+        "x": -1.4619830410470211,
+        "y": -1.8403371421226336
+      },
+      {
+        "tick": 3508,
+        "kind": "kill",
+        "victim": 3,
+        "x": 0.07394146870466653,
+        "y": -10.870445713945273
+      },
+      {
+        "tick": 3882,
+        "kind": "kill",
+        "victim": 1,
+        "x": 15.381284827081522,
+        "y": -4.2942224492119
+      }
+    ],
+    "vents": 0,
+    "pings": 3,
+    "first_sighting_s": 45.26,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Navigation",
+        "O2",
+        "Reactor",
+        "Security",
+        "Shields",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Navigation"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "Reactor",
+        "Security",
+        "Storage"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Shields",
+        "Storage",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      14,
+      1,
+      8,
+      9
+    ],
+    "coverage_frac": [
+      0.2574,
+      0.0139,
+      0.1109,
+      0.0931
+    ],
+    "npz_bytes": 65772,
+    "n_ticks": 3882,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_hiders_s1",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 1,
+    "winner": "seeker",
+    "sim_seconds": 70.24,
+    "wall_seconds": 179.4,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 1107,
+        "kind": "kill",
+        "victim": 3,
+        "x": 1.8864350017281302,
+        "y": -0.19742792328570957
+      },
+      {
+        "tick": 3487,
+        "kind": "kill",
+        "victim": 2,
+        "x": 7.8762263032295845,
+        "y": 1.5717111099040797
+      },
+      {
+        "tick": 3511,
+        "kind": "kill",
+        "victim": 1,
+        "x": 9.078185218233957,
+        "y": 0.5216279076583742
+      }
+    ],
+    "vents": 0,
+    "pings": 2,
+    "first_sighting_s": 18.3,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "O2",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine",
+        "Weapons"
+      ],
+      [
+        "Hallway",
+        "Navigation",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Hallway",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay",
+        "Weapons"
+      ]
+    ],
+    "n_rooms_visited": [
+      12,
+      4,
+      3,
+      4
+    ],
+    "coverage_frac": [
+      0.2079,
+      0.0515,
+      0.0337,
+      0.0733
+    ],
+    "npz_bytes": 68006,
+    "n_ticks": 3511,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  },
+  {
+    "name": "phase4_trained_matrix_spread_hiders_s2",
+    "spawn": "spread",
+    "nav": "explore_navcore",
+    "brain_agents": [
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 2,
+    "winner": "seeker",
+    "sim_seconds": 78.1,
+    "wall_seconds": 176.4,
+    "survivors": [],
+    "kills": [
+      {
+        "tick": 1163,
+        "kind": "kill",
+        "victim": 1,
+        "x": -8.170844376247558,
+        "y": 1.5667421260219951
+      },
+      {
+        "tick": 3644,
+        "kind": "kill",
+        "victim": 2,
+        "x": -3.8071384544686953,
+        "y": -14.745998018086118
+      },
+      {
+        "tick": 3904,
+        "kind": "kill",
+        "victim": 3,
+        "x": 1.641174732927484,
+        "y": -3.9747565519878525
+      }
+    ],
+    "vents": 2,
+    "pings": 4,
+    "first_sighting_s": 21.72,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Lower Engine",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Storage",
+        "Upper Engine"
+      ],
+      [
+        "Hallway",
+        "MedBay",
+        "Reactor",
+        "Security",
+        "Upper Engine"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Comms",
+        "Hallway",
+        "O2",
+        "Storage",
+        "Weapons"
+      ],
+      [
+        "Admin",
+        "Cafeteria",
+        "Electrical",
+        "Hallway",
+        "Storage"
+      ]
+    ],
+    "n_rooms_visited": [
+      10,
+      5,
+      7,
+      5
+    ],
+    "coverage_frac": [
+      0.2257,
+      0.0515,
+      0.1287,
+      0.0772
+    ],
+    "npz_bytes": 80415,
+    "n_ticks": 3904,
+    "total_spike_entries": 0,
+    "brains_spec": "hiders"
+  }
+]

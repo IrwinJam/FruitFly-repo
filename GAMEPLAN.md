@@ -153,7 +153,7 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 **4.5 — Training runs and controls**
 - [x] W2 exploration training on navcore-v2 (overnight).
 - [x] Same budget on shuffled navcore-v2, and with the CX silenced (the fly then relies on the goal policy + decoder alone).
-- [ ] (running: `match_matrix --nav explore_navcore --out phase4_trained_matrix`) Re-run the 4.0 match matrix with trained adapters and report before/after coverage and outcomes.
+- [x] (`docs/phase4_trained_matrix.json`: brain-fly rooms per match 3.67 → 5.08 Cafeteria spawn, p=0.29; 4.04 → 6.67 spread spawn, p=0.004) Re-run the 4.0 match matrix with trained adapters and report before/after coverage and outcomes.
 
 **Done when:**
 - Trained brain flies visit **≥ 5 of the 14 rooms** on average in a 90 s match starting in Cafeteria.
