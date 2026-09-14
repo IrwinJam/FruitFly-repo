@@ -1,0 +1,142 @@
+{
+  "summary": {
+    "PFL3_steerL_minus_steerR": {
+      "real_amp": 6.596,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.442,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "DNa02_L_minus_R": {
+      "real_amp": 22.5,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.349,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "DNa03_L_minus_R": {
+      "real_amp": 18.375,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.366,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "PFL3_mean": {
+      "real_amp": 1.333,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.176,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    }
+  },
+  "graphs": [
+    {
+      "tag": "navcore",
+      "replicates": 4,
+      "r_max_hz": 150.0,
+      "kappa": 2.0,
+      "measure_wall_s": 17.3,
+      "n_stim": {
+        "EPG": 46,
+        "FC2": 92,
+        "PFL3": 24
+      },
+      "fits": {
+        "PFL3_steerL_minus_steerR": {
+          "amp_rel": 6.596,
+          "pref_offset_deg": 248.3,
+          "r2_rel": 0.442,
+          "r2_goal_only": 0.004,
+          "r2_heading_only": 0.001,
+          "mean_by_offset": {
+            "0": -3.307,
+            "45": -6.682,
+            "90": -7.036,
+            "135": -2.852,
+            "180": 1.737,
+            "225": 5.208,
+            "270": 5.375,
+            "315": 2.367
+          }
+        },
+        "DNa02_L_minus_R": {
+          "amp_rel": 22.5,
+          "pref_offset_deg": 252.1,
+          "r2_rel": 0.349,
+          "r2_goal_only": 0.0,
+          "r2_heading_only": 0.008,
+          "mean_by_offset": {
+            "0": -10.812,
+            "45": -18.719,
+            "90": -25.375,
+            "135": -15.406,
+            "180": 4.438,
+            "225": 21.219,
+            "270": 16.25,
+            "315": 6.875
+          }
+        },
+        "DNa03_L_minus_R": {
+          "amp_rel": 18.375,
+          "pref_offset_deg": 252.1,
+          "r2_rel": 0.366,
+          "r2_goal_only": 0.003,
+          "r2_heading_only": 0.009,
+          "mean_by_offset": {
+            "0": -9.406,
+            "45": -15.469,
+            "90": -20.969,
+            "135": -11.906,
+            "180": 3.219,
+            "225": 16.406,
+            "270": 13.875,
+            "315": 5.844
+          }
+        },
+        "PFL3_mean": {
+          "amp_rel": 1.333,
+          "pref_offset_deg": 16.0,
+          "r2_rel": 0.176,
+          "r2_goal_only": 0.317,
+          "r2_heading_only": 0.012,
+          "mean_by_offset": {
+            "0": 13.102,
+            "45": 12.893,
+            "90": 12.516,
+            "135": 11.199,
+            "180": 10.301,
+            "225": 10.841,
+            "270": 11.625,
+            "315": 12.436
+          }
+        }
+      },
+      "controls": {
+        "PFL3_steerL_minus_steerR": {
+          "epg_only": -0.01,
+          "fc2_only": -0.711,
+          "none": 0.0
+        },
+        "DNa02_L_minus_R": {
+          "epg_only": 0.031,
+          "fc2_only": 0.406,
+          "none": 0.0
+        },
+        "DNa03_L_minus_R": {
+          "epg_only": 0.25,
+          "fc2_only": 0.594,
+          "none": 0.0
+        },
+        "PFL3_mean": {
+          "epg_only": 0.19,
+          "fc2_only": 13.158,
+          "none": 0.0
+        }
+      }
+    }
+  ]
+}

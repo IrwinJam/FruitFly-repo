@@ -1,0 +1,78 @@
+[
+  {
+    "name": "phase4_baseline_matrix_default_all_s0",
+    "spawn": "default",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seed": 0,
+    "winner": "hiders",
+    "sim_seconds": 90.04,
+    "wall_seconds": 232.7,
+    "survivors": [
+      2
+    ],
+    "kills": [
+      {
+        "tick": 2034,
+        "kind": "kill",
+        "victim": 3,
+        "x": -1.7318386231179235,
+        "y": 2.4010298994509314
+      },
+      {
+        "tick": 3945,
+        "kind": "kill",
+        "victim": 1,
+        "x": -4.418663429049633,
+        "y": 2.3780180571790113
+      }
+    ],
+    "vents": 0,
+    "pings": 5,
+    "first_sighting_s": 5.86,
+    "n_rooms_total": 15,
+    "rooms_visited": [
+      [
+        "Cafeteria",
+        "Hallway",
+        "MedBay"
+      ],
+      [
+        "Cafeteria",
+        "MedBay",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria",
+        "Hallway",
+        "O2",
+        "Weapons"
+      ],
+      [
+        "Cafeteria"
+      ]
+    ],
+    "n_rooms_visited": [
+      3,
+      4,
+      4,
+      1
+    ],
+    "coverage_frac": [
+      0.0911,
+      0.1426,
+      0.1347,
+      0.0515
+    ],
+    "npz_bytes": 124765,
+    "n_ticks": 4501,
+    "total_spike_entries": 0,
+    "brains_spec": "all"
+  }
+]

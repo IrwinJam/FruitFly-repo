@@ -71,20 +71,36 @@ def _adj(ei, mask, n):
     return sp.csr_matrix((np.ones(int(mask.sum()), dtype=np.float32), (ei[0][mask], ei[1][mask])), shape=(n, n))
 
 
-def select(ei, fracs, n, k_down: int, k_up: int, min_frac: float) -> np.ndarray:
+# navcore-v2 (Phase 4): the compass circuit. EPG (heading) and FC2 (goal) become
+# sources, and the pathway they use to reach steering DNs is force-kept: Delta7 (the
+# main EPG->PFL3 route), PFL3, and PFL3's strongest postsynaptic partner types from
+# docs/phase4_cx_map.json (their per-edge input share is too small to pass min_frac).
+CX_SOURCE_ROLES = ["heading_compass", "goal_direction"]
+CX_KEEP_TYPES = ["EPG", "FC2A", "FC2B", "FC2C", "Delta7", "PFL3", "LAL121", "AOTU042", "AOTU019", "VES054",
+                 "LAL126", "LAL083", "LAL040", "LAL141", "CRE041", "LAL076", "DNb01", "VES005"]
+
+
+def select(ei, fracs, n, k_down: int, k_up: int, min_frac: float,
+           source_roles: list[str] | None = None, keep_types: list[str] | None = None) -> np.ndarray:
     frac_out, frac_in = fracs
-    src = np.array(sorted({i for r in SOURCE_ROLES for i in role_idx(r)}))
+    sources = SOURCE_ROLES + (source_roles or [])
+    src = np.array(sorted({i for r in sources for i in role_idx(r)}))
     snk = np.array(sorted({i for r in SINK_ROLES for i in role_idx(r)}))
     down = hops_mask(_adj(ei, frac_out >= min_frac, n), src, k_down)
     up = hops_mask(_adj(ei, frac_in >= min_frac, n).T.tocsr(), snk, k_up)
     keep = down & up
     keep[[i for r in KEEP_ROLES for i in role_idx(r)]] = True
+    if keep_types:
+        from flyseek.brain.roles import type_idx
+
+        keep[[i for t in keep_types for i in type_idx(t)]] = True
     return keep
 
 
-def build(tag: str, k_down: int, k_up: int, min_frac: float, out_tag: str = "navcore") -> dict:
+def build(tag: str, k_down: int, k_up: int, min_frac: float, out_tag: str = "navcore",
+          source_roles: list[str] | None = None, keep_types: list[str] | None = None) -> dict:
     ei, fracs, n = load_adj(tag)
-    keep = select(ei, fracs, n, k_down, k_up, min_frac)
+    keep = select(ei, fracs, n, k_down, k_up, min_frac, source_roles, keep_types)
     new_of_old = -np.ones(n, dtype=np.int64)
     kept = np.where(keep)[0]
     new_of_old[kept] = np.arange(len(kept))
@@ -96,6 +112,7 @@ def build(tag: str, k_down: int, k_up: int, min_frac: float, out_tag: str = "nav
     np.save(CACHE_DIR / f"edge_weight_{out_tag}.npy", ew[m])
     np.save(CACHE_DIR / f"{out_tag}_full_idx.npy", kept.astype(np.int32))
     meta = {"tag": out_tag, "source_graph": tag, "k_down": k_down, "k_up": k_up, "min_frac": min_frac,
+            "extra_source_roles": source_roles or [], "keep_types": keep_types or [],
             "n_neurons": int(len(kept)), "n_edges": int(m.sum())}
     (CACHE_DIR / f"{out_tag}_meta.json").write_text(json.dumps(meta, indent=2))
     return meta

@@ -33,7 +33,7 @@ from flyseek.agents.fly_agent import FlyPopulation
 from flyseek.agents.scripted import ScriptedHider, ScriptedSeeker, line_of_sight
 from flyseek.brain.lif_torch import load_config
 from flyseek.motors.body_kinematic import KinematicBody
-from flyseek.paths import RESULTS_DIR
+from flyseek.paths import CACHE_DIR, DOCS_DIR, RESULTS_DIR
 from flyseek.senses.vision import VisualObject
 from flyseek.world.grid import OccupancyGrid
 from flyseek.world.pathing import GridPaths
@@ -45,20 +45,81 @@ DANGER_MAX_HZ = 20.0
 PING_DECAY_S = 0.8
 
 
-def spawn_positions(grid: OccupancyGrid, n: int, center, rng) -> np.ndarray:
-    cand = np.argwhere(grid.walkable & (grid.dist >= 0.4))
+def room_grid(grid: OccupancyGrid) -> np.ndarray:
+    """Room name per grid cell ('' for walls), aligned with OccupancyGrid.skeld() (1-cell pad)."""
+    g = np.load(CACHE_DIR / "skeld_grid.npz", allow_pickle=True)
+    rooms = np.pad(g["room_grid"].astype(str), 1, constant_values="")
+    assert rooms.shape == grid.walkable.shape
+    return rooms
+
+
+def spawn_positions(grid: OccupancyGrid, n: int, center, rng, mode: str = "default",
+                    rooms: np.ndarray | None = None) -> np.ndarray:
+    """
+    default: everyone within 2.5 units of the Cafeteria spawn (the Among Us rule).
+    spread:  each agent in a different random room (a demo/experiment preset, not an Among Us rule).
+    """
+    ok = grid.walkable & (grid.dist >= 0.4)
+    cand = np.argwhere(ok)
     xy = np.stack([grid.x0 + cand[:, 1] * grid.res, grid.y0 + cand[:, 0] * grid.res], axis=1)
-    near = xy[np.hypot(xy[:, 0] - center[0], xy[:, 1] - center[1]) < 2.5]
-    return near[rng.choice(len(near), n, replace=False)]
+    if mode == "default":
+        near = xy[np.hypot(xy[:, 0] - center[0], xy[:, 1] - center[1]) < 2.5]
+        return near[rng.choice(len(near), n, replace=False)]
+    if mode == "spread":
+        cell_rooms = rooms[cand[:, 0], cand[:, 1]]
+        names = sorted({r for r in cell_rooms if r and r != "Hallway"})
+        chosen = rng.choice(names, n, replace=False)
+        out = []
+        for r in chosen:
+            pts = xy[cell_rooms == r]
+            out.append(pts[rng.integers(len(pts))])
+        return np.array(out)
+    raise ValueError(f"unknown spawn mode {mode!r}")
+
+
+class Coverage:
+    """Per-agent rooms visited and 1-unit map-bin coverage while alive."""
+
+    def __init__(self, grid: OccupancyGrid, rooms: np.ndarray, n: int, bin_units: float = 1.0):
+        self.grid, self.rooms, self.n = grid, rooms, n
+        self.bin = bin_units
+        walk = np.argwhere(grid.walkable)
+        wx = grid.x0 + walk[:, 1] * grid.res
+        wy = grid.y0 + walk[:, 0] * grid.res
+        self.bx0, self.by0 = wx.min(), wy.min()
+        bins = {(int((a - self.bx0) // bin_units), int((b - self.by0) // bin_units)) for a, b in zip(wx, wy)}
+        self.n_bins = len(bins)
+        self.all_rooms = sorted({r for r in np.unique(rooms) if r})
+        self.visited_bins = [set() for _ in range(n)]
+        self.visited_rooms = [set() for _ in range(n)]
+
+    def update(self, x, y, alive):
+        cy, cx = self.grid._cell(x, y)
+        room = self.rooms[cy, cx]
+        for a in range(self.n):
+            if alive[a]:
+                self.visited_bins[a].add((int((x[a] - self.bx0) // self.bin), int((y[a] - self.by0) // self.bin)))
+                if room[a]:
+                    self.visited_rooms[a].add(str(room[a]))
+
+    def summary(self) -> dict:
+        return {
+            "n_rooms_total": len(self.all_rooms),
+            "rooms_visited": [sorted(r) for r in self.visited_rooms],
+            "n_rooms_visited": [len(r) for r in self.visited_rooms],
+            "coverage_frac": [round(len(b) / self.n_bins, 4) for b in self.visited_bins],
+        }
 
 
 def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | None, seed: int,
-              name: str, record_spikes: bool = True, max_seconds: float | None = None) -> dict:
+              name: str, record_spikes: bool = True, max_seconds: float | None = None,
+              spawn: str = "default") -> dict:
     rng = np.random.default_rng(seed)
     cfg = load_game_config(preset)
     extras = load_extras()
     grid = OccupancyGrid.skeld()
     paths = GridPaths(grid)
+    rooms = room_grid(grid)
     tick_ms = load_config()["sim"]["brain_ms_per_game_tick"]
     dt = tick_ms / 1000.0
 
@@ -66,7 +127,9 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
     roles = ["seeker"] + ["hider"] * n_hiders
     role_speed = np.array([cfg["speed"]["seeker_units_per_s"]] + [cfg["speed"]["hider_units_per_s"]] * n_hiders)
     vis_range = np.array([cfg["vision"]["seeker_range_units"]] + [cfg["vision"]["hider_range_units"]] * n_hiders)
-    start = spawn_positions(grid, n, extras["spawn"]["xy"], rng)
+    start = spawn_positions(grid, n, extras["spawn"]["xy"], rng, spawn, rooms)
+    coverage = Coverage(grid, rooms, n)
+    first_sighting_s = None
     start_heading = rng.uniform(-np.pi, np.pi, n)
 
     brain_agents = sorted(brain_agents)
@@ -88,7 +151,7 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
 
     rules = HideNSeekRules(roles, dt, cfg, extras, seed=seed)
     meta = {
-        "experiment": "hide_n_seek_match", "name": name, "seed": seed, "preset": preset, "graph": graph,
+        "experiment": "hide_n_seek_match", "name": name, "seed": seed, "preset": preset, "graph": graph, "spawn": spawn,
         "roles": roles, "brain_agents": brain_agents, "scripted_agents": scripted_agents, "tick_ms": tick_ms,
         "odor_channels_enabled": odor_ok and bool(brain_agents),
         "game_config": cfg, "vents": extras["vents"], "spawn": extras["spawn"],
@@ -198,6 +261,13 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
         state = {"x": x, "y": y, "heading": heading_all, "speed": speed_all, "omega": np.zeros(n),
                  "alive": rules.alive.astype(float)}
         rec.record(state, counts_all)
+        coverage.update(x, y, rules.alive)
+        if first_sighting_s is None and rules.phase in ("seek", "final_hide"):
+            for h in range(1, n):
+                if visible[h] and np.hypot(x[h] - x[0], y[h] - y[0]) <= vis_range[0] \
+                        and line_of_sight(grid, x[0], y[0], x[h], y[h]):
+                    first_sighting_s = round(rules.t, 2)
+                    break
 
         now = time.perf_counter()
         if now - last_print > 15:
@@ -207,11 +277,13 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
 
     wall = time.perf_counter() - t0
     info = rec.save(RESULTS_DIR / "replays" / name)
-    summary = {"name": name, "winner": rules.winner, "sim_seconds": round(rules.t, 2), "wall_seconds": round(wall, 1),
+    summary = {"name": name, "spawn": spawn, "brain_agents": brain_agents, "graph": graph, "seed": seed,
+               "winner": rules.winner, "sim_seconds": round(rules.t, 2), "wall_seconds": round(wall, 1),
                "survivors": [int(h) for h in range(1, n) if rules.alive[h]],
                "kills": [e for e in rec.events if e["kind"] == "kill"],
                "vents": sum(1 for e in rec.events if e["kind"] == "vent_enter"),
-               "pings": sum(1 for e in rec.events if e["kind"] == "ping"), **info}
+               "pings": sum(1 for e in rec.events if e["kind"] == "ping"),
+               "first_sighting_s": first_sighting_s, **coverage.summary(), **info}
     if pop is not None:
         del pop
         torch.cuda.empty_cache()
@@ -240,8 +312,10 @@ if __name__ == "__main__":
     ap.add_argument("--name", default=None)
     ap.add_argument("--no-spikes", action="store_true")
     ap.add_argument("--max-seconds", type=float, default=None)
+    ap.add_argument("--spawn", default="default", choices=["default", "spread"])
     args = ap.parse_args()
     brains = parse_brains(args.brains, 1 + args.hiders)
-    name = args.name or f"match_{args.brains}_{args.graph}_{args.preset}_s{args.seed}"
-    s = run_match(args.hiders, brains, args.graph, args.preset, args.seed, name, not args.no_spikes, args.max_seconds)
+    name = args.name or f"match_{args.brains}_{args.graph}_{args.preset}_{args.spawn}_s{args.seed}"
+    s = run_match(args.hiders, brains, args.graph, args.preset, args.seed, name, not args.no_spikes, args.max_seconds,
+                  args.spawn)
     print(json.dumps(s, indent=2, default=str))
