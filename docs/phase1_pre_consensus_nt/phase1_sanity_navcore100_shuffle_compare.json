@@ -60,7 +60,7 @@
     "dn": "DNa03",
     "input": "pursuit",
     "real": 9.8,
-    "shuffle_mean": 0.04,
+    "shuffle_mean": 0.05,
     "shuffle_max": 7.8,
     "n_shuffles": 100,
     "empirical_p": 0.01
@@ -92,9 +92,9 @@
     "metric": "LI",
     "dn": "DNa02",
     "input": "pursuit",
-    "real": 40.7,
-    "shuffle_mean": 2.93,
-    "shuffle_max": 108.6,
+    "real": 38.8,
+    "shuffle_mean": 2.96,
+    "shuffle_max": 108.3,
     "n_shuffles": 100,
     "empirical_p": 0.03
   },
@@ -103,11 +103,11 @@
     "metric": "LI",
     "dn": "DNa03",
     "input": "pursuit",
-    "real": 10.9,
-    "shuffle_mean": -0.19,
+    "real": 12.2,
+    "shuffle_mean": -0.18,
     "shuffle_max": 31.6,
     "n_shuffles": 100,
-    "empirical_p": 0.079
+    "empirical_p": 0.059
   },
   {
     "rate_hz": 50.0,
@@ -115,7 +115,7 @@
     "dn": "DNp01",
     "input": "loom",
     "real": 345.4,
-    "shuffle_mean": -0.18,
+    "shuffle_mean": -0.17,
     "shuffle_max": 32.4,
     "n_shuffles": 100,
     "empirical_p": 0.01
@@ -136,11 +136,11 @@
     "metric": "LI",
     "dn": "DNa02",
     "input": "pursuit",
-    "real": 25.9,
-    "shuffle_mean": 4.31,
-    "shuffle_max": 220.8,
+    "real": 25.2,
+    "shuffle_mean": 4.76,
+    "shuffle_max": 206.3,
     "n_shuffles": 100,
-    "empirical_p": 0.307
+    "empirical_p": 0.366
   },
   {
     "rate_hz": 100.0,
@@ -148,19 +148,19 @@
     "dn": "DNa03",
     "input": "pursuit",
     "real": 0.1,
-    "shuffle_mean": -8.6,
-    "shuffle_max": 242.4,
+    "shuffle_mean": -5.87,
+    "shuffle_max": 198.5,
     "n_shuffles": 100,
-    "empirical_p": 0.465
+    "empirical_p": 0.515
   },
   {
     "rate_hz": 100.0,
     "metric": "LI",
     "dn": "DNp01",
     "input": "loom",
-    "real": 345.7,
-    "shuffle_mean": -0.63,
-    "shuffle_max": 134.6,
+    "real": 344.5,
+    "shuffle_mean": 0.63,
+    "shuffle_max": 169.2,
     "n_shuffles": 100,
     "empirical_p": 0.01
   },
@@ -169,9 +169,9 @@
     "metric": "drive",
     "dn": "DNp01",
     "input": "loom",
-    "real": 313.57,
-    "shuffle_mean": 10.73,
-    "shuffle_max": 120.35,
+    "real": 313.88,
+    "shuffle_mean": 9.94,
+    "shuffle_max": 114.75,
     "n_shuffles": 100,
     "empirical_p": 0.01
   }

@@ -1,43 +1,42 @@
 {
   "kc_neurons": 4064,
   "kc_nt": {
-    "dopamine": 4062,
-    "unclear": 2
+    "acetylcholine": 4064
   },
   "pruned5": {
     "kc_kc_edges": 33247,
     "kc_kc_synapse_weight_frac_of_kc_input": 0.23354925215244293,
     "baseline": {
-      "pop_during_hz": 4.299899468271945,
-      "pop_after_hz": 4.692730223713376,
-      "active_after_gt1hz": 9192,
-      "kc_active_during_gt1hz": 2321,
-      "kc_mean_rate_during_hz": 33.74803149606299
+      "pop_during_hz": 4.2768377321011135,
+      "pop_after_hz": 4.722811012463512,
+      "active_after_gt1hz": 9391,
+      "kc_active_during_gt1hz": 2242,
+      "kc_mean_rate_during_hz": 31.966043307086615
     },
     "no_KC_KC": {
-      "pop_during_hz": 4.237218541442085,
-      "pop_after_hz": 4.623987112559199,
-      "active_after_gt1hz": 9062,
-      "kc_active_during_gt1hz": 2165,
-      "kc_mean_rate_during_hz": 30.206692913385826
+      "pop_during_hz": 4.231017066169256,
+      "pop_after_hz": 4.657968047867637,
+      "active_after_gt1hz": 9220,
+      "kc_active_during_gt1hz": 2096,
+      "kc_mean_rate_during_hz": 28.65206692913386
     }
   },
   "full": {
     "kc_kc_edges": 642933,
     "kc_kc_synapse_weight_frac_of_kc_input": 0.554129421710968,
     "baseline": {
-      "pop_during_hz": 9.184312205520767,
-      "pop_after_hz": 10.243177771587069,
-      "active_after_gt1hz": 12534,
+      "pop_during_hz": 8.960986422160584,
+      "pop_after_hz": 10.043616235268468,
+      "active_after_gt1hz": 12389,
       "kc_active_during_gt1hz": 4064,
-      "kc_mean_rate_during_hz": 182.82578740157481
+      "kc_mean_rate_during_hz": 180.86515748031496
     },
     "no_KC_KC": {
-      "pop_during_hz": 5.341819987645499,
-      "pop_after_hz": 5.765028282118676,
-      "active_after_gt1hz": 10647,
-      "kc_active_during_gt1hz": 2868,
-      "kc_mean_rate_during_hz": 49.96407480314961
+      "pop_during_hz": 5.21645813398578,
+      "pop_after_hz": 5.580007509598963,
+      "active_after_gt1hz": 10529,
+      "kc_active_during_gt1hz": 2797,
+      "kc_mean_rate_during_hz": 46.20718503937008
     }
   }
 }

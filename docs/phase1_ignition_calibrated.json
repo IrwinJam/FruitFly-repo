@@ -17,146 +17,69 @@
         "top_types_after": []
       },
       "orn_pulse": {
-        "pop_rate_during_hz": 4.246726662709996,
-        "pop_rate_after_hz": 4.6720727704364045,
-        "n_active_after_gt1hz": 9159,
+        "pop_rate_during_hz": 4.271823257954725,
+        "pop_rate_after_hz": 4.743147490946089,
+        "n_active_after_gt1hz": 9341,
         "superclass_after": {
-          "cb_intrinsic": 7420,
-          "vnc_intrinsic": 686,
-          "ol_intrinsic": 317,
-          "descending_neuron": 180,
-          "vnc_motor": 151,
-          "ascending_neuron": 147,
-          "visual_centrifugal": 89,
-          "visual_projection": 72
+          "cb_intrinsic": 7466,
+          "vnc_intrinsic": 678,
+          "ol_intrinsic": 354,
+          "descending_neuron": 187,
+          "ascending_neuron": 162,
+          "vnc_motor": 149,
+          "visual_centrifugal": 91,
+          "visual_projection": 90
         },
         "top_types_after": [
           {
             "type": "KCg-m",
-            "count": 1064,
-            "mean": 74.4
+            "count": 1024,
+            "mean": 72.1
           },
           {
             "type": "KCab-s",
-            "count": 400,
+            "count": 382,
             "mean": 47.1
           },
           {
             "type": "KCab-m",
-            "count": 368,
-            "mean": 62.3
-          },
-          {
-            "type": "KCab-c",
-            "count": 276,
-            "mean": 54.4
-          },
-          {
-            "type": "Lawf2",
-            "count": 161,
-            "mean": 19.2
-          },
-          {
-            "type": "KCa'b'-ap1",
-            "count": 72,
-            "mean": 40.9
-          },
-          {
-            "type": "KCa'b'-m",
-            "count": 68,
-            "mean": 43.2
-          },
-          {
-            "type": "Dm18",
-            "count": 44,
-            "mean": 39.8
-          },
-          {
-            "type": "KCa'b'-ap2",
-            "count": 37,
-            "mean": 40.9
-          },
-          {
-            "type": "EPG",
-            "count": 35,
-            "mean": 187.2
-          },
-          {
-            "type": "lLN1_bc",
-            "count": 30,
-            "mean": 400.0
-          },
-          {
-            "type": "Pm6",
-            "count": 28,
-            "mean": 29.2
-          }
-        ]
-      },
-      "photo_orn_pulse": {
-        "pop_rate_during_hz": 4.656133041024212,
-        "pop_rate_after_hz": 4.6656774990613,
-        "n_active_after_gt1hz": 9119,
-        "superclass_after": {
-          "cb_intrinsic": 7431,
-          "vnc_intrinsic": 641,
-          "ol_intrinsic": 319,
-          "descending_neuron": 179,
-          "ascending_neuron": 146,
-          "vnc_motor": 146,
-          "visual_centrifugal": 89,
-          "visual_projection": 73
-        },
-        "top_types_after": [
-          {
-            "type": "KCg-m",
-            "count": 1067,
-            "mean": 74.2
-          },
-          {
-            "type": "KCab-s",
-            "count": 404,
-            "mean": 46.8
-          },
-          {
-            "type": "KCab-m",
-            "count": 367,
+            "count": 365,
             "mean": 61.8
           },
           {
             "type": "KCab-c",
-            "count": 276,
-            "mean": 54.1
+            "count": 264,
+            "mean": 54.7
           },
           {
             "type": "Lawf2",
-            "count": 160,
-            "mean": 18.9
+            "count": 186,
+            "mean": 22.4
           },
           {
             "type": "KCa'b'-ap1",
-            "count": 72,
-            "mean": 41.4
+            "count": 69,
+            "mean": 41.1
           },
           {
             "type": "KCa'b'-m",
-            "count": 65,
-            "mean": 43.6
+            "count": 64,
+            "mean": 44.6
           },
           {
             "type": "Dm18",
-            "count": 44,
-            "mean": 39.3
+            "count": 45,
+            "mean": 44.6
           },
           {
             "type": "KCa'b'-ap2",
             "count": 36,
-            "mean": 42.2
+            "mean": 41.3
           },
           {
             "type": "EPG",
             "count": 35,
-            "mean": 187.6
+            "mean": 185.1
           },
           {
             "type": "lLN1_bc",
@@ -166,7 +89,84 @@
           {
             "type": "Pm6",
             "count": 29,
-            "mean": 28.8
+            "mean": 30.7
+          }
+        ]
+      },
+      "photo_orn_pulse": {
+        "pop_rate_during_hz": 4.675779120892431,
+        "pop_rate_after_hz": 4.718711013674738,
+        "n_active_after_gt1hz": 9261,
+        "superclass_after": {
+          "cb_intrinsic": 7506,
+          "vnc_intrinsic": 587,
+          "ol_intrinsic": 348,
+          "descending_neuron": 183,
+          "ascending_neuron": 151,
+          "vnc_motor": 138,
+          "visual_centrifugal": 93,
+          "visual_projection": 92
+        },
+        "top_types_after": [
+          {
+            "type": "KCg-m",
+            "count": 1029,
+            "mean": 71.7
+          },
+          {
+            "type": "KCab-s",
+            "count": 384,
+            "mean": 47.0
+          },
+          {
+            "type": "KCab-m",
+            "count": 364,
+            "mean": 61.2
+          },
+          {
+            "type": "KCab-c",
+            "count": 265,
+            "mean": 54.1
+          },
+          {
+            "type": "Lawf2",
+            "count": 183,
+            "mean": 21.7
+          },
+          {
+            "type": "KCa'b'-ap1",
+            "count": 69,
+            "mean": 41.7
+          },
+          {
+            "type": "KCa'b'-m",
+            "count": 64,
+            "mean": 42.8
+          },
+          {
+            "type": "Dm18",
+            "count": 45,
+            "mean": 43.7
+          },
+          {
+            "type": "KCa'b'-ap2",
+            "count": 36,
+            "mean": 41.4
+          },
+          {
+            "type": "EPG",
+            "count": 33,
+            "mean": 195.1
+          },
+          {
+            "type": "lLN1_bc",
+            "count": 30,
+            "mean": 400.0
+          },
+          {
+            "type": "Pm6",
+            "count": 29,
+            "mean": 31.1
           }
         ]
       }
@@ -190,156 +190,156 @@
         "top_types_after": []
       },
       "orn_pulse": {
-        "pop_rate_during_hz": 9.143869381427066,
-        "pop_rate_after_hz": 10.229442472838265,
-        "n_active_after_gt1hz": 12543,
+        "pop_rate_during_hz": 9.01803514976805,
+        "pop_rate_after_hz": 10.042526132193167,
+        "n_active_after_gt1hz": 12376,
         "superclass_after": {
-          "cb_intrinsic": 10249,
-          "vnc_intrinsic": 851,
-          "ol_intrinsic": 435,
-          "vnc_motor": 219,
-          "ascending_neuron": 193,
-          "descending_neuron": 186,
-          "cb_sensory": 112,
-          "visual_centrifugal": 105
+          "cb_intrinsic": 10086,
+          "vnc_intrinsic": 840,
+          "ol_intrinsic": 441,
+          "vnc_motor": 213,
+          "ascending_neuron": 198,
+          "descending_neuron": 192,
+          "cb_sensory": 111,
+          "visual_centrifugal": 108
         },
         "top_types_after": [
           {
             "type": "KCg-m",
             "count": 1342,
-            "mean": 246.7
+            "mean": 243.3
           },
           {
             "type": "KCab-s",
             "count": 657,
-            "mean": 184.8
+            "mean": 183.8
           },
           {
             "type": "KCab-m",
             "count": 536,
-            "mean": 168.8
+            "mean": 168.0
           },
           {
             "type": "KCab-c",
             "count": 488,
-            "mean": 141.0
+            "mean": 139.2
           },
           {
             "type": "KCa'b'-ap2",
             "count": 291,
-            "mean": 209.4
+            "mean": 208.1
           },
           {
             "type": "Lawf2",
-            "count": 246,
-            "mean": 30.7
+            "count": 252,
+            "mean": 31.1
           },
           {
             "type": "KCg-d",
             "count": 206,
-            "mean": 193.8
+            "mean": 193.1
           },
           {
             "type": "KCa'b'-m",
             "count": 205,
-            "mean": 209.6
+            "mean": 209.2
           },
           {
             "type": "KCa'b'-ap1",
             "count": 199,
-            "mean": 216.8
+            "mean": 215.4
           },
           {
             "type": "KCab-p",
             "count": 129,
-            "mean": 207.8
+            "mean": 206.9
           },
           {
             "type": "PAM08",
             "count": 50,
-            "mean": 286.7
+            "mean": 284.0
           },
           {
             "type": "Dm18",
             "count": 48,
-            "mean": 48.7
+            "mean": 48.6
           }
         ]
       },
       "photo_orn_pulse": {
-        "pop_rate_during_hz": 9.528167052240162,
-        "pop_rate_after_hz": 10.234814258548225,
-        "n_active_after_gt1hz": 12481,
+        "pop_rate_during_hz": 9.283499473116846,
+        "pop_rate_after_hz": 10.047867637262145,
+        "n_active_after_gt1hz": 12394,
         "superclass_after": {
-          "cb_intrinsic": 10191,
-          "vnc_intrinsic": 842,
-          "ol_intrinsic": 440,
-          "vnc_motor": 218,
-          "ascending_neuron": 193,
-          "descending_neuron": 187,
-          "cb_sensory": 112,
-          "visual_centrifugal": 106
+          "cb_intrinsic": 10105,
+          "vnc_intrinsic": 840,
+          "ol_intrinsic": 438,
+          "vnc_motor": 214,
+          "descending_neuron": 196,
+          "ascending_neuron": 196,
+          "cb_sensory": 111,
+          "visual_centrifugal": 107
         },
         "top_types_after": [
           {
             "type": "KCg-m",
             "count": 1342,
-            "mean": 246.7
+            "mean": 243.4
           },
           {
             "type": "KCab-s",
             "count": 657,
-            "mean": 185.3
+            "mean": 184.2
           },
           {
             "type": "KCab-m",
             "count": 536,
-            "mean": 169.2
+            "mean": 168.3
           },
           {
             "type": "KCab-c",
             "count": 488,
-            "mean": 141.2
+            "mean": 139.4
           },
           {
             "type": "KCa'b'-ap2",
             "count": 291,
-            "mean": 209.6
+            "mean": 208.4
           },
           {
             "type": "Lawf2",
             "count": 250,
-            "mean": 30.6
+            "mean": 31.5
           },
           {
             "type": "KCg-d",
             "count": 206,
-            "mean": 193.9
+            "mean": 193.2
           },
           {
             "type": "KCa'b'-m",
             "count": 205,
-            "mean": 209.9
+            "mean": 209.5
           },
           {
             "type": "KCa'b'-ap1",
             "count": 199,
-            "mean": 217.2
+            "mean": 215.5
           },
           {
             "type": "KCab-p",
             "count": 129,
-            "mean": 208.0
+            "mean": 207.3
           },
           {
             "type": "PAM08",
             "count": 50,
-            "mean": 286.7
+            "mean": 284.1
           },
           {
             "type": "Dm18",
             "count": 48,
-            "mean": 48.7
+            "mean": 48.6
           }
         ]
       }

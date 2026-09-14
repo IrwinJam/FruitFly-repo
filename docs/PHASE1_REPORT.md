@@ -202,6 +202,20 @@ Empirical p = (1 + #shuffles ≥ real)/101. The minimum possible is 0.010.
   3. Model APL as graded, non-saturating inhibition.
   4. As a disclosed fallback, drop odor channels from the full-graph showcase.
 
+### 6.4 Re-run with consensus neurotransmitter labels
+
+The graph builder now prefers the dataset's `consensus_nt` column (`docs/nt_audit.json`):
+- 5,564 labels change, including all **4,062 Kenyon cells**: dopamine → acetylcholine.
+- Only **418 neurons change sign**, which is 0.21% of output synapse weight.
+
+Every graph and shuffle was rebuilt and the key checks re-run (`flyseek/brain/run_nt_rebuild.ps1`). Pre-rebuild results are archived in `docs/phase1_pre_consensus_nt/`. **All conclusions are unchanged:**
+- **navcore vs 100 shuffles:** same pattern. Every metric is p = 0.010 at 10–25 Hz, and looming is p = 0.010 at every rate. At 50 Hz, DNa02 is p = 0.030 and DNa03 moved from 0.059 to 0.079. At 100 Hz pursuit is not specific (p = 0.31 / 0.47).
+- **full and pruned5:** DNa02 flips with side at every rate (full p between 1e‑6 and 9e‑11; pruned5 between 5e‑7 and 2e‑12). DNp01 is lateralized at every rate. No ignition (≤ 0.00023 of neurons active after a pulse).
+- **Stability and MB ignition:** unchanged. navcore is graded; pruned5 is 6.7–6.8% active and full is 8.7–8.8% active, both input-independent. ORN pulses still leave self-sustained KC activity (full: 10.0 Hz, 12.4k neurons after offset), and removing KC→KC synapses still only halves it (5.6 Hz).
+- **DNa01 contralateral looming:** still not confirmed (p ≈ 0.05 only at ≥ 50 Hz).
+
+**The Phase 2 closed-loop experiments were run on the rebuilt graphs.**
+
 ## 7. Decisions carried forward
 
 - `connectome_weight_scale: 0.514`, `modulatory_sign: 1`, dt 0.5 ms

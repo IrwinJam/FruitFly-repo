@@ -32,10 +32,10 @@
   {
     "rate_hz": 100.0,
     "dn": "DNa01",
-    "contra_index_real": 49.1,
-    "contra_rate_real_hz": 24.55,
-    "shuffle_mean": 0.23,
-    "shuffle_max": 133.2,
+    "contra_index_real": 50.7,
+    "contra_rate_real_hz": 25.35,
+    "shuffle_mean": 0.13,
+    "shuffle_max": 151.3,
     "n_shuffles": 100,
     "empirical_p": 0.05
   }
