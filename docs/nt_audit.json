@@ -1,0 +1,38 @@
+{
+  "traced_neurons": 165122,
+  "consensus_available_not_unclear": 161520,
+  "label_changed_neurons": 5564,
+  "sign_changed_neurons": 418,
+  "sign_changed_frac_of_output_weight": 0.0021277234565572323,
+  "label_transitions_top": {
+    "dopamine -> acetylcholine": 4062,
+    "nan -> nan": 502,
+    "glutamate -> gaba": 366,
+    "unclear -> glutamate": 288,
+    "histamine -> glutamate": 86,
+    "acetylcholine -> glutamate": 83,
+    "unclear -> octopamine": 50,
+    "serotonin -> acetylcholine": 49,
+    "unclear -> acetylcholine": 20,
+    "unclear -> gaba": 16,
+    "gaba -> acetylcholine": 11,
+    "acetylcholine -> gaba": 8
+  },
+  "sign_change_types_top": {
+    "LC30": 57,
+    "Acc. ti flexor MN": 47,
+    "Ti flexor MN": 37,
+    "Tr flexor MN": 35,
+    "ltm MN": 21,
+    "Fe reductor MN": 20,
+    "ltm2-femur MN": 12,
+    "ltm1-tibia MN": 9,
+    "Ta depressor MN": 9,
+    "Tergopleural/Pleural promotor MN": 8,
+    "DVMn 1a-c": 6,
+    "MNml78": 6,
+    "MNml80": 6,
+    "AVLP560": 5,
+    "Ta levator MN": 5
+  }
+}

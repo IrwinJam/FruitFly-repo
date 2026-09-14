@@ -1,0 +1,40 @@
+# Motor decoder: descending-neuron (DN) rates -> body commands.
+# Design decisions come from docs/PHASE1_REPORT.md section 4.5:
+#  * Forward-candidate DNs (DNg100, DNp09) get NO sensory drive in the model, so
+#    base forward speed is an ENGINEERED CONSTANT, disclosed as not brain-generated.
+#  * Steering comes from left-right differences of pursuit DNs (DNa02, DNa03, DNg13).
+#  * DNa01's contralateral looming response was NOT confirmed against shuffles
+#    (docs/phase1_dna01_escape_navcore.json), so its weight starts at 0 and is left
+#    to training (a learned, not assumed, mapping).
+# Sign convention: omega > 0 is a LEFT (counter-clockwise) turn. somaSide "L" is
+# assumed to be the fly's left (FlyEM convention); left-eye targets drive LC10a-L.
+#
+# All weights here are the hand-set STARTING adapter; Phase 4 training changes them.
+
+ema_tau_ms: 100.0
+
+forward:
+  base_speed_units_per_s: 1.5 # engineered constant (disclosed); Among Us feel is tuned in Phase 3
+  max_speed_units_per_s: 3.0
+
+turn:
+  max_omega_rad_per_s: 3.0
+  deadband_hz: 1.0 # |weighted L-R| below this is ignored
+  # omega = tanh(sum_i w_i * (rate_i_L - rate_i_R) / scale_hz) * max_omega
+  scale_hz: 20.0
+  weights:
+    DNa02: 1.0
+    DNa03: 0.5
+    DNg13: 0.5
+    DNa01: 0.0
+    DNp01: 0.0 # Hider turn-away is left to training (sign learned, not assumed)
+
+dash:
+  source: DNp01 # giant fiber
+  threshold_hz: 60.0 # mean of L+R
+  speed_multiplier: 1.8
+
+backward:
+  source: MDN
+  threshold_hz: 20.0
+  speed_units_per_s: -0.8

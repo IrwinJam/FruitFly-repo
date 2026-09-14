@@ -1,0 +1,165 @@
+{
+  "summary": {
+    "real_dash_before_contact": 1.0,
+    "blind_dash_before_contact": 0.0,
+    "shuffle_dash_before_contact": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "real_vs_shuffles_empirical_p": 0.09090909090909091
+  },
+  "conditions": [
+    {
+      "tag": "navcore",
+      "blind": false,
+      "n": 40,
+      "wall_s": 36.6,
+      "dash_before_contact": 1.0,
+      "dash_before_contact_left": 1.0,
+      "dash_before_contact_right": 1.0,
+      "approx_time_to_contact_at_dash_s_mean": 1.6029999999999998,
+      "peak_giant_fiber_hz_mean": 94.16441531229502,
+      "contact_fraction": 0.0
+    },
+    {
+      "tag": "navcore",
+      "blind": true,
+      "n": 40,
+      "wall_s": 32.5,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.0,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf0",
+      "blind": false,
+      "n": 40,
+      "wall_s": 36.6,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.4760041048975454,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf1",
+      "blind": false,
+      "n": 40,
+      "wall_s": 36.6,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.0,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf2",
+      "blind": false,
+      "n": 40,
+      "wall_s": 37.0,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.0,
+      "contact_fraction": 0.925
+    },
+    {
+      "tag": "navcore_shuf3",
+      "blind": false,
+      "n": 40,
+      "wall_s": 33.2,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.0,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf4",
+      "blind": false,
+      "n": 40,
+      "wall_s": 29.4,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 9.055682120453005,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf5",
+      "blind": false,
+      "n": 40,
+      "wall_s": 28.5,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 2.4992623220147467,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf6",
+      "blind": false,
+      "n": 40,
+      "wall_s": 28.1,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 1.4525059646685516,
+      "contact_fraction": 1.0
+    },
+    {
+      "tag": "navcore_shuf7",
+      "blind": false,
+      "n": 40,
+      "wall_s": 29.8,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 2.990124030626871,
+      "contact_fraction": 0.95
+    },
+    {
+      "tag": "navcore_shuf8",
+      "blind": false,
+      "n": 40,
+      "wall_s": 29.3,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.0,
+      "contact_fraction": 0.975
+    },
+    {
+      "tag": "navcore_shuf9",
+      "blind": false,
+      "n": 40,
+      "wall_s": 30.0,
+      "dash_before_contact": 0.0,
+      "dash_before_contact_left": 0.0,
+      "dash_before_contact_right": 0.0,
+      "approx_time_to_contact_at_dash_s_mean": null,
+      "peak_giant_fiber_hz_mean": 0.33987983797878407,
+      "contact_fraction": 1.0
+    }
+  ]
+}

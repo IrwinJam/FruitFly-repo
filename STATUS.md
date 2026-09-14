@@ -158,6 +158,15 @@ Supersedes the M3 section above. See [docs/PHASE1_REPORT.md](docs/PHASE1_REPORT.
 - **navcore** (22.7k neurons) is ready for training at ~15.6 fly-seconds per second.
 - **Open item:** odor-driven mushroom-body ignition on pruned5/full; navcore unaffected. The dataset also labels all Kenyon cells as dopaminergic.
 
+### Phase 2 — First closed loop ✅ (2026-09-13)
+See [docs/PHASE2_REPORT.md](docs/PHASE2_REPORT.md).
+
+Connectome-driven flies in an arena, on navcore:
+- **Pursuit:** 88% turn toward a seen target; blind 0%, 10 shuffled brains 0–23%.
+- **Escape:** 100% giant-fiber dash before a looming threat reaches them; blind and all shuffles 0%.
+
+Body, decoder, vision, agent loop and replay recorder are built and tested (14 unit tests total).
+
 ## Not done yet
 
 Everything past the M3/M4 work above is unbuilt. In particular, **no training has

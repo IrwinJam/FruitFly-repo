@@ -78,15 +78,21 @@ def load_neurons() -> pd.DataFrame:
     ann = ann[["bodyId", "type", "superclass", "class", "somaSide", "somaLocation"]]
 
     nt = pd.read_feather(NT_FILE)[
-        ["body", "celltype_predicted_nt", "predicted_nt"]
+        ["body", "consensus_nt", "celltype_predicted_nt", "predicted_nt"]
     ].rename(columns={"body": "bodyId"})
 
     df = ann.merge(nt, on="bodyId", how="left")
 
-    resolved_nt = df["celltype_predicted_nt"].where(
-        df["celltype_predicted_nt"].notna() & (df["celltype_predicted_nt"] != "unclear"),
-        df["predicted_nt"],
-    )
+    def usable(col):
+        return df[col].where(df[col].notna() & (df[col] != "unclear"))
+
+    # Priority (changed 2026-09-13, see docs/nt_audit.json): the dataset's consensus
+    # label first, then the cell-type prediction, then the per-body prediction. The
+    # predictions alone label all 4,062 Kenyon cells as dopamine; consensus says
+    # acetylcholine, matching the literature.
+    predicted = usable("celltype_predicted_nt").fillna(df["predicted_nt"])
+    resolved_nt = usable("consensus_nt").fillna(predicted)
+    df["nt_predicted"] = predicted  # kept for audit/sensitivity analysis
     df["nt"] = resolved_nt
     df["nt_confident"] = resolved_nt.isin(NT_SIGN.keys())
     df["sign"] = resolved_nt.map(NT_SIGN).fillna(DEFAULT_SIGN).astype(np.int8)
@@ -97,7 +103,7 @@ def load_neurons() -> pd.DataFrame:
     df["soma_z"] = xyz.apply(lambda t: t[2])
     df["has_soma"] = df["soma_x"].notna()
 
-    df = df.drop(columns=["somaLocation", "celltype_predicted_nt", "predicted_nt"])
+    df = df.drop(columns=["somaLocation", "consensus_nt", "celltype_predicted_nt", "predicted_nt"])
     df = df.sort_values("bodyId").reset_index(drop=True)
     df["idx"] = np.arange(len(df), dtype=np.int32)
     return df
@@ -140,9 +146,7 @@ def build_and_cache(min_synapses: int, tag: str) -> dict:
     edge_index, edge_weight = load_edges(neurons, min_synapses=min_synapses)
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    neurons_path = CACHE_DIR / "neurons.parquet"
-    if not neurons_path.exists():
-        neurons.to_parquet(neurons_path)
+    neurons.to_parquet(CACHE_DIR / "neurons.parquet")  # always rewrite: NT rules may have changed
 
     np.save(CACHE_DIR / f"edge_index_{tag}.npy", edge_index)
     np.save(CACHE_DIR / f"edge_weight_{tag}.npy", edge_weight)

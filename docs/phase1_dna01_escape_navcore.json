@@ -1,0 +1,42 @@
+[
+  {
+    "rate_hz": 10.0,
+    "dn": "DNa01",
+    "contra_index_real": 0.0,
+    "contra_rate_real_hz": 0.0,
+    "shuffle_mean": 0.0,
+    "shuffle_max": 0.0,
+    "n_shuffles": 100,
+    "empirical_p": 1.0
+  },
+  {
+    "rate_hz": 25.0,
+    "dn": "DNa01",
+    "contra_index_real": 0.0,
+    "contra_rate_real_hz": 0.0,
+    "shuffle_mean": -0.01,
+    "shuffle_max": 1.2,
+    "n_shuffles": 100,
+    "empirical_p": 0.901
+  },
+  {
+    "rate_hz": 50.0,
+    "dn": "DNa01",
+    "contra_index_real": 3.0,
+    "contra_rate_real_hz": 1.5,
+    "shuffle_mean": -0.2,
+    "shuffle_max": 9.1,
+    "n_shuffles": 100,
+    "empirical_p": 0.059
+  },
+  {
+    "rate_hz": 100.0,
+    "dn": "DNa01",
+    "contra_index_real": 49.1,
+    "contra_rate_real_hz": 24.55,
+    "shuffle_mean": 0.23,
+    "shuffle_max": 133.2,
+    "n_shuffles": 100,
+    "empirical_p": 0.05
+  }
+]

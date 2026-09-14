@@ -76,20 +76,24 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 
 **If pursuit doesn't carry a signal:** use `bypass_downstream` (inject at AOTU019/025). If even that fails, inject at DNa03. This lowers the "the connectome did it" factor, but the game still works. The UI already has a flag to disclose it.
 
-### Phase 2 — One fly, one closed loop · ~2 sessions
-*Goal: a single brain drives a body around an empty arena using its own vision.*
+### Phase 2 — One fly, one closed loop · ✅ DONE 2026-09-13
+*Goal: a single brain drives a body around an empty arena using its own vision.* **Write-up: [docs/PHASE2_REPORT.md](docs/PHASE2_REPORT.md).**
 
-- [ ] `flyseek/motors/body_kinematic.py`: position, heading, speed, collisions against a grid (sliding along walls).
-- [ ] `config/motors.yaml` + `flyseek/motors/decoders.py`: DN rates (EMA smoothed) → forward/turn/dash, with deadband and clamping (formula in PROJECT_PLAN §4.6).
-- [ ] `flyseek/senses/vision.py`: ray-cast panorama → per-ray brightness/color → photoreceptors, plus a direct target-feature channel into LC10a, using the Phase 1 gains (**LC10a ≤ 25 Hz**, retinotopic by side).
-- [ ] Decoder design from Phase 1: base forward speed = **engineered constant (disclosed)**; steering from DNa02/DNa03/DNg13 (pursuit) and DNa01 (candidate turn-away); DNp01 → dash. First test DNa01's contralateral looming response statistically.
-- [ ] `flyseek/agents/fly_agent.py`: one tick = sense → 40 brain steps → decode → move.
-- [ ] Arena test: a bright target on the left or right of the fly.
-  - Pass: the fly turns toward it more often than a zero-gain control.
-  - Hand-tune the gains. No training yet.
-- [ ] A first **replay recorder** that saves positions plus spikes to disk.
+- [x] `flyseek/motors/body_kinematic.py` (+ `flyseek/world/grid.py`): unicycle body with wall sliding.
+- [x] `config/motors.yaml` + `flyseek/motors/decoders.py`: EMA-smoothed DN rates → turn/dash/back; forward speed is an engineered constant (disclosed).
+- [x] `flyseek/senses/vision.py`: ray casting, side-level LC10a (≤ 25 Hz) and LC4/LPLC2 looming (≤ 100 Hz), photoreceptor brightness. **Not retinotopic yet.**
+- [x] DNa01 contralateral looming tested vs 100 shuffles: **not confirmed** (p ≈ 0.05 only at ≥ 50 Hz), so its decoder weight starts at 0 and is left to training.
+- [x] `flyseek/agents/fly_agent.py`: batched flies, sense → 40 brain steps → decode → move.
+- [x] Arena pursuit: **88%** turn toward the target (blind 0%, 10 shuffles 0–23%).
+- [x] **Added:** arena escape. **100%** giant-fiber dash before contact (blind 0%, all 10 shuffles 0%).
+- [x] Replay recorder: 177 KB for 40 flies × 2 s of navcore spikes.
 
-**Done when:** a recorded run shows the fly turning toward the target in ≥ 70% of 20 trials, compared with ~50% for the control.
+**Done when:** a recorded run shows the fly turning toward the target in ≥ 70% of 20 trials, compared with ~50% for the control. **Met: 88% vs 0% blind.**
+
+**Carried into Phase 3/4:**
+- Turn gain is gentle (flies don't reach the target in 2 s).
+- Escape triggers too early (~1.6 s before contact); the looming gain and dash threshold need calibration for gameplay.
+- Retinotopic vision.
 
 ### Phase 3 — First watchable match (vertical slice) · ~2–3 sessions
 *Goal: 1 Seeker + 3 Hiders play Hide n Seek on The Skeld, recorded and replayed in the viewer with real spikes.*
