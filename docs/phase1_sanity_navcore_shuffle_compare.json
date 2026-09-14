@@ -1,0 +1,178 @@
+[
+  {
+    "rate_hz": 10.0,
+    "metric": "LI",
+    "dn": "DNa02",
+    "input": "pursuit",
+    "real": 5.7,
+    "shuffle_mean": 0.07,
+    "shuffle_max": 0.6,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 10.0,
+    "metric": "LI",
+    "dn": "DNa03",
+    "input": "pursuit",
+    "real": 1.1,
+    "shuffle_mean": -0.03,
+    "shuffle_max": 0.1,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 10.0,
+    "metric": "LI",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 128.5,
+    "shuffle_mean": -0.01,
+    "shuffle_max": 0.0,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 10.0,
+    "metric": "drive",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 75.28,
+    "shuffle_mean": 0.0,
+    "shuffle_max": 0.03,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 25.0,
+    "metric": "LI",
+    "dn": "DNa02",
+    "input": "pursuit",
+    "real": 27.0,
+    "shuffle_mean": 2.27,
+    "shuffle_max": 9.7,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 25.0,
+    "metric": "LI",
+    "dn": "DNa03",
+    "input": "pursuit",
+    "real": 9.8,
+    "shuffle_mean": -0.22,
+    "shuffle_max": 1.8,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 25.0,
+    "metric": "LI",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 262.9,
+    "shuffle_mean": -0.2,
+    "shuffle_max": 0.0,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 25.0,
+    "metric": "drive",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 178.58,
+    "shuffle_mean": 0.05,
+    "shuffle_max": 0.35,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 50.0,
+    "metric": "LI",
+    "dn": "DNa02",
+    "input": "pursuit",
+    "real": 38.8,
+    "shuffle_mean": 12.6,
+    "shuffle_max": 38.4,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 50.0,
+    "metric": "LI",
+    "dn": "DNa03",
+    "input": "pursuit",
+    "real": 12.2,
+    "shuffle_mean": -1.31,
+    "shuffle_max": 9.0,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 50.0,
+    "metric": "LI",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 345.4,
+    "shuffle_mean": -1.89,
+    "shuffle_max": 2.5,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 50.0,
+    "metric": "drive",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 282.5,
+    "shuffle_mean": 0.85,
+    "shuffle_max": 2.12,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 100.0,
+    "metric": "LI",
+    "dn": "DNa02",
+    "input": "pursuit",
+    "real": 25.2,
+    "shuffle_mean": 20.94,
+    "shuffle_max": 95.4,
+    "n_shuffles": 10,
+    "empirical_p": 0.636
+  },
+  {
+    "rate_hz": 100.0,
+    "metric": "LI",
+    "dn": "DNa03",
+    "input": "pursuit",
+    "real": 0.1,
+    "shuffle_mean": -8.35,
+    "shuffle_max": 55.3,
+    "n_shuffles": 10,
+    "empirical_p": 0.545
+  },
+  {
+    "rate_hz": 100.0,
+    "metric": "LI",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 344.5,
+    "shuffle_mean": 17.41,
+    "shuffle_max": 169.2,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  },
+  {
+    "rate_hz": 100.0,
+    "metric": "drive",
+    "dn": "DNp01",
+    "input": "loom",
+    "real": 313.88,
+    "shuffle_mean": 17.64,
+    "shuffle_max": 79.75,
+    "n_shuffles": 10,
+    "empirical_p": 0.091
+  }
+]

@@ -1,0 +1,43 @@
+{
+  "kc_neurons": 4064,
+  "kc_nt": {
+    "dopamine": 4062,
+    "unclear": 2
+  },
+  "pruned5": {
+    "kc_kc_edges": 33247,
+    "kc_kc_synapse_weight_frac_of_kc_input": 0.23354925215244293,
+    "baseline": {
+      "pop_during_hz": 4.299899468271945,
+      "pop_after_hz": 4.692730223713376,
+      "active_after_gt1hz": 9192,
+      "kc_active_during_gt1hz": 2321,
+      "kc_mean_rate_during_hz": 33.74803149606299
+    },
+    "no_KC_KC": {
+      "pop_during_hz": 4.237218541442085,
+      "pop_after_hz": 4.623987112559199,
+      "active_after_gt1hz": 9062,
+      "kc_active_during_gt1hz": 2165,
+      "kc_mean_rate_during_hz": 30.206692913385826
+    }
+  },
+  "full": {
+    "kc_kc_edges": 642933,
+    "kc_kc_synapse_weight_frac_of_kc_input": 0.554129421710968,
+    "baseline": {
+      "pop_during_hz": 9.184312205520767,
+      "pop_after_hz": 10.243177771587069,
+      "active_after_gt1hz": 12534,
+      "kc_active_during_gt1hz": 4064,
+      "kc_mean_rate_during_hz": 182.82578740157481
+    },
+    "no_KC_KC": {
+      "pop_during_hz": 5.341819987645499,
+      "pop_after_hz": 5.765028282118676,
+      "active_after_gt1hz": 10647,
+      "kc_active_during_gt1hz": 2868,
+      "kc_mean_rate_during_hz": 49.96407480314961
+    }
+  }
+}

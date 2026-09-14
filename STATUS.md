@@ -146,6 +146,18 @@ behavior."
 - **Not yet built**: the rules engine (phase transitions, win conditions, kill/
   vent/ping logic) and the map view in the viewer.
 
+### Phase 1 — Brain trustworthy ✅ (2026-09-13)
+Supersedes the M3 section above. See [docs/PHASE1_REPORT.md](docs/PHASE1_REPORT.md).
+
+- **Simulator matches Shiu et al.**, with 8 unit tests passing.
+- **Uncalibrated MaleCNS ignites.** Fixed by weight scale 0.514, derived from dataset statistics.
+- **Side-specific wiring confirmed vs 100 shuffled graphs:**
+  - LC10a→DNa02/DNa03 pursuit at ≤ 25 Hz
+  - LC4/LPLC2→DNp01 looming at all rates
+  - holds on full, pruned5 and navcore, and at dt 0.1 ms
+- **navcore** (22.7k neurons) is ready for training at ~15.6 fly-seconds per second.
+- **Open item:** odor-driven mushroom-body ignition on pruned5/full; navcore unaffected. The dataset also labels all Kenyon cells as dopaminergic.
+
 ## Not done yet
 
 Everything past the M3/M4 work above is unbuilt. In particular, **no training has

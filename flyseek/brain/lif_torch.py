@@ -185,6 +185,15 @@ class LIFBrain:
         neuron idx, batch column, rate in Hz. Replaces any previous stimulus.
         """
         dev = self.device
+        neurons = np.asarray(neurons, dtype=np.int64)
+        cols = np.asarray(cols, dtype=np.int64)
+        if len(neurons) and (neurons.min() < 0 or neurons.max() >= self.n_neurons):
+            raise IndexError(
+                f"stimulus neuron index out of range for graph '{self.tag}' ({self.n_neurons} neurons). "
+                "Look up roles with graph=<tag> when using a subgraph such as navcore."
+            )
+        if len(cols) and self.batch_size and cols.max() >= self.batch_size:
+            raise IndexError(f"stimulus column {cols.max()} >= batch size {self.batch_size}; call reset() first")
         self._stim_neuron = torch.as_tensor(neurons, dtype=torch.int64, device=dev)
         self._stim_col = torch.as_tensor(cols, dtype=torch.int64, device=dev)
         rates = torch.as_tensor(rates_hz, dtype=torch.float32, device=dev)
@@ -245,13 +254,13 @@ class LIFBrain:
         # 1. delayed synaptic input arriving now, plus stimulus spikes
         self.g += self.delay_buf[self.buf_ptr]
         if len(self._stim_neuron):
+            # no boolean masking here: masking forces a GPU->CPU sync every step
             fire = torch.rand(len(self._stim_prob), device=self.device, generator=self.gen) < self._stim_prob
-            if fire.any():
-                self.g.index_put_(
-                    (self._stim_neuron[fire], self._stim_col[fire]),
-                    torch.full((int(fire.sum()),), p.poisson_kick_mv, device=self.device),
-                    accumulate=True,
-                )
+            self.g.index_put_(
+                (self._stim_neuron, self._stim_col),
+                fire.to(self.g.dtype) * p.poisson_kick_mv,
+                accumulate=True,
+            )
         if ext_current is not None:
             self.g += ext_current
 

@@ -17,8 +17,8 @@ from flyseek.brain.roles import role_idx
 from flyseek.paths import DOCS_DIR
 
 
-def bench_one(tag: str, batch: int, seconds: float = 0.5, warmup_ms: float = 200) -> dict:
-    brain = LIFBrain(tag=tag)
+def bench_one(tag: str, batch: int, propagation: str | None = None, seconds: float = 0.5, warmup_ms: float = 200) -> dict:
+    brain = LIFBrain(tag=tag, propagation=propagation)
     brain.reset(batch, seed=0)
     broad = sorted(set(role_idx("photoreceptor_achromatic", graph=tag) + role_idx("photoreceptor_color", graph=tag)
                        + role_idx("aversive_odor", graph=tag) + role_idx("attractive_odor", graph=tag)))
@@ -54,13 +54,15 @@ def bench_one(tag: str, batch: int, seconds: float = 0.5, warmup_ms: float = 200
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--configs", nargs="+", default=[
-        "navcore:1", "navcore:16", "navcore:64", "pruned5:1", "pruned5:6", "full:1", "full:6"])
+        "navcore:1:event", "navcore:1:spmm", "navcore:16:event", "navcore:16:spmm", "navcore:64:event", "navcore:64:spmm",
+        "navcore:256:spmm", "pruned5:1:auto", "pruned5:6:auto", "pruned5:6:spmm", "full:1:auto", "full:6:auto"])
     args = ap.parse_args()
     results = []
     for spec in args.configs:
-        tag, b = spec.split(":")
-        r = bench_one(tag, int(b))
-        print(f"{tag:8s} B={r['batch']:<3} {r['ms_per_step']:8.3f} ms/step | real-time {r['real_time_factor_per_fly_batch']:.3f}x "
-              f"| {r['spikes_per_step']:.0f} spikes/step", flush=True)
+        tag, b, mode = spec.split(":")
+        r = bench_one(tag, int(b), mode)
+        r["fly_seconds_per_wall_second"] = round(r["real_time_factor_per_fly_batch"] * r["batch"], 3)
+        print(f"{tag:8s} B={r['batch']:<3} {mode:5s} {r['ms_per_step']:8.3f} ms/step | real-time {r['real_time_factor_per_fly_batch']:.3f}x "
+              f"| throughput {r['fly_seconds_per_wall_second']:.2f} fly-s/s | {r['spikes_per_step']:.0f} spikes/step", flush=True)
         results.append(r)
     (DOCS_DIR / "bench_results.json").write_text(json.dumps(results, indent=2))

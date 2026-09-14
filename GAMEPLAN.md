@@ -53,22 +53,24 @@ The plan's original order was: verify → walk → navigate → train roles → 
 
 Effort is in **working sessions** (roughly one sitting like today). GPU time is **unattended** run time; most of it can run overnight. Every GPU estimate is a guess until the Phase 1 benchmark on real, active networks replaces it.
 
-### Phase 1 — Make the brain trustworthy · ~1–2 sessions
-*Goal: know, with real statistics, whether senses reach motor neurons at realistic drive levels.*
+### Phase 1 — Make the brain trustworthy · ✅ DONE 2026-09-13 (one open item carried forward)
+*Goal: know, with real statistics, whether senses reach motor neurons at realistic drive levels.* **Full write-up: [docs/PHASE1_REPORT.md](docs/PHASE1_REPORT.md).**
 
-- [ ] **Stability test.** Put sustained, moderate drive (5–20 Hz) on the sensory populations for 5 s. Record the total firing rate over time. Pass: activity settles instead of exploding. If it runs away, add global inhibition, lower `mv_per_synapse`, or use `pruned5`.
+- [x] **Stability test** (5 s sustained drive). No condition grows. Found the uncalibrated ignition problem and fixed it with `connectome_weight_scale: 0.514`, derived from dataset statistics.
 - [x] **Match the Shiu reference model**: refractory 2.2 ms (Brian2 semantics), 1.8 ms synaptic delay buffer, exact integration, 68.75 mV stimulus kicks. Covered by unit tests (`tests/test_lif.py`).
-- [ ] **Rewrite the sanity checks properly:**
-  - [ ] An undriven baseline for every check, with the **same random seed**.
-  - [ ] 20 trials per condition with different seeds. Report mean ± spread and a simple test (e.g. a t-test on L−R).
-  - [ ] Longer windows (1–2 s) so spike counts reach the hundreds.
-  - [ ] Sweep the drive level (e.g. 10, 25, 50, 100 Hz) and find the lowest level that gives a reliable effect. **That level becomes the encoder gain.**
-  - [ ] Delete the two self-readout checks, or relabel them as tests of the counter.
-  - [ ] Add the reverse-side test: drive LC10a‑R and expect the asymmetry to flip sign.
-  - [ ] Check DNg100/DNp09 (forward candidates) and pIP1 (arousal): does sensory drive move them at all?
-- [ ] **Build `navcore`**, the small training subgraph: neurons within k hops downstream of the sensory roles *and* upstream of the motor DNs. Re-run the checks on it and confirm the effects survive. Benchmark it with 16 flies.
-- [ ] **Benchmark on active networks** (real spiking load) and update `docs/bench_results.json`.
-- [ ] **Build the shuffled-connectome generator** (degree-preserving rewiring, sign kept per presynaptic neuron) and run the same checks on it. If shuffled graphs show the same L/R asymmetries, that's a red flag to investigate now, not after training.
+- [x] **Rewrite the sanity checks properly:**
+  - [x] Undriven baseline and matched conditions in the same batch.
+  - [x] 10 replicates per condition with independent input, 95% CIs, Welch t-test, Cohen's d.
+  - [x] 1 s measurement windows.
+  - [x] Drive sweep 10/25/50/100 Hz. **Pursuit encoder ≤ 25 Hz** (wiring-specific vs 100 shuffles only up to 25 Hz).
+  - [x] Self-readout checks removed.
+  - [x] Reverse-side test: the asymmetry flips sign for DNa02, DNa03, DNp01.
+  - [x] Forward candidates DNg100/DNp09 and MDN get **no** sensory drive, so base forward speed becomes a disclosed decoder constant. pIP1's responses don't fit a P1 identity.
+- [x] **Build `navcore`** (strength-thresholded: 22,686 neurons, 985k edges). Reproduces the full-graph effects; 15.6 fly-s/s at 64 flies.
+- [x] **Benchmark on active networks**, plus sync removal (~1.7× faster).
+- [x] **Shuffled-connectome controls**: 100 navcore shuffles, 3 pruned5, 1 full. Looming→DNp01 is wiring-specific at all rates; pursuit at 10–25 Hz (p = 0.01).
+- [x] **dt check**: 0.1 ms and 0.5 ms agree within noise.
+- [ ] **Carried forward, blocking Phase 6 only:** odor (ORN) input ignites a self-sustained Kenyon-cell/mushroom-body state on `pruned5`/`full` (not navcore). Also, the dataset labels all KCs as dopamine. Fixes to test are in PHASE1_REPORT §6.3.
 
 **Done when:** a table with statistics shows which pathways work at which drive levels on `full`, `pruned5` and `navcore`, and there's a go/no-go on direct injection vs `bypass_downstream` for each pathway.
 
@@ -79,7 +81,8 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 
 - [ ] `flyseek/motors/body_kinematic.py`: position, heading, speed, collisions against a grid (sliding along walls).
 - [ ] `config/motors.yaml` + `flyseek/motors/decoders.py`: DN rates (EMA smoothed) → forward/turn/dash, with deadband and clamping (formula in PROJECT_PLAN §4.6).
-- [ ] `flyseek/senses/vision.py`: ray-cast panorama → per-ray brightness/color → photoreceptors, plus a direct target-feature channel into LC10a, using the Phase 1 gains.
+- [ ] `flyseek/senses/vision.py`: ray-cast panorama → per-ray brightness/color → photoreceptors, plus a direct target-feature channel into LC10a, using the Phase 1 gains (**LC10a ≤ 25 Hz**, retinotopic by side).
+- [ ] Decoder design from Phase 1: base forward speed = **engineered constant (disclosed)**; steering from DNa02/DNa03/DNg13 (pursuit) and DNa01 (candidate turn-away); DNp01 → dash. First test DNa01's contralateral looming response statistically.
 - [ ] `flyseek/agents/fly_agent.py`: one tick = sense → 40 brain steps → decode → move.
 - [ ] Arena test: a bright target on the left or right of the fly.
   - Pass: the fly turns toward it more often than a zero-gain control.

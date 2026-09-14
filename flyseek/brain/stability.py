@@ -18,7 +18,7 @@ import numpy as np
 import torch
 
 from flyseek.brain.lif_torch import LIFBrain
-from flyseek.brain.roles import neurons, role_idx
+from flyseek.brain.roles import full_idx_of, neurons, role_idx
 from flyseek.paths import DOCS_DIR
 
 SENSORY_ROLES = ["photoreceptor_achromatic", "photoreceptor_color", "aversive_odor", "attractive_odor"]
@@ -29,7 +29,7 @@ def run(tag: str, rates: list[float], seconds: float, seed: int = 0) -> dict:
     B = len(rates)
     brain.reset(B, seed=seed)
 
-    sens = sorted({i for r in SENSORY_ROLES for i in role_idx(r)})
+    sens = sorted({i for r in SENSORY_ROLES for i in role_idx(r, graph=tag)})
     neu, cols, rr = [], [], []
     for c, rate in enumerate(rates):
         neu += sens
@@ -48,7 +48,10 @@ def run(tag: str, rates: list[float], seconds: float, seed: int = 0) -> dict:
     pop = out["pop_rate_hz"].cpu().numpy()  # [bins, B]
 
     # per-superclass whole-run rates, excluding the directly stimulated neurons
-    df = neurons()
+    df = neurons().sort_values("idx").reset_index(drop=True)
+    full = full_idx_of(tag)
+    if full is not None:  # subgraph: rows in local index order
+        df = df.iloc[full].reset_index(drop=True)
     non_stim = np.ones(brain.n_neurons, dtype=bool)
     non_stim[sens] = False
 

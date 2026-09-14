@@ -1,0 +1,381 @@
+[
+  {
+    "tag": "pruned5",
+    "columns": {
+      "none": {
+        "pop_rate_during_hz": 0.0,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "photo_pulse": {
+        "pop_rate_during_hz": 0.3983357759717058,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "orn_pulse": {
+        "pop_rate_during_hz": 4.246726662709996,
+        "pop_rate_after_hz": 4.6720727704364045,
+        "n_active_after_gt1hz": 9159,
+        "superclass_after": {
+          "cb_intrinsic": 7420,
+          "vnc_intrinsic": 686,
+          "ol_intrinsic": 317,
+          "descending_neuron": 180,
+          "vnc_motor": 151,
+          "ascending_neuron": 147,
+          "visual_centrifugal": 89,
+          "visual_projection": 72
+        },
+        "top_types_after": [
+          {
+            "type": "KCg-m",
+            "count": 1064,
+            "mean": 74.4
+          },
+          {
+            "type": "KCab-s",
+            "count": 400,
+            "mean": 47.1
+          },
+          {
+            "type": "KCab-m",
+            "count": 368,
+            "mean": 62.3
+          },
+          {
+            "type": "KCab-c",
+            "count": 276,
+            "mean": 54.4
+          },
+          {
+            "type": "Lawf2",
+            "count": 161,
+            "mean": 19.2
+          },
+          {
+            "type": "KCa'b'-ap1",
+            "count": 72,
+            "mean": 40.9
+          },
+          {
+            "type": "KCa'b'-m",
+            "count": 68,
+            "mean": 43.2
+          },
+          {
+            "type": "Dm18",
+            "count": 44,
+            "mean": 39.8
+          },
+          {
+            "type": "KCa'b'-ap2",
+            "count": 37,
+            "mean": 40.9
+          },
+          {
+            "type": "EPG",
+            "count": 35,
+            "mean": 187.2
+          },
+          {
+            "type": "lLN1_bc",
+            "count": 30,
+            "mean": 400.0
+          },
+          {
+            "type": "Pm6",
+            "count": 28,
+            "mean": 29.2
+          }
+        ]
+      },
+      "photo_orn_pulse": {
+        "pop_rate_during_hz": 4.656133041024212,
+        "pop_rate_after_hz": 4.6656774990613,
+        "n_active_after_gt1hz": 9119,
+        "superclass_after": {
+          "cb_intrinsic": 7431,
+          "vnc_intrinsic": 641,
+          "ol_intrinsic": 319,
+          "descending_neuron": 179,
+          "ascending_neuron": 146,
+          "vnc_motor": 146,
+          "visual_centrifugal": 89,
+          "visual_projection": 73
+        },
+        "top_types_after": [
+          {
+            "type": "KCg-m",
+            "count": 1067,
+            "mean": 74.2
+          },
+          {
+            "type": "KCab-s",
+            "count": 404,
+            "mean": 46.8
+          },
+          {
+            "type": "KCab-m",
+            "count": 367,
+            "mean": 61.8
+          },
+          {
+            "type": "KCab-c",
+            "count": 276,
+            "mean": 54.1
+          },
+          {
+            "type": "Lawf2",
+            "count": 160,
+            "mean": 18.9
+          },
+          {
+            "type": "KCa'b'-ap1",
+            "count": 72,
+            "mean": 41.4
+          },
+          {
+            "type": "KCa'b'-m",
+            "count": 65,
+            "mean": 43.6
+          },
+          {
+            "type": "Dm18",
+            "count": 44,
+            "mean": 39.3
+          },
+          {
+            "type": "KCa'b'-ap2",
+            "count": 36,
+            "mean": 42.2
+          },
+          {
+            "type": "EPG",
+            "count": 35,
+            "mean": 187.6
+          },
+          {
+            "type": "lLN1_bc",
+            "count": 30,
+            "mean": 400.0
+          },
+          {
+            "type": "Pm6",
+            "count": 29,
+            "mean": 28.8
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tag": "full",
+    "columns": {
+      "none": {
+        "pop_rate_during_hz": 0.0,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "photo_pulse": {
+        "pop_rate_during_hz": 0.3982873269461368,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "orn_pulse": {
+        "pop_rate_during_hz": 9.143869381427066,
+        "pop_rate_after_hz": 10.229442472838265,
+        "n_active_after_gt1hz": 12543,
+        "superclass_after": {
+          "cb_intrinsic": 10249,
+          "vnc_intrinsic": 851,
+          "ol_intrinsic": 435,
+          "vnc_motor": 219,
+          "ascending_neuron": 193,
+          "descending_neuron": 186,
+          "cb_sensory": 112,
+          "visual_centrifugal": 105
+        },
+        "top_types_after": [
+          {
+            "type": "KCg-m",
+            "count": 1342,
+            "mean": 246.7
+          },
+          {
+            "type": "KCab-s",
+            "count": 657,
+            "mean": 184.8
+          },
+          {
+            "type": "KCab-m",
+            "count": 536,
+            "mean": 168.8
+          },
+          {
+            "type": "KCab-c",
+            "count": 488,
+            "mean": 141.0
+          },
+          {
+            "type": "KCa'b'-ap2",
+            "count": 291,
+            "mean": 209.4
+          },
+          {
+            "type": "Lawf2",
+            "count": 246,
+            "mean": 30.7
+          },
+          {
+            "type": "KCg-d",
+            "count": 206,
+            "mean": 193.8
+          },
+          {
+            "type": "KCa'b'-m",
+            "count": 205,
+            "mean": 209.6
+          },
+          {
+            "type": "KCa'b'-ap1",
+            "count": 199,
+            "mean": 216.8
+          },
+          {
+            "type": "KCab-p",
+            "count": 129,
+            "mean": 207.8
+          },
+          {
+            "type": "PAM08",
+            "count": 50,
+            "mean": 286.7
+          },
+          {
+            "type": "Dm18",
+            "count": 48,
+            "mean": 48.7
+          }
+        ]
+      },
+      "photo_orn_pulse": {
+        "pop_rate_during_hz": 9.528167052240162,
+        "pop_rate_after_hz": 10.234814258548225,
+        "n_active_after_gt1hz": 12481,
+        "superclass_after": {
+          "cb_intrinsic": 10191,
+          "vnc_intrinsic": 842,
+          "ol_intrinsic": 440,
+          "vnc_motor": 218,
+          "ascending_neuron": 193,
+          "descending_neuron": 187,
+          "cb_sensory": 112,
+          "visual_centrifugal": 106
+        },
+        "top_types_after": [
+          {
+            "type": "KCg-m",
+            "count": 1342,
+            "mean": 246.7
+          },
+          {
+            "type": "KCab-s",
+            "count": 657,
+            "mean": 185.3
+          },
+          {
+            "type": "KCab-m",
+            "count": 536,
+            "mean": 169.2
+          },
+          {
+            "type": "KCab-c",
+            "count": 488,
+            "mean": 141.2
+          },
+          {
+            "type": "KCa'b'-ap2",
+            "count": 291,
+            "mean": 209.6
+          },
+          {
+            "type": "Lawf2",
+            "count": 250,
+            "mean": 30.6
+          },
+          {
+            "type": "KCg-d",
+            "count": 206,
+            "mean": 193.9
+          },
+          {
+            "type": "KCa'b'-m",
+            "count": 205,
+            "mean": 209.9
+          },
+          {
+            "type": "KCa'b'-ap1",
+            "count": 199,
+            "mean": 217.2
+          },
+          {
+            "type": "KCab-p",
+            "count": 129,
+            "mean": 208.0
+          },
+          {
+            "type": "PAM08",
+            "count": 50,
+            "mean": 286.7
+          },
+          {
+            "type": "Dm18",
+            "count": 48,
+            "mean": 48.7
+          }
+        ]
+      }
+    }
+  },
+  {
+    "tag": "navcore",
+    "columns": {
+      "none": {
+        "pop_rate_during_hz": 0.0,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "photo_pulse": {
+        "pop_rate_during_hz": 2.8993211672397075,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "orn_pulse": {
+        "pop_rate_during_hz": 0.2591025301948338,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      },
+      "photo_orn_pulse": {
+        "pop_rate_during_hz": 3.205236709865115,
+        "pop_rate_after_hz": 0.0,
+        "n_active_after_gt1hz": 0,
+        "superclass_after": {},
+        "top_types_after": []
+      }
+    }
+  }
+]
