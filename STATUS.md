@@ -112,16 +112,38 @@ driving a kinematic body's steering in an actual arena — is still open (M5). T
 this as "the wiring can carry a signal when pushed," not "vision already drives
 behavior."
 
+### M4 — Skeld world 🟡 map + vents done, rules engine + viewer map view not yet
+[flyseek/world/skeld.py](flyseek/world/skeld.py), preview:
+[docs/skeld_world_preview.png](docs/skeld_world_preview.png).
+- Cleaned the map: merged duplicate room labels (`UpperEngine`/`Upper Engine`,
+  `Nav`/`Navigation`, `O2`/`LifeSupp`), dropped 2 tiny disconnected islands (6
+  cells total), relabeled 38 `Unknown` cells to their nearest labeled neighbor.
+- Built a 276×155 occupancy grid + Euclidean distance-to-wall field
+  (`C:\flyseek-data\cache\skeld_grid.npz`).
+- Derived **14 vents in the correct, documented Skeld vent-connectivity graph**
+  (6 groups: Reactor↔Upper Engine, Reactor↔Lower Engine,
+  {Electrical,MedBay,Security}, {Admin,Cafeteria,Hallway}, Navigation↔Weapons,
+  Navigation↔Shields — cross-validated: the group sizes sum to exactly 14,
+  matching the commonly cited vent count). **Vent positions are approximate** —
+  skeld_map.json has no vent data at all, so each vent's position is computed as
+  the point in its room closest to the linked room(s)' centroid. Flagged
+  `"approximate": true` in `config/skeld_extras.json`.
+- `config/game.yaml`: Hide n Seek timers/rules, with documented values (Final
+  Hide 120s, ~6s ping interval) kept separate from undocumented defaults we
+  picked ourselves (clearly labeled in the file). Task rules are genuinely
+  ambiguous across sources (Innersloth's page describes a task-driven timer;
+  other summaries say tasks are disabled in this mode) — defaulted to disabled
+  rather than guessing, and no task stations are modeled.
+- **Not yet built**: the rules engine (phase transitions, win conditions, kill/
+  vent/ping logic) and the map view in the viewer.
+
 ## Not done yet
 
-Everything past the M3 checks above is unbuilt. In particular, **no training has
+Everything past the M3/M4 work above is unbuilt. In particular, **no training has
 happened** — the plan's Stage W0–S training schedule is measured in hours to days
 of GPU time even on `navcore`-sized subgraphs, which doesn't fit in an interactive
 session. Concretely, still open:
 
-- **M4 — Skeld world**: map cleanup (room-name normalization, dropping the 2 tiny
-  disconnected islands), vents/tasks/spawns (`skeld_extras.json`), the rules
-  engine, and the map view in the viewer are all unbuilt.
 - **M5–M7 — closed-loop walking, navigation, and role training**: none of the
   sensory encoders or motor decoders from `config/senses.yaml`/`config/motors.yaml`
   are wired to the actual LIF simulator yet — those configs currently describe
@@ -145,11 +167,12 @@ they were easy.
 
 ## Next session's concrete first steps
 
-1. Write `flyseek/world/skeld.py`: clean the map, build the occupancy grid +
-   distance transform, author `skeld_extras.json` (vents/tasks/spawns).
-2. Wire one sensory encoder (vision) and one motor decoder (steering) end-to-end
+1. Wire one sensory encoder (vision) and one motor decoder (steering) end-to-end
    on a single fly in an empty arena — the first real closed loop. Use realistic
    encoder gains (not the strong forced drive used for the M3 go/no-go checks) and
    check whether the pursuit/looming asymmetries from M3 still show up — if they
    don't, that's exactly where `bypass_downstream` gets flipped on.
+2. Build the rules engine (`flyseek/world/rules.py`): phase transitions, win
+   conditions, kill/vent/ping logic, using `config/game.yaml` +
+   `config/skeld_extras.json`.
 3. Start Stage W1 (open-arena phototaxis) once the closed loop exists.

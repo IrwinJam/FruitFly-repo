@@ -1,0 +1,161 @@
+{
+  "source": "derived from skeld_map.json by flyseek/world/skeld.py",
+  "vents": [
+    {
+      "group": 0,
+      "room": "Reactor",
+      "links_to": [
+        "Upper Engine"
+      ],
+      "x": -19.413,
+      "y": -3.392,
+      "approximate": true
+    },
+    {
+      "group": 0,
+      "room": "Upper Engine",
+      "links_to": [
+        "Reactor"
+      ],
+      "x": -17.7,
+      "y": -4.95,
+      "approximate": true
+    },
+    {
+      "group": 1,
+      "room": "Reactor",
+      "links_to": [
+        "Lower Engine"
+      ],
+      "x": -17.4,
+      "y": -8.1,
+      "approximate": true
+    },
+    {
+      "group": 1,
+      "room": "Lower Engine",
+      "links_to": [
+        "Reactor"
+      ],
+      "x": -19.352,
+      "y": -9.453,
+      "approximate": true
+    },
+    {
+      "group": 2,
+      "room": "Electrical",
+      "links_to": [
+        "MedBay",
+        "Security"
+      ],
+      "x": -9.956,
+      "y": -7.68,
+      "approximate": true
+    },
+    {
+      "group": 2,
+      "room": "MedBay",
+      "links_to": [
+        "Electrical",
+        "Security"
+      ],
+      "x": -10.265,
+      "y": -5.373,
+      "approximate": true
+    },
+    {
+      "group": 2,
+      "room": "Security",
+      "links_to": [
+        "Electrical",
+        "MedBay"
+      ],
+      "x": -12.222,
+      "y": -6.885,
+      "approximate": true
+    },
+    {
+      "group": 3,
+      "room": "Admin",
+      "links_to": [
+        "Cafeteria",
+        "Hallway"
+      ],
+      "x": -0.3,
+      "y": -5.3999999999999995,
+      "approximate": true
+    },
+    {
+      "group": 3,
+      "room": "Cafeteria",
+      "links_to": [
+        "Admin",
+        "Hallway"
+      ],
+      "x": -0.6,
+      "y": -5.3999999999999995,
+      "approximate": true
+    },
+    {
+      "group": 3,
+      "room": "Hallway",
+      "links_to": [
+        "Admin",
+        "Cafeteria"
+      ],
+      "x": -0.098,
+      "y": -4.939,
+      "approximate": true
+    },
+    {
+      "group": 4,
+      "room": "Navigation",
+      "links_to": [
+        "Weapons"
+      ],
+      "x": 12.299999999999999,
+      "y": -3.0,
+      "approximate": true
+    },
+    {
+      "group": 4,
+      "room": "Weapons",
+      "links_to": [
+        "Navigation"
+      ],
+      "x": 12.15,
+      "y": -3.15,
+      "approximate": true
+    },
+    {
+      "group": 5,
+      "room": "Navigation",
+      "links_to": [
+        "Shields"
+      ],
+      "x": 11.25,
+      "y": -6.6,
+      "approximate": true
+    },
+    {
+      "group": 5,
+      "room": "Shields",
+      "links_to": [
+        "Navigation"
+      ],
+      "x": 9.9,
+      "y": -7.35,
+      "approximate": true
+    }
+  ],
+  "spawn": {
+    "note": "Standard Among Us behavior: all players (including the Seeker) spawn in Cafeteria.",
+    "room": "Cafeteria",
+    "xy": [
+      -0.9699666339548577,
+      0.9391030421982335
+    ]
+  },
+  "tasks_modeled": false,
+  "tasks_note": "Hide n Seek's task rules are ambiguous across sources (Innersloth's own page describes tasks reducing the Final Hide timer via a 'Common Tasks' setting; other summaries state tasks are disabled entirely). Not resolved by further searching, so task stations are not modeled -- see config/game.yaml."
+}
