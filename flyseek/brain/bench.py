@@ -1,80 +1,66 @@
 """
-Benchmark the batched LIF simulator: steps/sec and real-time factor for
-full/pruned5 graphs at B=1 and B=6 (Milestone M1 acceptance criterion).
+Benchmark the calibrated LIF simulator on an ACTIVE network (the M1 benchmark ran a
+silent network): all photoreceptors + ORNs driven at 20 Hz, plus LC10a-L at 50 Hz,
+in every batch column. Reports steps/sec, real-time factor and spikes/step for each
+graph and batch size.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import time
-from pathlib import Path
 
 import torch
 
-from flyseek.brain.lif_torch import LIFBrain, load_config
+from flyseek.brain.lif_torch import LIFBrain
+from flyseek.brain.roles import role_idx
+from flyseek.paths import DOCS_DIR
 
-RESULTS_PATH = Path(r"C:\Users\Irwin\OneDrive\Desktop\FruitFly\docs\bench_results.json")
 
-
-def bench_one(tag: str, batch_size: int, n_steps: int = 200, warmup: int = 20) -> dict:
+def bench_one(tag: str, batch: int, seconds: float = 0.5, warmup_ms: float = 200) -> dict:
     brain = LIFBrain(tag=tag)
-    brain.reset(batch_size)
+    brain.reset(batch, seed=0)
+    broad = sorted(set(role_idx("photoreceptor_achromatic", graph=tag) + role_idx("photoreceptor_color", graph=tag)
+                       + role_idx("aversive_odor", graph=tag) + role_idx("attractive_odor", graph=tag)))
+    lc = role_idx("target_motion_detector", "L", graph=tag)
+    neu, cols, rates = [], [], []
+    for c in range(batch):
+        neu += broad + lc
+        cols += [c] * (len(broad) + len(lc))
+        rates += [20.0] * len(broad) + [50.0] * len(lc)
+    brain.set_stimulus(neu, cols, rates)
 
-    n = brain.n_neurons
-    dev = brain.device
-    torch.manual_seed(0)
-
-    for _ in range(warmup):
-        ext = (torch.rand(n, batch_size, device=dev) < 0.001).float() * 5.0
-        brain.step(ext)
-    if dev.type == "cuda":
-        torch.cuda.synchronize()
-
+    brain.run(int(warmup_ms / brain.dt_ms))
+    n_steps = int(seconds * 1000 / brain.dt_ms)
+    torch.cuda.synchronize()
     t0 = time.perf_counter()
-    n_spikes = 0
+    spikes = 0
     for _ in range(n_steps):
-        ext = (torch.rand(n, batch_size, device=dev) < 0.001).float() * 5.0
-        spikes = brain.step(ext)
-        n_spikes += int(spikes.sum().item())
-    if dev.type == "cuda":
-        torch.cuda.synchronize()
-    elapsed = time.perf_counter() - t0
-
-    cfg = load_config()
-    dt_ms = cfg["sim"]["dt_ms"]
-    brain_ms_simulated = n_steps * dt_ms
-    real_time_factor = (brain_ms_simulated / 1000.0) / elapsed
-
-    return {
-        "tag": tag,
-        "batch_size": batch_size,
-        "n_neurons": n,
-        "n_edges": brain.num_edges(),
-        "n_steps": n_steps,
-        "wall_seconds": round(elapsed, 4),
-        "steps_per_sec": round(n_steps / elapsed, 2),
-        "ms_per_step": round(1000 * elapsed / n_steps, 4),
-        "brain_ms_simulated": brain_ms_simulated,
-        "real_time_factor": round(real_time_factor, 4),
-        "mean_spikes_per_step": round(n_spikes / n_steps, 1),
-        "device": str(dev),
+        spikes += int(brain.step().sum())
+    torch.cuda.synchronize()
+    wall = time.perf_counter() - t0
+    res = {
+        "tag": tag, "batch": batch, "n_neurons": brain.n_neurons, "n_edges": brain.num_edges(),
+        "propagation": brain.propagation, "dt_ms": brain.dt_ms,
+        "ms_per_step": round(1000 * wall / n_steps, 3),
+        "real_time_factor_per_fly_batch": round(seconds / wall, 4),
+        "spikes_per_step": round(spikes / n_steps, 1),
     }
-
-
-def main():
-    results = []
-    for tag in ["pruned5", "full"]:
-        for batch_size in [1, 6]:
-            print(f"Benchmarking tag={tag} batch_size={batch_size} ...")
-            r = bench_one(tag, batch_size)
-            print(f"  {r['steps_per_sec']} steps/sec, {r['ms_per_step']} ms/step, "
-                  f"real-time factor {r['real_time_factor']}x, "
-                  f"mean spikes/step {r['mean_spikes_per_step']}")
-            results.append(r)
-
-    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS_PATH.write_text(json.dumps(results, indent=2))
-    print(f"\nSaved to {RESULTS_PATH}")
+    del brain
+    torch.cuda.empty_cache()
+    return res
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--configs", nargs="+", default=[
+        "navcore:1", "navcore:16", "navcore:64", "pruned5:1", "pruned5:6", "full:1", "full:6"])
+    args = ap.parse_args()
+    results = []
+    for spec in args.configs:
+        tag, b = spec.split(":")
+        r = bench_one(tag, int(b))
+        print(f"{tag:8s} B={r['batch']:<3} {r['ms_per_step']:8.3f} ms/step | real-time {r['real_time_factor_per_fly_batch']:.3f}x "
+              f"| {r['spikes_per_step']:.0f} spikes/step", flush=True)
+        results.append(r)
+    (DOCS_DIR / "bench_results.json").write_text(json.dumps(results, indent=2))
