@@ -1,10 +1,12 @@
 """
 Motor decoder: EMA-smoothed descending-neuron rates -> (speed, omega) per fly.
 Config and the reasoning behind each choice: config/motors.yaml.
+
+Any numeric config value may be a scalar or a per-fly array of shape [A]; that is how
+training evaluates a whole population of adapter settings in one GPU batch.
 """
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -12,7 +14,7 @@ import yaml
 
 from flyseek.paths import CONFIG_DIR
 
-READOUT_TYPES = ["DNa02", "DNa03", "DNg13", "DNa01", "DNp01", "MDN", "DNg100", "DNp09"]
+READOUT_TYPES = ["DNa02", "DNa03", "DNg13", "DNa01", "DNp01", "MDN", "DNg100", "DNp09", "PFL2"]
 
 
 def load_motor_config() -> dict:
@@ -38,7 +40,7 @@ class MotorDecoder:
 
     def update_rates(self, instant_hz: dict, dt_ms: float):
         """instant_hz[type][side] -> [A] rate over the last tick (Hz)."""
-        a = 1.0 - math.exp(-dt_ms / self.cfg["ema_tau_ms"])
+        a = 1.0 - np.exp(-dt_ms / np.asarray(self.cfg["ema_tau_ms"], dtype=float))
         for t in READOUT_TYPES:
             for s in "LR":
                 if t in instant_hz and s in instant_hz[t]:
@@ -49,7 +51,7 @@ class MotorDecoder:
         w = weights or c["turn"]["weights"]
         drive = np.zeros(self.n)
         for t, wt in w.items():
-            if wt:
+            if np.any(np.asarray(wt) != 0):
                 drive += wt * (self.rates[t]["L"] - self.rates[t]["R"])
         drive = np.where(np.abs(drive) < c["turn"]["deadband_hz"], 0.0, drive)
         omega = np.tanh(drive / c["turn"]["scale_hz"]) * c["turn"]["max_omega_rad_per_s"]
@@ -62,5 +64,18 @@ class MotorDecoder:
         bk = c["backward"]
         back = (self.rates[bk["source"]]["L"] + self.rates[bk["source"]]["R"]) / 2 > bk["threshold_hz"]
         speed = np.where(back, bk["speed_units_per_s"], speed)
+
+        # goal behind (Phase 4): PFL3 steering fades to zero when the goal is behind the
+        # fly; PFL2 (bilateral) is high there. When PFL2 exceeds threshold, turn in the
+        # direction of the residual steering drive (left if none) and slow down.
+        gb = c.get("goal_behind")
+        if gb and np.any(gb.get("enabled", False)):
+            pfl2 = (self.rates[gb["source"]]["L"] + self.rates[gb["source"]]["R"]) / 2
+            behind = (pfl2 > gb["threshold_hz"]) & np.asarray(gb.get("enabled", False), dtype=bool)
+            direction = np.where(drive < 0, -1.0, 1.0)
+            omega = np.where(behind, np.clip(omega + direction * gb["turn_rad_per_s"],
+                                             -c["turn"]["max_omega_rad_per_s"], c["turn"]["max_omega_rad_per_s"]), omega)
+            speed = np.where(behind, speed * gb["speed_factor"], speed)
+
         speed = np.clip(speed, bk["speed_units_per_s"], c["forward"]["max_speed_units_per_s"])
         return DecodedCommand(speed, omega, dash, back, drive)

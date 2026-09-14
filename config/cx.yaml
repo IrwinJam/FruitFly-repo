@@ -1,0 +1,21 @@
+# Central-complex (compass) channels. Values come from docs/phase4_cx_test.json and
+# docs/phase4_cx_pfl2_check.json (Phase 4.2). Neuron phases: flyseek/brain/cx_map.py
+# (nominal PB glomerulus / FB column convention).
+
+# Poisson peak rate of the EPG heading bump and FC2 goal bump. 150 Hz is the Shiu et
+# al. default activation rate; 40 Hz gave almost no steering and 80 Hz ~1/7 of it
+# (phase4_cx_drive_r*.json). Disclosed: well above typical in vivo EPG/FC2 rates.
+r_max_hz: 150.0
+kappa: 2.0 # von Mises bump concentration
+
+# World -> nominal angle mapping:
+#   nominal_heading = heading_sign * world_heading
+#   nominal_goal    = heading_sign * world_goal + goal_offset_deg
+# Measured: DNa02/DNa03 left-minus-right peaks at nominal (goal - heading) = 252 deg,
+# and PFL2 mean peaks at nominal 169 deg. Two mappings give identical steering
+# (sign +1 / offset 162, or sign -1 / offset 342); they differ only in what PFL2
+# means. Sign -1 makes PFL2 peak when the goal is BEHIND the fly (world offset ~173 deg),
+# matching our reading of Westeinde et al. 2024; flagged for verification. The PFL2
+# decoder weight is trainable, so training can undo a wrong sign.
+heading_sign: -1
+goal_offset_deg: 342.0

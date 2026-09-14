@@ -13,8 +13,11 @@ from dataclasses import dataclass
 
 import numpy as np
 import torch
+import yaml
 
+from flyseek.brain.cx_test import cx_neurons
 from flyseek.brain.lif_torch import LIFBrain, load_config
+from flyseek.paths import CONFIG_DIR
 from flyseek.brain.roles import full_idx_of, role_idx, type_idx
 from flyseek.motors.body_kinematic import KinematicBody
 from flyseek.motors.decoders import READOUT_TYPES, MotorDecoder
@@ -64,8 +67,41 @@ class FlyPopulation:
         self.readout = {t: {s: np.array(type_idx(t, s, graph=tag), dtype=np.int64) for s in "LR"} for t in READOUT_TYPES}
         self.full_idx = full_idx_of(tag)
 
-    def _set_stimulus(self, rates: dict):
+        # central-complex compass (EPG heading bump) and goal (FC2 bump), Phase 4.3
+        with open(CONFIG_DIR / "cx.yaml") as f:
+            self.cx_cfg = yaml.safe_load(f)
+        cx = cx_neurons(tag)
+        self.epg_idx = np.array([i for i, _ in cx["EPG"]], dtype=np.int64)
+        self.epg_phase = np.array([p for _, p in cx["EPG"]])
+        self.fc2_idx = np.array([i for i, _ in cx["FC2"]], dtype=np.int64)
+        self.fc2_phase = np.array([p for _, p in cx["FC2"]])
+
+    def _cx_rates(self, heading: np.ndarray, goal: np.ndarray | None, sensing: np.ndarray | None):
+        """Returns (neurons, cols, rates) for the EPG heading bump and FC2 goal bump."""
+        c = self.cx_cfg
+        if goal is None:  # no goal system in use (e.g. untrained Phase 3 baseline): no CX drive at all
+            return [], [], []
+        on = np.ones(self.n, bool) if sensing is None else np.asarray(sensing, bool)
+        parts = []
+        sign = c.get("heading_sign", 1)
+        if self.channel_gain.get("compass", 1.0) > 0 and len(self.epg_idx):
+            h_nom = sign * heading
+            r = c["r_max_hz"] * np.exp(c["kappa"] * (np.cos(self.epg_phase[None, :] - h_nom[:, None]) - 1))
+            parts.append((self.epg_idx, r * on[:, None] * self.channel_gain.get("compass", 1.0)))
+        if goal is not None and self.channel_gain.get("goal", 1.0) > 0 and len(self.fc2_idx):
+            has = on & np.isfinite(goal)
+            g_nom = sign * np.where(has, goal, 0.0) + np.deg2rad(c["goal_offset_deg"])
+            r = c["r_max_hz"] * np.exp(c["kappa"] * (np.cos(self.fc2_phase[None, :] - g_nom[:, None]) - 1))
+            parts.append((self.fc2_idx, r * has[:, None] * self.channel_gain.get("goal", 1.0)))
         neu, cols, rr = [], [], []
+        for idx, rates in parts:
+            keep = rates >= 1.0
+            ff, nn = np.nonzero(keep)
+            neu.append(idx[nn]); cols.append(ff); rr.append(rates[ff, nn])
+        return neu, cols, rr
+
+    def _set_stimulus(self, rates: dict, extra: tuple | None = None):
+        neu, cols, rr = ([], [], []) if extra is None else (list(extra[0]), list(extra[1]), list(extra[2]))
         for ch, sides in rates.items():
             gain = self.channel_gain.get(ch, 1.0)
             if gain == 0 or ch not in self.chan_idx:
@@ -88,12 +124,14 @@ class FlyPopulation:
 
     def tick(self, objects: list[VisualObject], record_all_spikes: bool = False, extra_rates: dict | None = None,
              base_speed: np.ndarray | None = None, movable: np.ndarray | None = None,
-             sensing: np.ndarray | None = None):
+             sensing: np.ndarray | None = None, goal_angle: np.ndarray | None = None):
         """
         extra_rates: additional channels, e.g. {"danger": {"L": [A], "R": [A]}}.
         base_speed:  per-fly engineered forward speed (overrides config/motors.yaml).
         movable:     per-fly bool; False = frozen (dead, in a vent, or seeker during hide phase).
         sensing:     per-fly bool; False = all sensory input off (e.g. a caught fly).
+        goal_angle:  per-fly WORLD goal direction (rad) for the FC2 goal bump; nan = no goal.
+                     The EPG compass bump always tracks the body heading (idealized compass).
         """
         dt_s = self.tick_ms / 1000.0
         b = self.body
@@ -104,7 +142,7 @@ class FlyPopulation:
         if sensing is not None:
             on = np.asarray(sensing, dtype=float)
             rates = {ch: {s: np.asarray(v[s]) * on for s in "LR"} for ch, v in rates.items()}
-        self._set_stimulus(rates)
+        self._set_stimulus(rates, extra=self._cx_rates(b.heading, goal_angle, sensing))
 
         out = self.brain.run(self.steps_per_tick, count_neurons=None if record_all_spikes else self._readout_tensor())
         counts = out["counts"]

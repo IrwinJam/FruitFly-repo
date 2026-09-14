@@ -38,3 +38,14 @@ backward:
   source: MDN
   threshold_hz: 20.0
   speed_units_per_s: -0.8
+
+# Phase 4 goal navigation: PFL3 steering is ~0 when the goal is behind the fly
+# (docs/phase4_cx_test.json); PFL2 mean is highest there (docs/phase4_cx_pfl2_check.json,
+# 15 Hz goal-ahead -> 24 Hz goal-behind at 150 Hz bump drive). Hand-set starting values;
+# Phase 4.4 training tunes them. Only matters when a goal is given (no CX drive otherwise).
+goal_behind:
+  enabled: true
+  source: PFL2
+  threshold_hz: 20.0
+  turn_rad_per_s: 2.0
+  speed_factor: 0.4

@@ -113,6 +113,7 @@ def run_graph(tag: str, replicates: int, r_max: float, kappa: float, seed: int =
         "DNa02_L_minus_R": rate[type_idx("DNa02", "L", tag)].mean(0) - rate[type_idx("DNa02", "R", tag)].mean(0),
         "DNa03_L_minus_R": rate[type_idx("DNa03", "L", tag)].mean(0) - rate[type_idx("DNa03", "R", tag)].mean(0),
         "PFL3_mean": rate[pfl3_L + pfl3_R].mean(0),
+        "PFL2_mean": rate[type_idx("PFL2", graph=tag)].mean(0) if type_idx("PFL2", graph=tag) else np.zeros(rate.shape[1]),
     }
 
     res = {"tag": tag, "replicates": replicates, "r_max_hz": r_max, "kappa": kappa, "measure_wall_s": round(wall, 1),
