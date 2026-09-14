@@ -68,6 +68,7 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
   - [ ] Check DNg100/DNp09 (forward candidates) and pIP1 (arousal): does sensory drive move them at all?
 - [ ] **Build `navcore`**, the small training subgraph: neurons within k hops downstream of the sensory roles *and* upstream of the motor DNs. Re-run the checks on it and confirm the effects survive. Benchmark it with 16 flies.
 - [ ] **Benchmark on active networks** (real spiking load) and update `docs/bench_results.json`.
+- [ ] **Build the shuffled-connectome generator** (degree-preserving rewiring, sign kept per presynaptic neuron) and run the same checks on it. If shuffled graphs show the same L/R asymmetries, that's a red flag to investigate now, not after training.
 
 **Done when:** a table with statistics shows which pathways work at which drive levels on `full`, `pruned5` and `navcore`, and there's a go/no-go on direct injection vs `bypass_downstream` for each pathway.
 
@@ -111,6 +112,8 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 - [ ] **W1 (arena phototaxis)** on navcore. Rough estimate: 1–2 h of GPU.
 - [ ] **W2 (Skeld navigation curriculum)**: Cafeteria → room + corridor → full map. Rough estimate: 7–15 h of GPU.
 - [ ] Check transfer: the best adapter from navcore evaluated on `pruned5`.
+- [ ] **Portability for free compute:** configurable data paths (no hard-coded `C:\`), headless CLI, checkpoint/resume, and a Kaggle notebook that pulls the repo plus a private Kaggle dataset.
+- [ ] Run W2 on the shuffled connectome too, with the same budget, for the §6.2 control.
 
 **Done when:** a trained fly reaches a random room within 90 s in ≥ 60% of trials and beats a random walk.
 
@@ -118,11 +121,14 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 - [ ] **R1:** train the Seeker adapter against scripted Hiders, and the Hider adapter against a scripted Seeker. Rough estimate: 15–30 h of GPU per role. Use shorter episodes (90 s) first to halve that.
 - [ ] **R2:** self-play league with a hall of fame of past adapters. Open-ended; stop when win rates plateau.
 - [ ] Win-rate curves and a comparison table against the baselines.
+- [ ] **Controls for publication:** the shuffled connectome trained with the same budget, adapter-on-noise, and circuit ablations (LC10a silenced for the Seeker; LC4/LPLC2/DNp01 silenced for Hiders) evaluated on a held-out seed set.
 
 **Done when:** the trained Seeker beats scripted Hiders more often than a random-walk Seeker does, and trained Hiders survive longer than a random baseline.
 
-### Phase 6 — Showcase · ~1–2 sessions + ~1 h of GPU
-- [ ] 1 Seeker + 5 Hiders on the `full` graph with trained adapters. Recorded match: ~30–60 min of compute per 5-minute match.
+### Phase 6 — Showcase · ~1–2 sessions + a few hours of GPU
+- [ ] **6a — 1 Seeker + 3 Hiders** on the `full` graph with trained role adapters. Recorded match: ~20–40 min of compute per 5-minute match on the 2060 Super (estimate).
+- [ ] **6b — 1 Seeker + 5 Hiders**, reusing the same role adapters (no retraining). Evaluate briefly first; fine-tune the Hider adapter only if 5 Hiders crowd or collapse. ~30–60 min of compute per match.
+- [ ] Methods table and a results write-up (§6.2) alongside the video.
 - [ ] Viewer polish: IMG_0897 bloom, named-circuit labels ("LC10a — target spotted"), a highlight when the fly is selected, title card.
 - [ ] Capture a 60–90 s video.
 
@@ -144,10 +150,10 @@ Effort is in **working sessions** (roughly one sitting like today). GPU time is 
 | 3 **First match** | 2–3 | minutes per match | **Watchable replay with real spikes** |
 | 4 Walk/navigate | 2 | 1–2 nights | Flies that actually get around The Skeld |
 | 5 Roles | 2 | 2–4 nights | Seekers that hunt, hiders that flee |
-| 6 Showcase | 1–2 | ~1 h | Video |
+| 6 Showcase | 1–2 | a few hours | 3-Hider video, then 5-Hider video, plus write-up |
 | **Total** | **~10–13 sessions** | **~4–7 nights** | |
 
-A cloud GPU (e.g. an A100, roughly 10× faster than the 2060 Super) would turn most of those nights into hours.
+No paid compute (§6.1): the nights run on the local 2060 Super, offloaded to Kaggle's free ~30 h/week where they fit in 12 h chunks, and to TTU HPCC once an account is approved. The publication controls in §6.2 (shuffled connectome, ablations) add roughly **+50–100% training compute** on top of these numbers.
 
 ---
 
@@ -160,17 +166,47 @@ A cloud GPU (e.g. an A100, roughly 10× faster than the 2060 Super) would turn m
 | 3 | Training too slow on the 2060 Super | Likely | navcore, shorter episodes, overnight runs, optional cloud |
 | 4 | Guessed cell-type identities are wrong (pIP1 as P1, DNg100 as forward) | Open | Phase 1 checks whether they respond at all. Swap candidates if not |
 | 5 | Replay files too large | Unmeasured | Measure in Phase 3, with a quantized-heat fallback |
-| 6 | Two copies of the repo drift apart | **Happening already** | Pick one canonical folder (§6) |
+| 6 | Two copies of the repo drift apart | Resolved | `FruitFly/` is canonical, backed up to GitHub |
+| 7 | Free-tier limits (Kaggle 12 h sessions, HPCC approval time) | Likely | Resumable training; request HPCC access now |
+| 8 | The shuffled connectome performs just as well | Unknown, **and a legitimate result** | Test early in Phase 1; report it either way |
 
 ---
 
-## 6. Decisions needed from you
+## 6. Decisions (resolved 2026-09-13)
 
-1. **Canonical folder.** `FruitFly/` (has the venv and data junction) or `FruitFly-repo/` (clean clone)? Working in both will cause drift. Suggestion: keep working in `FruitFly/`, and either delete `FruitFly-repo/` or push both to a **private GitHub repo** as the real backup.
-2. **Cloud GPU for Phases 4–5?** Yes/no, plus a rough budget. Without one, plan on overnight runs.
-3. **Hiders in the showcase:** 5 (the original plan) or 3 (about 40% less compute and bigger brain panels)?
-4. **"Feel" values nobody publishes:** movement speed, vision radius, kill distance. Suggested approach: pick them by eye in Phase 3 so matches look like Among Us.
-5. **How honest the UI should be about bypasses.** If Phase 1 forces downstream injection, keep a visible "bypass" label (recommended) or hide it?
+| # | Decision | What it means for the plan |
+|---|---|---|
+| 1 | **`FruitFly/` is the canonical folder**, backed up to a **private GitHub repo** | All work happens in `FruitFly/`. `FruitFly-repo/` is redundant and can be deleted. The data (~1.4 GB) isn't pushed; [README.md](README.md) documents how to rebuild it |
+| 2 | **No paid compute** | See §6.1. Azure's free and student tiers don't allow GPU VMs, so the plan uses the local 2060 Super, then Kaggle's free tier, then TTU HPCC |
+| 3 | **Showcase with 3 Hiders first, then 5** | Adapters are trained **per role, not per fly**, so the 5-Hider match reuses the same trained Hider adapter. Scaling up costs compute, not retraining. A short fine-tune may be needed if 5 Hiders behave differently (e.g. crowding) |
+| 4 | **Aim for publishable results** | See §6.2. This adds controls and ablations to Phases 1, 4 and 5, and keeps bypasses **visibly labeled** |
+| — | "Feel" values (speed, vision radius, kill distance) | Picked by eye in Phase 3, then **frozen and reported** so results can be reproduced |
+
+### 6.1 Free compute plan
+
+| Option | What you get | Verdict |
+|---|---|---|
+| Azure free trial / Azure for Students | GPU VM series (NC etc.) not available on trial or student subscriptions; student quota is 3 vCPUs | ❌ Doesn't work for GPU |
+| **Local RTX 2060 Super** | 8 GB, always available, overnight runs | ✅ Default for Phases 1–3 and short training runs |
+| **Kaggle Notebooks** | ~30 GPU-hours/week free (P100 16 GB or 2× T4), 12 h max per session; runs continue after closing the tab | ✅ Offload for Phase 4–5 training. Needs checkpoint/resume (a 12 h cap per run) and the data uploaded as a private Kaggle dataset (~1.4 GB) |
+| **TTU HPCC (RedRaider: Matador/Toreador GPU partitions)** | Free for TTU students **with faculty sponsorship**, fair-share queue | ⭐ Best option for Phase 5 and the full-graph showcase. A faculty sponsor also helps with publishing. **Action: find a sponsor and request an account early**, since approval takes time |
+
+**Implications for the code:**
+- Training scripts must be **headless and resumable**, checkpointing every N generations.
+- Data paths must be **configurable**. They're hard-coded to `C:\flyseek-data` today, which breaks on Kaggle/HPCC (Linux).
+- Both changes are added to Phase 4.
+
+### 6.2 What "publishable" adds
+
+A result like "the connectome makes the fly hunt" only holds up against the right comparisons. Each of these goes into the phases below:
+
+1. **Shuffled-connectome control.** A degree-preserving rewired graph, trained with the same adapter budget. If it plays just as well, the wiring isn't doing the work. **This is the single most important control.**
+2. **Baselines.** Zero-gain brain, random walk, scripted agents, and an adapter-only model (the same readout on noise instead of a brain).
+3. **Circuit ablations.** Silence LC10a → does pursuit drop? Silence LC4/LPLC2/DNp01 → does escape drop?
+4. **Statistics.** Multiple seeds, confidence intervals, fixed evaluation sets held out from training.
+5. **Disclosure.** Every bypass injection, guessed cell-type identity (pIP1 as P1, DNg100 as forward), and hand-picked constant is listed in a methods table.
+6. **Reproducibility.** Code, configs, checkpoints and the exact data version are pinned. This is a small preregistration: write down success criteria *before* running each evaluation.
+7. **Attribution and IP.** MaleCNS is CC-BY 4.0 with a citation. Use no Among Us art; use own sprites in any published video. Remove the reference screenshots from any public release.
 
 ---
 
