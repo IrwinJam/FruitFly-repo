@@ -1,0 +1,53 @@
+{
+  "values": {
+    "decoder:turn.scale_hz": 20.584660723188307,
+    "decoder:ema_tau_ms": 124.91487669937332,
+    "decoder:turn.weights.DNa02": 1.2812721935487297,
+    "decoder:turn.weights.DNa03": 0.3087609181746676,
+    "decoder:turn.weights.DNg13": -0.29572043369823287,
+    "decoder:goal_behind.threshold_hz": 23.32473642143964,
+    "decoder:goal_behind.turn_rad_per_s": 2.227689596474888,
+    "decoder:goal_behind.speed_factor": 0.6241614177821573,
+    "policy:w_free": 1.3557141940506945,
+    "policy:w_novel": 2.324214487796307,
+    "policy:w_align": 0.8976034092254936,
+    "policy:w_keep": -0.7270941106547757,
+    "policy:decide_s": 1.700534336254471
+  },
+  "rooms": [
+    2.0,
+    2.0,
+    2.0,
+    3.0,
+    4.0,
+    2.0,
+    1.0,
+    2.0
+  ],
+  "coverage": [
+    0.0257,
+    0.0594,
+    0.0594,
+    0.0495,
+    0.0554,
+    0.0614,
+    0.0277,
+    0.0218
+  ],
+  "stuck_s": [
+    22.9999999999996,
+    14.639999999999777,
+    15.779999999999752,
+    20.739999999999647,
+    12.59999999999982,
+    10.819999999999858,
+    23.31999999999959,
+    23.239999999999593
+  ],
+  "frac_time_near_wall": 0.0,
+  "heading_error_deg_when_near_wall": null,
+  "heading_error_deg_when_free": 55.820078132927605,
+  "goal_free_dist_when_near_wall_mean": null,
+  "frac_near_wall_goal_blocked_within_1u": null,
+  "mean_speed_units_per_s": 0.7345204620558697
+}

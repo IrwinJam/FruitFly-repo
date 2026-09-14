@@ -1,0 +1,53 @@
+{
+  "values": {
+    "decoder:turn.scale_hz": 19.999999999999996,
+    "decoder:ema_tau_ms": 100.00000000000004,
+    "decoder:turn.weights.DNa02": 1.0,
+    "decoder:turn.weights.DNa03": 0.5,
+    "decoder:turn.weights.DNg13": 0.5,
+    "decoder:goal_behind.threshold_hz": 20.0,
+    "decoder:goal_behind.turn_rad_per_s": 2.0,
+    "decoder:goal_behind.speed_factor": 0.4,
+    "policy:w_novel": 2.0,
+    "policy:w_room": 3.0,
+    "policy:w_dist": 1.0,
+    "policy:replan_s": 2.9999999999999996,
+    "policy:lookahead_units": 1.4999999999999998
+  },
+  "rooms": [
+    4.0,
+    5.0,
+    4.0,
+    4.0,
+    1.0,
+    4.0,
+    4.0,
+    3.0
+  ],
+  "coverage": [
+    0.0317,
+    0.0436,
+    0.0396,
+    0.0475,
+    0.0317,
+    0.0535,
+    0.0614,
+    0.0257
+  ],
+  "stuck_s": [
+    13.299999999999805,
+    14.319999999999784,
+    21.93999999999962,
+    15.159999999999766,
+    17.31999999999972,
+    18.1999999999997,
+    19.25999999999968,
+    16.679999999999733
+  ],
+  "frac_time_near_wall": 0.7336666666666667,
+  "heading_error_deg_when_near_wall": 57.505898888971174,
+  "heading_error_deg_when_free": 66.84106182018614,
+  "goal_free_dist_when_near_wall_mean": 2.0496020466173963,
+  "frac_near_wall_goal_blocked_within_1u": 0.2808413871517908,
+  "mean_speed_units_per_s": 0.7230187840423025
+}

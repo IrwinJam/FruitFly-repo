@@ -39,6 +39,21 @@ EXPLORE_PARAMS = [
 ]
 
 
+_DECODER_PARAMS = [p for p in EXPLORE_PARAMS if p.name.startswith("decoder:")]
+
+# Route policy (map-based planner, flyseek/agents/route_policy.py). Replaced the ray
+# policy after docs/phase4_diag_explore.png showed flies couldn't find narrow exits.
+ROUTE_PARAMS = _DECODER_PARAMS + [
+    Param("policy:w_novel", 0.0, 4.0, 2.0),
+    Param("policy:w_room", 0.0, 6.0, 3.0),
+    Param("policy:w_dist", 0.0, 4.0, 1.0),
+    Param("policy:replan_s", 0.5, 10.0, 3.0, log=True),
+    Param("policy:lookahead_units", 0.5, 4.0, 1.5, log=True),
+]
+
+PARAM_SETS = {"ray": EXPLORE_PARAMS, "route": ROUTE_PARAMS}
+
+
 def to_unit(params: list[Param], values: dict | None = None) -> np.ndarray:
     out = []
     for p in params:

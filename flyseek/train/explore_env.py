@@ -19,6 +19,8 @@ import torch
 
 from flyseek.agents.fly_agent import FlyPopulation
 from flyseek.agents.goal_policy import ExplorationGoalPolicy
+from flyseek.agents.route_policy import RouteGoalPolicy
+from flyseek.world.pathing import GridPaths
 from flyseek.brain.roles import type_idx
 from flyseek.motors.decoders import load_motor_config
 from flyseek.world.grid import OccupancyGrid
@@ -28,6 +30,7 @@ from flyseek.train.adapter import apply_decoder, policy_values
 
 _GRID = None
 _ROOMS = None
+_PATHS = None
 
 
 def _world():
@@ -38,9 +41,17 @@ def _world():
     return _GRID, _ROOMS
 
 
+def _paths():
+    global _PATHS
+    if _PATHS is None:
+        # wall_cost keeps planned routes near corridor centers (see pathing.GridPaths)
+        _PATHS = GridPaths(_world()[0], wall_cost=4.0)
+    return _PATHS
+
+
 def run_episode(tag: str, values: dict, seeds: list[int], seconds: float = 45.0, spawn: str = "default",
                 silence: list[str] | None = None, wall_bump: bool = False, brain=None,
-                return_traces: bool = False) -> dict:
+                return_traces: bool = False, policy_kind: str = "route") -> dict:
     """
     values: decoded adapter values, each scalar or an array of length len(seeds) (one fly per seed).
     Returns fitness per fly plus coverage details.
@@ -64,7 +75,10 @@ def run_episode(tag: str, values: dict, seeds: list[int], seconds: float = 45.0,
     cfg = copy.deepcopy(load_motor_config())
     apply_decoder(cfg, values)
     pop.decoder.cfg = cfg
-    policy = ExplorationGoalPolicy(n, grid, policy_values(values))
+    if policy_kind == "route":
+        policy = RouteGoalPolicy(n, grid, _paths(), rooms, policy_values(values), seed=int(seeds[0]))
+    else:
+        policy = ExplorationGoalPolicy(n, grid, policy_values(values))
     cov = Coverage(grid, rooms, n)
     dt = pop.tick_ms / 1000
     stuck = np.zeros(n)

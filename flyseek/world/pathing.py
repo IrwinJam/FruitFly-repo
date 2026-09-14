@@ -14,7 +14,12 @@ _NEIGH = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
 
 
 class GridPaths:
-    def __init__(self, grid: OccupancyGrid, clearance: float = 0.2):
+    def __init__(self, grid: OccupancyGrid, clearance: float = 0.2, wall_cost: float = 0.0, wall_scale: float = 0.3):
+        """
+        wall_cost > 0 makes stepping into cells near walls more expensive
+        (cost x (1 + wall_cost * exp(-(clearance_dist - 0.25) / wall_scale))), so shortest
+        paths run down the middle of corridors instead of hugging walls and corners.
+        """
         self.grid = grid
         free = grid.walkable & (grid.dist >= clearance)
         self.free = free
@@ -31,7 +36,11 @@ class GridPaths:
             ok[ok] = free[r2[ok], c2[ok]]
             rows.append(np.arange(len(cells))[ok])
             cols.append(node_of[r2[ok], c2[ok]])
-            wts.append(np.full(int(ok.sum()), np.hypot(dx, dy) * grid.res))
+            base = np.full(int(ok.sum()), np.hypot(dx, dy) * grid.res)
+            if wall_cost > 0:
+                near = grid.dist[r2[ok], c2[ok]]
+                base = base * (1.0 + wall_cost * np.exp(-np.maximum(near - 0.25, 0.0) / wall_scale))
+            wts.append(base)
         n = len(cells)
         self.graph = coo_matrix((np.concatenate(wts), (np.concatenate(rows), np.concatenate(cols))), shape=(n, n)).tocsr()
 

@@ -25,7 +25,7 @@ from cmaes import CMA
 
 from flyseek.brain.lif_torch import LIFBrain
 from flyseek.paths import RESULTS_DIR
-from flyseek.train.adapter import EXPLORE_PARAMS, decode, to_unit
+from flyseek.train.adapter import PARAM_SETS, decode, to_unit
 from flyseek.train.explore_env import run_episode
 
 
@@ -40,12 +40,13 @@ def main():
     ap.add_argument("--seconds", type=float, default=45.0)
     ap.add_argument("--sigma", type=float, default=0.2)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--policy", default="route", choices=list(PARAM_SETS))
     args = ap.parse_args()
 
     out = RESULTS_DIR / "train" / args.run
     out.mkdir(parents=True, exist_ok=True)
     ckpt, log_path = out / "cma.pkl", out / "log.jsonl"
-    params = EXPLORE_PARAMS
+    params = PARAM_SETS[args.policy]
     if ckpt.exists():
         state = pickle.loads(ckpt.read_bytes())
         opt, gen0, best = state["opt"], state["generation"] + 1, state["best"]
@@ -65,7 +66,8 @@ def main():
         # fresh episode seeds each generation (same seeds for every candidate in a generation)
         seeds = [args.seed * 100000 + gen * 1000 + e for _ in cands for e in range(E)]
         values = decode(params, unit)
-        res = run_episode(args.graph, values, seeds, seconds=args.seconds, silence=args.silence or None, brain=brain)
+        res = run_episode(args.graph, values, seeds, seconds=args.seconds, silence=args.silence or None, brain=brain,
+                          policy_kind=args.policy)
         fit = res["fitness"].reshape(len(cands), E).mean(axis=1)
         opt.tell([(c, -float(f)) for c, f in zip(cands, fit)])
 
