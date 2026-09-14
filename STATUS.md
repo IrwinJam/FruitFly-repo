@@ -84,18 +84,41 @@ mocked numbers except where explicitly labeled "synthetic"/"demo".
     (randomized, role-biased spike bursts) — it is NOT yet wired to the real brain
     simulator or game world. That's the honest state; see "Not done" below.
 
+### M3 — Sanity circuits (W0) 🟡 core checks done, with caveats
+[flyseek/brain/sanity_checks.py](flyseek/brain/sanity_checks.py), results in
+[docs/sanity_check_results.json](docs/sanity_check_results.json). **All 4 checks
+passed** on the `full` graph:
+
+| check | result | verdict |
+|---|---|---|
+| steering_readout (force DNa02-L) | L=100Hz, R=0Hz | ✅ clean turn-left signal |
+| pursuit_pathway (drive LC10a-L, direct, **no bypass needed**) | L=26.67Hz vs R=10Hz downstream on DNa02/DNa03 | ✅ asymmetry=16.67Hz |
+| looming_pathway (drive LC4+LPLC2) | baseline 0Hz → driven 490Hz on DNp01 | ✅ strong, clean signal |
+| backward_readout (force MDN) | 101.25Hz | ✅ (trivial self-readout check) |
+
+**This is good news and meaningfully de-risks the project**: unlike Eon's report
+of "somewhat decorative" vision or DOOMFLY's failed validation gates, the pursuit
+pathway carried an asymmetric signal through direct LC10a injection on the first
+try, with no need for the `bypass_downstream` fallback stubbed in
+`config/senses.yaml`.
+
+**Important caveat — don't over-read this yet.** These checks used strong forced
+Poisson drive (200–300Hz, ~40mV-equivalent kicks) on whole neuron populations to
+get an unambiguous signal for a go/no-go check. That is NOT the same as the actual
+designed sensory-encoder gains in `config/senses.yaml` (e.g. `target_feature`
+gain_hz: 150) driven by a real ray-cast vision encoder feeding a handful of
+retinotopically-appropriate cells at a time. The real test — closed-loop vision
+driving a kinematic body's steering in an actual arena — is still open (M5). Take
+this as "the wiring can carry a signal when pushed," not "vision already drives
+behavior."
+
 ## Not done yet
 
-Everything past M2 in the plan is unbuilt. In particular, **no training has
+Everything past the M3 checks above is unbuilt. In particular, **no training has
 happened** — the plan's Stage W0–S training schedule is measured in hours to days
 of GPU time even on `navcore`-sized subgraphs, which doesn't fit in an interactive
 session. Concretely, still open:
 
-- **M3 — Sanity circuits (W0)**: haven't yet verified the pursuit path (LC10a →
-  DNa02 asymmetry) or looming path (LC4/LPLC2 → DNp01) actually carry a usable
-  signal through the LIF model. This is the single biggest open risk in the plan
-  (section 7) — vision/sensory signals dying out before reaching motor neurons is
-  a documented failure mode in Eon's own writeup.
 - **M4 — Skeld world**: map cleanup (room-name normalization, dropping the 2 tiny
   disconnected islands), vents/tasks/spawns (`skeld_extras.json`), the rules
   engine, and the map view in the viewer are all unbuilt.
@@ -122,13 +145,11 @@ they were easy.
 
 ## Next session's concrete first steps
 
-1. Run the M3 sanity checks from the plan (sugar→MN9, DN stimulation → kinematic
-   turn, LC10a→DNa02 asymmetry, looming→DNp01) using `LIFBrain` directly. This is
-   the highest-priority next step — everything downstream depends on knowing
-   whether the direct-injection approach works or whether sensory input needs to
-   be injected further downstream (the `bypass_downstream` flag already stubbed
-   in `config/senses.yaml`).
-2. Write `flyseek/world/skeld.py`: clean the map, build the occupancy grid +
+1. Write `flyseek/world/skeld.py`: clean the map, build the occupancy grid +
    distance transform, author `skeld_extras.json` (vents/tasks/spawns).
-3. Wire one sensory encoder (vision) and one motor decoder (steering) end-to-end
-   on a single fly in an empty arena — the first real closed loop.
+2. Wire one sensory encoder (vision) and one motor decoder (steering) end-to-end
+   on a single fly in an empty arena — the first real closed loop. Use realistic
+   encoder gains (not the strong forced drive used for the M3 go/no-go checks) and
+   check whether the pursuit/looming asymmetries from M3 still show up — if they
+   don't, that's exactly where `bypass_downstream` gets flipped on.
+3. Start Stage W1 (open-arena phototaxis) once the closed loop exists.

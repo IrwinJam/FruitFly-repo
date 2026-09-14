@@ -1,0 +1,35 @@
+[
+  {
+    "check": "steering_readout",
+    "description": "Force DNa02-L spiking; expect L rate >> R rate (turn-left readout).",
+    "rates_hz": {
+      "R": 0.0,
+      "L": 100.0
+    },
+    "turn_signal": 100.0,
+    "pass": true
+  },
+  {
+    "check": "pursuit_pathway",
+    "description": "Drive target_motion_detector (L side); expect L-side DNa02/DNa03 rate > R-side.",
+    "bypass_downstream": false,
+    "rate_l_hz": 26.666666666666668,
+    "rate_r_hz": 10.0,
+    "asymmetry": 16.666666666666668,
+    "pass": true
+  },
+  {
+    "check": "looming_pathway",
+    "description": "Drive LC4+LPLC2; expect DNp01 (giant fiber) rate to rise above baseline.",
+    "baseline_hz": 0.0,
+    "driven_hz": 490.0,
+    "delta_hz": 490.0,
+    "pass": true
+  },
+  {
+    "check": "backward_readout",
+    "description": "Force MDN spiking; readout should register nonzero backward drive.",
+    "mdn_rate_hz": 101.25,
+    "pass": true
+  }
+]
