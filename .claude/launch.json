@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flyseek-viewer",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "viewer", "run", "dev", "--", "--host"],
+      "port": 5173
+    }
+  ]
+}

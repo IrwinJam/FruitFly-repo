@@ -4,8 +4,10 @@ cave-secret.json
 .env
 config/local.yaml
 
-# data (lives outside the repo, junctioned in)
-data/
+# data (lives outside the repo, junctioned in) -- anchored to repo root so it
+# doesn't also match viewer/public/data (the small exported viewer assets, which
+# ARE tracked)
+/data/
 *.feather
 *.parquet
 
