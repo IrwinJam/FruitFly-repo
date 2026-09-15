@@ -16,6 +16,7 @@ PY=.venv/Scripts/python
 LOG=/c/flyseek-data/phase5_overnight.log
 stage() { echo "[stage] $(date '+%Y-%m-%d %H:%M') $*" | tee -a "$LOG"; }
 report() { $PY -m flyseek.train.phase5_report >> "$LOG" 2>&1; }
+done_eval() { [ -f "docs/$1.json" ]; }  # evaluations already finished are skipped on re-runs
 wait_pid() { while tasklist //FI "PID eq $1" 2>/dev/null | grep -q " $1 "; do sleep 60; done; }
 
 stage "0 waiting for running seeker eval (pid ${EVAL_PID:-none}) and hider_navcore training (pid ${TRAIN_PID:-none})"
@@ -28,7 +29,7 @@ $PY -m flyseek.train.es --run hider_navcore --graph navcore --policy hider --ini
 report
 
 stage "2 held-out hider evaluation"
-$PY -m flyseek.train.eval_role --role hider \
+done_eval phase5_eval_hider || $PY -m flyseek.train.eval_role --role hider \
   explorer=brain:navcore:init:explore_navcore \
   trained_best=brain:navcore:best:hider_navcore \
   trained_mean=brain:navcore:mean:hider_navcore \
@@ -41,7 +42,7 @@ report
 
 if [ ! -f docs/phase5_eval_seeker.json ]; then
   stage "3a seeker evaluation missing, running it"
-  $PY -m flyseek.train.eval_role --role seeker explorer=brain:navcore:init:explore_navcore trained_best=brain:navcore:best:seeker_navcore trained_mean=brain:navcore:mean:seeker_navcore random=random scripted=scripted lc10a_off=brain:navcore:init:explore_navcore:LC10a pfl3_off=brain:navcore:init:explore_navcore:PFL3 >> "$LOG" 2>&1
+  done_eval phase5_eval_seeker || $PY -m flyseek.train.eval_role --role seeker explorer=brain:navcore:init:explore_navcore trained_best=brain:navcore:best:seeker_navcore trained_mean=brain:navcore:mean:seeker_navcore random=random scripted=scripted lc10a_off=brain:navcore:init:explore_navcore:LC10a pfl3_off=brain:navcore:init:explore_navcore:PFL3 >> "$LOG" 2>&1
 fi
 DEC=$($PY -m flyseek.train.phase5_report --decide phase5_eval_seeker 2>/dev/null | tail -1)
 SEEKER_RUN=seeker_navcore
@@ -49,7 +50,7 @@ SHUF_SEEKER_RUN=seeker_shuf0
 SEEKER_ARGS="--pop 12 --seeds-per-candidate 4 --generations 25"
 if [ "$DEC" = "ok" ]; then
   stage "3 seeker_navcore beat the explorer -> ablations on the trained seeker"
-  $PY -m flyseek.train.eval_role --role seeker \
+  done_eval phase5_eval_seeker_trained_ablations || $PY -m flyseek.train.eval_role --role seeker \
     explorer=brain:navcore:init:explore_navcore \
     trained_mean=brain:navcore:mean:seeker_navcore \
     lc10a_off_trained=brain:navcore:mean:seeker_navcore:LC10a \
@@ -63,7 +64,7 @@ else
   $PY -m flyseek.train.es --run seeker_navcore_v2 --graph navcore --policy seeker --init-from explore_navcore $SEEKER_ARGS >> "$LOG" 2>&1
   report
   stage "3b held-out evaluation of seeker_navcore_v2"
-  $PY -m flyseek.train.eval_role --role seeker \
+  done_eval phase5_eval_seeker_v2 || $PY -m flyseek.train.eval_role --role seeker \
     explorer=brain:navcore:init:explore_navcore \
     trained_best=brain:navcore:best:seeker_navcore_v2 \
     trained_mean=brain:navcore:mean:seeker_navcore_v2 \
@@ -77,7 +78,7 @@ stage "4 hider_shuf0 control"
 $PY -m flyseek.train.es --run hider_shuf0 --graph navcore_shuf0 --policy hider --init-from explore_shuf0 --pop 12 --seeds-per-candidate 2 --generations 25 >> "$LOG" 2>&1
 report
 stage "4b held-out evaluation, hider shuffle control"
-$PY -m flyseek.train.eval_role --role hider \
+done_eval phase5_eval_hider_shuffle || $PY -m flyseek.train.eval_role --role hider \
   explorer=brain:navcore:init:explore_navcore \
   trained_mean=brain:navcore:mean:hider_navcore \
   shuf_explorer=brain:navcore_shuf0:init:explore_shuf0 \
@@ -89,7 +90,7 @@ stage "5 seeker shuffle control: $SHUF_SEEKER_RUN ($SEEKER_ARGS)"
 $PY -m flyseek.train.es --run "$SHUF_SEEKER_RUN" --graph navcore_shuf0 --policy seeker --init-from explore_shuf0 $SEEKER_ARGS >> "$LOG" 2>&1
 report
 stage "5b held-out evaluation, seeker shuffle control"
-$PY -m flyseek.train.eval_role --role seeker \
+done_eval phase5_eval_seeker_shuffle || $PY -m flyseek.train.eval_role --role seeker \
   explorer=brain:navcore:init:explore_navcore \
   trained_mean=brain:navcore:mean:$SEEKER_RUN \
   shuf_explorer=brain:navcore_shuf0:init:explore_shuf0 \
