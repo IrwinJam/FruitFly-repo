@@ -31,6 +31,7 @@ EXPLORE_PARAMS = [
     Param("decoder:goal_behind.threshold_hz", 15.0, 28.0, 20.0),
     Param("decoder:goal_behind.turn_rad_per_s", 0.0, 3.0, 2.0),
     Param("decoder:goal_behind.speed_factor", 0.1, 1.0, 0.4),
+    Param("decoder:turn.max_omega_rad_per_s", 2.0, 10.0, 6.0),  # Phase 5.5 sweep: 6.0 best
     Param("policy:w_free", -2.0, 4.0, 1.0),
     Param("policy:w_novel", -2.0, 4.0, 1.5),
     Param("policy:w_align", -2.0, 4.0, 0.5),

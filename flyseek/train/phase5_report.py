@@ -17,9 +17,11 @@ import numpy as np
 
 from flyseek.paths import DATA_DIR, DOCS_DIR, RESULTS_DIR
 
-RUNS = ["seeker_navcore", "hider_navcore", "seeker_navcore_v2", "hider_shuf0", "seeker_shuf0", "seeker_shuf0_v2"]
+RUNS = ["seeker_navcore", "hider_navcore", "seeker_navcore_v2", "explore_navcore_v2", "explore_shuf0_v2",
+        "seeker_v3", "hider_v2", "seeker_shuf0_v3", "hider_shuf0_v2"]
 EVALS = ["phase5_eval_seeker", "phase5_eval_hider", "phase5_eval_seeker_v2", "phase5_eval_seeker_trained_ablations",
-         "phase5_eval_hider_shuffle", "phase5_eval_seeker_shuffle"]
+         "phase5_eval_hider_shuffle", "phase5_eval_seeker_shuffle", "phase5_eval_seeker_v3",
+         "phase5_eval_hider_v2", "phase5_eval_seeker_shuffle_v3", "phase5_eval_hider_shuffle_v2"]
 
 
 def load_log(run):
