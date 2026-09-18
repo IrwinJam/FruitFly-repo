@@ -196,6 +196,48 @@ Camping (a hider standing still) scales the engineered forward speed; this is di
 
 **Done when:** the trained Seeker beats scripted Hiders more often than a random-walk Seeker does, and trained Hiders survive longer than a random baseline.
 
+### Phase 5.5 — Fix locomotion first, then re-train roles (revised 2026-09-18)
+
+**Why the plan changed.** Role training on top of the Phase 4 walker gave at best marginal gains
+(seeker +0.11 fitness, p=0.22; hider best adapter +10 s survival, p=0.015, population mean flat),
+while diagnostics point at locomotion, not strategy, as the binding constraint:
+
+| Evidence | Number |
+|---|---|
+| Wall contact vs rooms visited (held-out, pooled) | Spearman rho = −0.39, p = 9e-6 |
+| Share of wall time spent in contacts longer than 2 s | 74% (longest single contact 38 s) |
+| Body turn rate | 0 deg/s half the time, saturated at max omega 27% of ticks |
+| Turning *toward* the goal while in wall contact | 27% of ticks (44% when free) |
+| Steering error, open arena vs The Skeld | 26–32 deg vs 54–70 deg |
+| Goal direction blocked by a wall | only 15% of near-wall ticks |
+
+So the fly is pinned by its own constant forward speed, not misdirected. Two fixes already tested
+and rejected or accepted on held-out episodes:
+- **Wall-aware goal direction** (probe own rays, steer to nearest clear direction): no gain
+  (rooms −0.10 to −0.42), kept in the code as a trainable parameter defaulting to off.
+- **Higher compass drive / sharper bumps**: worse (r_max 250 gives 51 deg error vs 32 baseline).
+  Useful knobs are lower `turn.scale_hz` (5–10) and higher `max_omega` (4.5–6): 26–28 deg.
+
+**5.5a Locomotion (in progress)**
+- [ ] `wall_slow`: cut forward thrust while in wall contact so the brain's turn can act. A/B on 40 held-out episodes.
+- [ ] Make `turn.max_omega_rad_per_s` trainable; A/B the best steering settings on The Skeld.
+- [ ] Keep whatever wins; re-train the explorer (~15 generations) with the new parameters and re-run the Phase 4 held-out comparison (untrained / trained / shuffled / PFL3-off).
+
+**5.5b Roles, re-trained on fixed locomotion**
+- [ ] `seeker_navcore_v3` and `hider_navcore_v2` (8 matches per candidate for the seeker).
+- [ ] Controls with the same budget on `navcore_shuf0`, plus ablations (LC10a, PFL3 for the seeker;
+      LC4+LPLC2, DNp01, PFL3 for hiders) on held-out matches. **Run these only after locomotion is frozen** —
+      controls trained against the old locomotion would have to be redone.
+
+**5.5c Report**
+- [ ] `docs/PHASE5_REPORT.md` including the negative results: photoreceptors are nearly absent from
+      navcore (16/9 neurons, zero steering output), looming drives only DNp01 and never DNa02/03/DNg13,
+      the wall-aware goal did not help, and role training gives small gains at best.
+
+**Done when:** wall contact per 45 s episode is well below the current ~21 s with rooms visited not worse,
+and the re-trained roles beat their Phase 4 starting point on held-out matches, with shuffled-wiring and
+ablation controls reported either way.
+
 ### Phase 6 — Showcase · ~1–2 sessions + a few hours of GPU
 - [ ] **6a — 1 Seeker + 3 Hiders** on the `full` graph with trained role adapters. Recorded match: ~20–40 min of compute per 5-minute match on the 2060 Super (estimate).
 - [ ] **6b — 1 Seeker + 5 Hiders**, reusing the same role adapters (no retraining). Evaluate briefly first; fine-tune the Hider adapter only if 5 Hiders crowd or collapse. ~30–60 min of compute per match.

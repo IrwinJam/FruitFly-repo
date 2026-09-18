@@ -85,10 +85,16 @@ def run_episode(tag: str, values: dict, seeds: list[int], seconds: float = 45.0,
     trace = [] if return_traces else None
     rng = np.random.default_rng(seeds[0] + 7919)
     t0 = time.perf_counter()
+    # wall_slow (Phase 5, engineered + disclosed): a fly in wall contact cuts forward
+    # thrust to this fraction, so it can turn away instead of being pinned by its own
+    # constant forward speed (74% of wall time was in contacts > 2 s; docs/PHASE5_*).
+    wall_slow = values.get("policy:wall_slow", 1.0)
+    base_speed_cfg = pop.decoder.cfg["forward"]["base_speed_units_per_s"]
     for _ in range(int(seconds / dt)):
         b = pop.body
         goal = policy.step(b.x, b.y, b.heading, dt)
-        pop.tick([], goal_angle=goal)
+        bs = np.where(b.wall_contact, np.asarray(base_speed_cfg) * np.asarray(wall_slow), base_speed_cfg)
+        pop.tick([], goal_angle=goal, base_speed=np.broadcast_to(bs, (n,)).astype(float))
         if wall_bump:
             bump = pop.body.wall_contact
             pop.body.heading = np.where(bump, pop.body.heading + rng.uniform(1.0, 2.6, n) * rng.choice([-1, 1], n),

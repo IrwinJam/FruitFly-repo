@@ -29,11 +29,16 @@ from __future__ import annotations
 
 import numpy as np
 
-from flyseek.agents.route_policy import RouteGoalPolicy, lookahead
+from flyseek.agents.route_policy import AVOID_FREE_UNITS, RouteGoalPolicy, free_direction, lookahead
 from flyseek.world.grid import OccupancyGrid
 from flyseek.world.pathing import GridPaths
 
 _CONCEAL_CACHE: dict = {}
+
+
+def _vec(params: dict, key: str, n: int) -> np.ndarray:
+    v = params.get(key, AVOID_FREE_UNITS)
+    return np.full(n, float(v)) if not np.ndim(v) else np.asarray(v, float)
 
 
 def _p(params: dict, key: str, i: int) -> float:
@@ -87,6 +92,7 @@ class SeekerRolePolicy:
             else:
                 goal[i] = lookahead(self.grid, self._field_to(i, target), x[i], y[i], _p(self.p, "chase_lookahead", i),
                                     target)
+        goal = free_direction(self.grid, x, y, goal, _vec(self.p, "avoid_free_units", self.n))
         self.t += dt
         return goal, np.ones(self.n)
 
@@ -165,5 +171,6 @@ class HiderRolePolicy:
                 speed[i] = _p(self.p, "camp_speed", i)
             else:
                 goal[i] = lookahead(self.grid, self.field[i], x[i], y[i], _p(self.p, "lookahead_units", i), self.spot[i])
+        goal = free_direction(self.grid, x, y, goal, _vec(self.p, "avoid_free_units", self.n))
         self.t += dt
         return goal, speed

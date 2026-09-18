@@ -44,6 +44,7 @@ _DECODER_PARAMS = [p for p in EXPLORE_PARAMS if p.name.startswith("decoder:")]
 # Route policy (map-based planner, flyseek/agents/route_policy.py). Replaced the ray
 # policy after docs/phase4_diag_explore.png showed flies couldn't find narrow exits.
 ROUTE_PARAMS = _DECODER_PARAMS + [
+    Param("policy:avoid_free_units", 0.0, 4.0, 1.5),  # Phase 5 wall-aware goal (0 = off)
     Param("policy:w_novel", 0.0, 4.0, 2.0),
     Param("policy:w_room", 0.0, 6.0, 3.0),
     Param("policy:w_dist", 0.0, 4.0, 1.0),
@@ -71,6 +72,7 @@ HIDER_PARAMS = _DECODER_PARAMS + [
     Param("policy:camp_speed", 0.0, 1.0, 0.2),
     Param("policy:flee_danger", 0.05, 1.0, 0.4),
     Param("policy:lookahead_units", 0.5, 4.0, 1.5, log=True),
+    Param("policy:avoid_free_units", 0.0, 4.0, 1.5),  # Phase 5 wall-aware goal (0 = off)
 ]
 
 PARAM_SETS = {"ray": EXPLORE_PARAMS, "route": ROUTE_PARAMS, "seeker": SEEKER_PARAMS, "hider": HIDER_PARAMS}

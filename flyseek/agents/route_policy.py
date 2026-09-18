@@ -41,6 +41,39 @@ def lookahead(grid: OccupancyGrid, field: np.ndarray, x: float, y: float, units:
     return float(np.arctan2(py - y, px - x))
 
 
+AVOID_FREE_UNITS = 1.5  # default clearance the goal direction must have (Phase 5)
+
+
+def free_direction(grid: OccupancyGrid, x, y, goal, min_free: float = 1.5, max_turn_deg: float = 60.0,
+                   n_probe: int = 9) -> np.ndarray:
+    """
+    Wall-aware goal direction (Phase 5). The fly probes its own line of sight in a fan
+    around the planned goal direction and takes the direction closest to that goal whose
+    free distance is at least `min_free`; if none is, it takes the freest probe. This
+    uses the fly's own rays, not the map, and still steers through the connectome
+    (EPG/FC2 -> PFL3): only the goal bump direction changes.
+
+    Needed because the connectome's steering DNs get no wall signal: photoreceptors are
+    nearly absent from navcore, and looming drives only DNp01 (escape), never DNa02/03
+    (scratchpad checks, Phase 5). Engineered and disclosed, like the forward speed.
+    """
+    x, y, goal = np.asarray(x, float), np.asarray(y, float), np.asarray(goal, float)
+    ok = np.isfinite(goal)
+    if not ok.any():
+        return goal
+    offs = np.deg2rad(np.linspace(-max_turn_deg, max_turn_deg, n_probe))
+    order = np.argsort(np.abs(offs))  # probe the goal direction first, then outwards
+    ang = np.nan_to_num(goal)[:, None] + offs[None, :]
+    free = grid.raycast(x, y, ang, float(np.max(min_free) * 2 + 1.0))
+    need = np.reshape(min_free, (-1, 1)) if np.ndim(min_free) else min_free
+    good = free >= need
+    pick = np.full(len(goal), -1)
+    for j in order:  # first (most goal-aligned) probe that is clear enough
+        pick = np.where((pick < 0) & good[:, j], j, pick)
+    pick = np.where(pick < 0, np.argmax(free, axis=1), pick)
+    return np.where(ok, goal + offs[pick], goal)
+
+
 class RouteGoalPolicy:
     def __init__(self, n: int, grid: OccupancyGrid, paths: GridPaths, rooms: np.ndarray, params: dict,
                  n_candidates: int = 24, bin_units: float = 1.0, seed: int = 0):
@@ -64,9 +97,15 @@ class RouteGoalPolicy:
         self.next_plan = np.zeros(n)
         self.t = 0.0
 
-    def _param(self, key, i):
+    def _param(self, key, i, default=None):
+        if key not in self.p:  # adapters trained before this parameter existed
+            return default
         v = self.p[key]
         return float(v[i]) if np.ndim(v) else float(v)
+
+    def _vec(self, key, default):
+        v = self.p.get(key, default)
+        return np.full(self.n, float(v)) if not np.ndim(v) else np.asarray(v, float)
 
     def _bins(self, x, y):
         bx = np.clip(((np.asarray(x) - self.bx0) // self.bin).astype(int), 0, self.bw - 1)
@@ -115,5 +154,6 @@ class RouteGoalPolicy:
                 self._plan(i, x[i], y[i])
             if self.field[i] is not None:
                 goal[i] = self._lookahead(i, x[i], y[i])
+        goal = free_direction(self.grid, x, y, goal, self._vec("avoid_free_units", AVOID_FREE_UNITS))
         self.t += dt
         return goal
