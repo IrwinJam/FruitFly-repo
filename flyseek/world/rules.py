@@ -24,9 +24,9 @@ from flyseek.paths import CONFIG_DIR
 def load_game_config(preset: str | None = None) -> dict:
     with open(CONFIG_DIR / "game.yaml") as f:
         cfg = yaml.safe_load(f)
-    if preset:
+    if preset and preset != "full":  # "full" = the full-length default timers
         cfg["timers"].update(cfg["presets"][preset])
-        cfg["preset"] = preset
+    cfg["preset"] = preset or "full"
     return cfg
 
 

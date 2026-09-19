@@ -43,16 +43,19 @@ def ci(x):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--role", required=True, choices=["seeker", "hider"])
+    ap.add_argument("--role", required=True, choices=["seeker", "hider", "both"])
     ap.add_argument("conditions", nargs="+")
     ap.add_argument("--n", type=int, default=40)
     ap.add_argument("--chunk", type=int, default=20, help="matches per batch")
     ap.add_argument("--preset", default="short")
     ap.add_argument("--spawn", default="default")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--hiders", type=int, default=3)
+    ap.add_argument("--seed-base", type=int, default=90000)
     args = ap.parse_args()
-    params = PARAM_SETS[args.role]
-    seeds = list(range(90000, 90000 + args.n))
+    params = PARAM_SETS.get(args.role)
+    seeds = list(range(args.seed_base, args.seed_base + args.n))
+    H = args.hiders
     results, brains = {}, {}
     for c in args.conditions:
         label, spec = c.split("=", 1)
@@ -60,22 +63,29 @@ def main():
         ctrl = parts[0]
         graph, values, silence = "navcore", None, None
         if ctrl == "brain":
-            graph, kind, run = parts[1], parts[2], parts[3]
-            silence = parts[4].split(",") if len(parts) > 4 and parts[4] else None
-            values = load_values(kind, run, params)
+            if args.role == "both":  # brain:graph:seekerKind:seekerRun:hiderKind:hiderRun[:silence]
+                graph = parts[1]
+                values = {"seeker": load_values(parts[2], parts[3], PARAM_SETS["seeker"]),
+                          "hider": load_values(parts[4], parts[5], PARAM_SETS["hider"])}
+                silence = parts[6].split(",") if len(parts) > 6 and parts[6] else None
+            else:
+                graph, kind, run = parts[1], parts[2], parts[3]
+                silence = parts[4].split(",") if len(parts) > 4 and parts[4] else None
+                values = load_values(kind, run, params)
             if graph not in brains:
                 brains = {graph: LIFBrain(tag=graph)}
         per_match_fit, wins, first, surv, stuck = [], [], [], [], []
-        per_fly = 3 if args.role == "hider" else 1
+        per_fly = H if args.role == "hider" else 1
         for k in range(0, args.n, args.chunk):
             chunk = seeds[k:k + args.chunk]
             r = run_role_episode(graph, args.role, values, chunk, controller=ctrl, preset=args.preset,
-                                 spawn=args.spawn, silence=silence, brain=brains.get(graph))
-            per_match_fit += list(np.asarray(r["fitness"]).reshape(len(chunk), per_fly).mean(axis=1))
+                                 spawn=args.spawn, silence=silence, brain=brains.get(graph), n_hiders=H)
+            fit = r["fitness_seeker"] if args.role == "both" else r["fitness"]  # "both": seeker fitness per match
+            per_match_fit += list(np.asarray(fit).reshape(len(chunk), per_fly).mean(axis=1))
             wins += list(r["seeker_win"].astype(float))
             first += list(r["first_sighting_s"])
-            if args.role == "hider":
-                surv += list(np.asarray(r["survival_s"]).reshape(len(chunk), per_fly).mean(axis=1))
+            if args.role in ("hider", "both"):
+                surv += list(np.asarray(r["survival_s"]).reshape(len(chunk), H).mean(axis=1))
             if ctrl != "scripted":
                 stuck += list(r["stuck_s"])
         res = {"controller": ctrl, "spec": spec, "fitness": per_match_fit, "fitness_ci": ci(per_match_fit),
@@ -102,7 +112,7 @@ def main():
         print(f"  {label} vs {ref}: fitness diff {(a - b).mean():+.3f}, paired t p={t.pvalue:.3g}"
               + (f", Wilcoxon p={w.pvalue:.3g}" if w else ""), flush=True)
     out = args.out or f"phase5_eval_{args.role}"
-    (DOCS_DIR / f"{out}.json").write_text(json.dumps({"role": args.role, "n": args.n, "preset": args.preset,
+    (DOCS_DIR / f"{out}.json").write_text(json.dumps({"role": args.role, "n": args.n, "preset": args.preset, "hiders": H,
                                                       "spawn": args.spawn, "results": results}, indent=2, default=float))
 
 

@@ -114,12 +114,17 @@ class Coverage:
 
 def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | None, seed: int,
               name: str, record_spikes: bool = True, max_seconds: float | None = None,
-              spawn: str = "default", nav: str | None = None) -> dict:
+              spawn: str = "default", nav: str | None = None, seeker_adapter: str | None = None,
+              hider_adapter: str | None = None) -> dict:
     """
     nav: name of a Phase 4 exploration training run (results/train/<run>/best.json). When set,
          brain agents get the trained motor decoder plus the route goal policy, whose world goal
          direction enters the connectome through the EPG compass / FC2 goal bumps. The wall-bump
          reflex is then off (the navigator was trained without it).
+    seeker_adapter / hider_adapter: Phase 6 role adapters, "<kind>:<run>" with kind init | best | mean
+         (see flyseek/train/eval_role.py). When given, brain agents are driven by the same
+         RoleController as the batched evaluation (flyseek/agents/role_policy.py), so a recorded
+         match behaves like the evaluated ones. Takes precedence over `nav`.
     """
     rng = np.random.default_rng(seed)
     cfg = load_game_config(preset)
@@ -149,8 +154,23 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
         pop = FlyPopulation(graph, start[brain_agents, 0], start[brain_agents, 1], start_heading[brain_agents], grid,
                             seed=seed, channel_gain=gain)
         pop.body.radius = cfg["body_radius_units"]
-    nav_policy = None
-    if pop is not None and nav:
+    nav_policy = role_ctrl = None
+    if pop is not None and (seeker_adapter or hider_adapter):
+        from flyseek.agents.role_policy import RoleController
+        from flyseek.motors.decoders import load_motor_config
+        from flyseek.train.adapter import PARAM_SETS, apply_decoder
+        from flyseek.train.eval_role import load_values
+        role_vals = {r: load_values(*spec.split(":", 1), PARAM_SETS[r])
+                     for r, spec in (("seeker", seeker_adapter), ("hider", hider_adapter)) if spec}
+        col_roles = [roles[a] for a in sorted(brain_agents)]
+        role_ctrl = RoleController(col_roles, role_vals, grid, rooms, GridPaths(grid, wall_cost=4.0), extras["vents"],
+                                   extras["spawn"]["xy"], seed=seed)
+        pop.channel_gain = role_ctrl.channel_gains(odor_ok=odor_ok)
+        dcfg = copy.deepcopy(load_motor_config())
+        apply_decoder(dcfg, role_ctrl.decoder_values())
+        pop.decoder.cfg = dcfg
+        cfg["reflexes"]["wall_bump_turn"] = False
+    elif pop is not None and nav:
         from flyseek.agents.route_policy import RouteGoalPolicy
         from flyseek.motors.decoders import load_motor_config
         from flyseek.train.adapter import apply_decoder, policy_values
@@ -176,9 +196,12 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
         "odor_channels_enabled": odor_ok and bool(brain_agents),
         "game_config": cfg, "vents": extras["vents"], "spawn": extras["spawn"],
         "map": {"x0": grid.x0, "y0": grid.y0, "res": grid.res, "shape": list(grid.walkable.shape)},
-        "nav": nav,
+        "nav": nav, "seeker_adapter": seeker_adapter, "hider_adapter": hider_adapter,
         "engineered": ["forward speed constant", "auto-vent rule", "wall-bump turn reflex" if cfg["reflexes"]["wall_bump_turn"] else None,
                        "side-level vision encoder",
+                       (f"role policies + trained adapters (seeker {seeker_adapter}, hider {hider_adapter}); goal enters via "
+                        "EPG/FC2 bumps with an idealized compass; hider camping scales forward speed")
+                       if role_ctrl is not None else
                        f"motor decoder + route goal policy trained in run {nav} (goal enters via EPG/FC2 bumps; idealized compass)"
                        if nav_policy is not None else "hand-set motor decoder weights (untrained)"],
         "disclaimer": "Connectome-constrained LIF model with engineered sensory/motor mappings; not a validated fly brain.",
@@ -246,12 +269,31 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
                 "ping": {"L": ping_level[ba] * PING_MAX_HZ * (1 + np.sin(ping_bearing[ba])) / 2,
                          "R": ping_level[ba] * PING_MAX_HZ * (1 - np.sin(ping_bearing[ba])) / 2},
             }
-            goal = None
-            if nav_policy is not None:
+            goal, sp = None, np.ones(nb)
+            if role_ctrl is not None:
+                seen_h, pings_c, seen_s = [], [], []
+                for a in ba:
+                    if roles[a] == "seeker":
+                        cand = [h for h in range(n) if roles[h] == "hider" and visible[h]
+                                and np.hypot(x[h] - x[a], y[h] - y[a]) <= vis_range[a]
+                                and line_of_sight(grid, x[a], y[a], x[h], y[h])]
+                        h = min(cand, key=lambda q: np.hypot(x[q] - x[a], y[q] - y[a])) if cand else None
+                        seen_h.append(None if h is None else (float(x[h]), float(y[h])))
+                        pings_c.append(out.ping_positions)
+                        seen_s.append(None)
+                    else:
+                        s0 = int(np.flatnonzero(np.array(roles) == "seeker")[0])
+                        ok = bool(visible[s0]) and np.hypot(x[s0] - x[a], y[s0] - y[a]) <= vis_range[a]                             and line_of_sight(grid, x[a], y[a], x[s0], y[s0])
+                        seen_s.append((float(x[s0]), float(y[s0])) if ok else None)
+                        seen_h.append(None)
+                        pings_c.append(None)
+                goal, sp = role_ctrl.step(pop.body.x, pop.body.y, pop.body.heading, dt,
+                                          viewer_alive & (mult[ba] > 0), seen_h, pings_c, seen_s, danger[ba])
+            elif nav_policy is not None:
                 goal = nav_policy.step(pop.body.x, pop.body.y, pop.body.heading, dt,
                                        active=viewer_alive & (mult[ba] > 0))
             res, counts = pop.tick(objects, record_all_spikes=record_spikes, extra_rates=extra,
-                                   base_speed=role_speed[ba] * mult[ba], movable=mult[ba] > 0,
+                                   base_speed=role_speed[ba] * mult[ba] * sp, movable=mult[ba] > 0,
                                    sensing=viewer_alive, goal_angle=goal)
             if cfg["reflexes"]["wall_bump_turn"]:
                 bump = pop.body.wall_contact & (mult[ba] > 0)
@@ -304,7 +346,8 @@ def run_match(n_hiders: int, brain_agents: list[int], graph: str, preset: str | 
 
     wall = time.perf_counter() - t0
     info = rec.save(RESULTS_DIR / "replays" / name)
-    summary = {"name": name, "spawn": spawn, "nav": nav, "brain_agents": brain_agents, "graph": graph, "seed": seed,
+    summary = {"name": name, "spawn": spawn, "nav": nav, "seeker_adapter": seeker_adapter,
+               "hider_adapter": hider_adapter, "brain_agents": brain_agents, "graph": graph, "seed": seed,
                "winner": rules.winner, "sim_seconds": round(rules.t, 2), "wall_seconds": round(wall, 1),
                "survivors": [int(h) for h in range(1, n) if rules.alive[h]],
                "kills": [e for e in rec.events if e["kind"] == "kill"],
@@ -341,9 +384,11 @@ if __name__ == "__main__":
     ap.add_argument("--max-seconds", type=float, default=None)
     ap.add_argument("--spawn", default="default", choices=["default", "spread"])
     ap.add_argument("--nav", default=None, help="trained exploration run for brain agents, e.g. explore_navcore")
+    ap.add_argument("--seeker-adapter", default=None, help="Phase 6 seeker adapter, e.g. init:explore_navcore_v2")
+    ap.add_argument("--hider-adapter", default=None, help="Phase 6 hider adapter, e.g. mean:hider_v2")
     args = ap.parse_args()
     brains = parse_brains(args.brains, 1 + args.hiders)
     name = args.name or f"match_{args.brains}_{args.graph}_{args.preset}_{args.spawn}_s{args.seed}"
     s = run_match(args.hiders, brains, args.graph, args.preset, args.seed, name, not args.no_spikes, args.max_seconds,
-                  args.spawn, args.nav)
+                  args.spawn, args.nav, args.seeker_adapter, args.hider_adapter)
     print(json.dumps(s, indent=2, default=str))

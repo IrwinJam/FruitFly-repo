@@ -8,6 +8,8 @@ the other role is scripted (flyseek/agents/scripted.py).
 
   role="seeker": agent 0 is the trainee, H scripted hiders.   Batch column = match.
   role="hider":  agents 1..H are trainees, 1 scripted seeker. Batch column = m*H + (h-1).
+  role="both":   every agent is a brain (Phase 6 showcase setting); values = {"seeker": .., "hider": ..}.
+                 Batch column = m*(1+H) + agent.
 
 Controllers for the trainee:
   "brain"    connectome + role policy + trained decoder (all brain flies share one GPU batch)
@@ -30,14 +32,14 @@ import numpy as np
 import torch
 
 from flyseek.agents.fly_agent import FlyPopulation
-from flyseek.agents.role_policy import HiderRolePolicy, SeekerRolePolicy
+from flyseek.agents.role_policy import RoleController
 from flyseek.agents.scripted import ScriptedHider, ScriptedSeeker
 from flyseek.brain.lif_torch import load_config
 from flyseek.brain.roles import type_idx
 from flyseek.motors.body_kinematic import KinematicBody
 from flyseek.motors.decoders import load_motor_config
 from flyseek.senses.vision import VisualObject
-from flyseek.train.adapter import apply_decoder, gain_values, policy_values
+from flyseek.train.adapter import apply_decoder
 from flyseek.world.grid import OccupancyGrid
 from flyseek.world.match import DANGER_MAX_HZ, PING_DECAY_S, PING_MAX_HZ, room_grid, spawn_positions
 from flyseek.world.pathing import GridPaths
@@ -88,7 +90,7 @@ def run_role_episode(tag: str, role: str, values: dict | None, seeds: list[int],
         rules.append(HideNSeekRules(["seeker"] + ["hider"] * H, dt, copy.deepcopy(cfg), extras, seed=s))
         rngs.append(rng)
 
-    trainee = [0] if role == "seeker" else list(range(1, n))
+    trainee = [0] if role == "seeker" else (list(range(1, n)) if role == "hider" else list(range(n)))
     # (m, agent) of each trainee batch column
     cols = [(m, a) for m in range(M) for a in trainee]
     A = len(cols)
@@ -108,29 +110,20 @@ def run_role_episode(tag: str, role: str, values: dict | None, seeds: list[int],
 
     pop = policy = None
     if controller == "brain":
-        gains = {"target": 1.0 if role == "seeker" else 0.0, "loom": 1.0 if role == "hider" else 0.0, "photo": 1.0,
-                 "danger": 1.0 if role == "hider" else 0.0, "ping": 1.0 if role == "seeker" else 0.0,
-                 "compass": 1.0, "goal": 1.0}
-        for k, v in gain_values(values).items():
-            gains[k] = v
-        if not tag.startswith("navcore"):
-            gains["danger"], gains["ping"] = 0.0, 0.0  # mushroom-body odor ignition on full/pruned5
+        col_roles = ["seeker" if a == 0 else "hider" for a in ca]
+        role_values = values if role == "both" else {role: values}
+        policy = RoleController(col_roles, role_values, grid, rooms, W["nav_paths"], extras["vents"],
+                                extras["spawn"]["xy"], seed=int(seeds[0]))
         pop = FlyPopulation(tag, X[cm, ca], Y[cm, ca], HD[cm, ca], grid, seed=int(seeds[0]), brain=brain,
-                            channel_gain=gains)
+                            channel_gain=policy.channel_gains(odor_ok=tag.startswith("navcore")))
         pop.body.radius = R
         if silence:
             pop.brain.silence([i for t in silence for i in type_idx(t, graph=tag)])
         else:
             pop.brain.keep_mask = None
         dcfg = copy.deepcopy(load_motor_config())
-        apply_decoder(dcfg, values)
+        apply_decoder(dcfg, policy.decoder_values())
         pop.decoder.cfg = dcfg
-        pv = policy_values(values)
-        if role == "seeker":
-            policy = SeekerRolePolicy(A, grid, W["nav_paths"], rooms, pv, seed=int(seeds[0]))
-        else:
-            policy = HiderRolePolicy(A, grid, W["nav_paths"], pv, extras["vents"], extras["spawn"]["xy"],
-                                     seed=int(seeds[0]))
 
     death_t = np.full((M, n), np.nan)
     done = np.zeros(M, bool)
@@ -195,29 +188,36 @@ def run_role_episode(tag: str, role: str, values: dict | None, seeds: list[int],
         if pop is not None:
             movable = mult[cm, ca] > 0
             sensing = alive[cm, ca] & live[cm]
-            if role == "seeker":
-                objects = [VisualObject(X[cm, k], Y[cm, k], R, "target",
-                                        visible_to=visible[cm, k] & (np.hypot(X[cm, k] - X[cm, 0], Y[cm, k] - Y[cm, 0]) <= vis_range[0]))
-                           for k in range(1, n)]
-                extra = {"ping": {"L": ping_level[cm] * PING_MAX_HZ * (1 + np.sin(ping_bearing[cm])) / 2,
-                                  "R": ping_level[cm] * PING_MAX_HZ * (1 - np.sin(ping_bearing[cm])) / 2}}
-                seen = []
-                for i, m in enumerate(cm):
+            sk = ca == 0  # seeker columns
+            # hiders -> LC10a target channel of seeker columns; seeker -> looming channel of hider columns
+            objects = [VisualObject(X[cm, k], Y[cm, k], R, "target",
+                                    visible_to=sk & visible[cm, k]
+                                    & (np.hypot(X[cm, k] - X[cm, ca], Y[cm, k] - Y[cm, ca]) <= vis_range[0]))
+                       for k in range(1, n)]
+            objects.append(VisualObject(X[cm, 0], Y[cm, 0], R, "threat",
+                                        visible_to=~sk & visible[cm, 0]
+                                        & (np.hypot(X[cm, 0] - X[cm, ca], Y[cm, 0] - Y[cm, ca]) <= vis_range[1])))
+            pl, pb = np.where(sk, ping_level[cm], 0.0), ping_bearing[cm]
+            dz = np.where(sk, 0.0, danger[cm, ca]) * DANGER_MAX_HZ
+            extra = {"ping": {"L": pl * PING_MAX_HZ * (1 + np.sin(pb)) / 2, "R": pl * PING_MAX_HZ * (1 - np.sin(pb)) / 2},
+                     "danger": {"L": dz, "R": dz}}
+            seen_h, seen_s, pings = [], [], []
+            for m, a in cols:
+                if a == 0:
                     ks = np.flatnonzero(los[m])
                     if len(ks):
                         k = ks[np.argmin(np.hypot(dx[m, ks], dy[m, ks]))]
-                        seen.append((float(X[m, k + 1]), float(Y[m, k + 1])))
+                        seen_h.append((float(X[m, k + 1]), float(Y[m, k + 1])))
                     else:
-                        seen.append(None)
-                goal, sp = policy.step(pop.body.x, pop.body.y, pop.body.heading, dt, movable & sensing, seen,
-                                       new_pings_for(cm, new_pings))
-            else:
-                objects = [VisualObject(X[cm, 0], Y[cm, 0], R, "threat",
-                                        visible_to=visible[cm, 0] & (np.hypot(X[cm, 0] - X[cm, ca], Y[cm, 0] - Y[cm, ca]) <= vis_range[1]))]
-                extra = {"danger": {"L": danger[cm, ca] * DANGER_MAX_HZ, "R": danger[cm, ca] * DANGER_MAX_HZ}}
-                seen = [(float(X[m, 0]), float(Y[m, 0])) if los[m, a - 1] else None for m, a in cols]
-                goal, sp = policy.step(pop.body.x, pop.body.y, pop.body.heading, dt, movable & sensing, seen,
-                                       danger[cm, ca])
+                        seen_h.append(None)
+                    pings.append(new_pings[m])
+                    seen_s.append(None)
+                else:
+                    seen_h.append(None)
+                    pings.append(None)
+                    seen_s.append((float(X[m, 0]), float(Y[m, 0])) if los[m, a - 1] else None)
+            goal, sp = policy.step(pop.body.x, pop.body.y, pop.body.heading, dt, movable & sensing, seen_h, pings,
+                                   seen_s, danger[cm, ca])
             pop.tick(objects, extra_rates=extra, base_speed=speed[ca] * mult[cm, ca] * sp, movable=movable,
                      sensing=sensing, goal_angle=goal)
             stuck += pop.body.wall_contact * dt * (movable & sensing)
@@ -253,15 +253,13 @@ def run_role_episode(tag: str, role: str, values: dict | None, seeds: list[int],
     wall = time.perf_counter() - t0
     t_end = np.array([r.t for r in rules])
     caught = ~np.isnan(death_t[:, 1:])
-    if role == "seeker":
-        left = np.where(caught, (T - np.nan_to_num(death_t[:, 1:], nan=T)) / T, 0.0)
-        fitness = (caught * (1.0 + left)).sum(axis=1) / H
-        per = {"kills": caught.sum(axis=1), "seeker_win": caught.all(axis=1)}
-    else:
-        surv_t = np.where(caught, death_t[:, 1:], T)
-        frac = surv_t / T
-        fitness = (frac + 0.5 * ~caught).reshape(-1)  # [M*H] in column order (m, h)
-        per = {"survival_s": surv_t.reshape(-1), "survived": (~caught).reshape(-1), "seeker_win": caught.all(axis=1)}
+    left = np.where(caught, (T - np.nan_to_num(death_t[:, 1:], nan=T)) / T, 0.0)
+    seeker_fit = (caught * (1.0 + left)).sum(axis=1) / H
+    surv_t = np.where(caught, death_t[:, 1:], T)
+    hider_fit = (surv_t / T + 0.5 * ~caught).reshape(-1)  # [M*H] in column order (m, h)
+    per = {"kills": caught.sum(axis=1), "seeker_win": caught.all(axis=1), "survival_s": surv_t.reshape(-1),
+           "survived": (~caught).reshape(-1), "fitness_seeker": seeker_fit, "fitness_hider": hider_fit}
+    fitness = seeker_fit if role == "seeker" else hider_fit  # "both": hider fitness; see fitness_seeker
     out = {"fitness": fitness, "wall_s": wall, "first_sighting_s": first_sight, "match_end_s": t_end,
            "stuck_s": stuck, **per}
     if traj is not None:

@@ -174,3 +174,85 @@ class HiderRolePolicy:
         goal = free_direction(self.grid, x, y, goal, _vec(self.p, "avoid_free_units", self.n))
         self.t += dt
         return goal, speed
+
+
+class RoleController:
+    """
+    Drives any mix of brain seekers and brain hiders that share one FlyPopulation
+    (Phase 6). Used by the batched role environment (training / evaluation) and by
+    recorded matches, so showcase matches behave exactly like evaluated ones.
+
+    roles:  per batch column, "seeker" or "hider"
+    values: {"seeker": decoded adapter values, "hider": decoded adapter values}; each value
+            is a scalar or an array over that role's columns (in column order)
+    """
+
+    GAIN_DEFAULTS = {  # channels a role does not use are off, so they cannot leak in
+        "seeker": {"target": 1.0, "loom": 0.0, "danger": 0.0, "ping": 1.0},
+        "hider": {"target": 0.0, "loom": 1.0, "danger": 1.0, "ping": 0.0},
+    }
+
+    def __init__(self, roles: list[str], values: dict, grid: OccupancyGrid, rooms: np.ndarray, paths: GridPaths,
+                 vents: list, seeker_start, seed: int = 0):
+        self.roles = np.asarray(roles)
+        self.n = len(roles)
+        self.cols = {r: np.flatnonzero(self.roles == r) for r in ("seeker", "hider")}
+        self.values = values
+        self.seeker = self.hider = None
+        from flyseek.train.adapter import policy_values
+        if len(self.cols["seeker"]):
+            self.seeker = SeekerRolePolicy(len(self.cols["seeker"]), grid, paths, rooms,
+                                           policy_values(values["seeker"]), seed=seed)
+        if len(self.cols["hider"]):
+            self.hider = HiderRolePolicy(len(self.cols["hider"]), grid, paths, policy_values(values["hider"]), vents,
+                                         seeker_start, seed=seed)
+
+    def _merge(self, prefix: str) -> dict:
+        """Per-column arrays for every `prefix:` key used by any role present."""
+        keys = sorted({k for r, c in self.cols.items() if len(c) for k in self.values[r] if k.startswith(prefix)})
+        out = {}
+        for k in keys:
+            arr = np.full(self.n, np.nan)
+            for r, c in self.cols.items():
+                if len(c) and k in self.values[r]:
+                    arr[c] = np.broadcast_to(np.asarray(self.values[r][k], float), (len(c),))
+            out[k] = arr
+        return out
+
+    def decoder_values(self) -> dict:
+        merged = self._merge("decoder:")
+        return {k: np.where(np.isnan(v), np.nanmean(v), v) for k, v in merged.items()}
+
+    def channel_gains(self, odor_ok: bool = True) -> dict:
+        gains = {"photo": 1.0, "compass": 1.0, "goal": 1.0}
+        for ch in ("target", "loom", "danger", "ping"):
+            arr = np.zeros(self.n)
+            for r, c in self.cols.items():
+                if len(c):
+                    v = self.values[r].get(f"gain:{ch}", self.GAIN_DEFAULTS[r][ch])
+                    arr[c] = np.broadcast_to(np.asarray(v, float), (len(c),)) if self.GAIN_DEFAULTS[r][ch] else 0.0
+            gains[ch] = arr
+        if not odor_ok:  # mushroom-body odor ignition on full/pruned5 (PHASE1_REPORT 6.3)
+            gains["danger"], gains["ping"] = 0.0, 0.0
+        return gains
+
+    def step(self, x, y, heading, dt, active, seen_hider_xy: list, pings: list, seen_seeker_xy: list,
+             danger: np.ndarray):
+        """
+        All per-column inputs are indexed by batch column; seen_hider_xy / pings are only read
+        for seeker columns, seen_seeker_xy / danger only for hider columns.
+        Returns (goal [n], speed factor [n]).
+        """
+        goal, speed = np.full(self.n, np.nan), np.ones(self.n)
+        x, y, heading, active = map(np.asarray, (x, y, heading, active))
+        if self.seeker is not None:
+            c = self.cols["seeker"]
+            g, s = self.seeker.step(x[c], y[c], heading[c], dt, active[c], [seen_hider_xy[i] for i in c],
+                                    [pings[i] for i in c])
+            goal[c], speed[c] = g, s
+        if self.hider is not None:
+            c = self.cols["hider"]
+            g, s = self.hider.step(x[c], y[c], heading[c], dt, active[c], [seen_seeker_xy[i] for i in c],
+                                   np.asarray(danger)[c])
+            goal[c], speed[c] = g, s
+        return goal, speed
