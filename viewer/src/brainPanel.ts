@@ -37,6 +37,34 @@ const VERTEX_SHADER = `
   }
 `;
 
+// Halo pass (IMG_0897-style glow): the same points drawn again, much larger and faint,
+// only where a neuron is active. Cheap bloom without post-processing, so it works with
+// the per-panel scissor viewports.
+const HALO_VERTEX_SHADER = `
+  attribute float heat;
+  attribute vec3 baseColor;
+  uniform float uPixelRatio;
+  varying float vHeat;
+  varying vec3 vColor;
+  void main() {
+    vHeat = heat;
+    vColor = baseColor;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = heat > 0.06 ? uPixelRatio * (4.0 + heat * 22.0) : 0.0;
+  }
+`;
+
+const HALO_FRAGMENT_SHADER = `
+  varying float vHeat;
+  varying vec3 vColor;
+  void main() {
+    float d = length(gl_PointCoord.xy - 0.5);
+    if (d > 0.5) discard;
+    float f = smoothstep(0.5, 0.0, d);
+    gl_FragColor = vec4(vColor * 1.2, f * f * vHeat * 0.16);
+  }
+`;
+
 const FRAGMENT_SHADER = `
   uniform float uRestAlpha;
   varying float vHeat;
@@ -105,11 +133,21 @@ export class BrainPanel {
     });
 
     this.points = new THREE.Points(geometry, material);
+    const halo = new THREE.Points(geometry, new THREE.ShaderMaterial({
+      vertexShader: HALO_VERTEX_SHADER,
+      fragmentShader: HALO_FRAGMENT_SHADER,
+      uniforms: { uPixelRatio: { value: Math.min(window.devicePixelRatio, 2) } },
+      transparent: true,
+      depthTest: false,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+    }));
     this.scene = new THREE.Scene();
+    this.scene.add(halo);
     this.scene.add(this.points);
 
     // Layout coords are roughly N(0,1)-normalized; frame with a fixed orthographic box.
-    const half = 4.2;
+    const half = 3.5;
     this.camera = new THREE.OrthographicCamera(-half, half, half * 1.3, -half * 1.3, 0.1, 10);
     this.camera.position.z = 1;
   }
@@ -150,6 +188,7 @@ export class BrainPanel {
 
   /** x, y, w, h in CSS pixels with y measured from the TOP of the canvas. */
   render(renderer: THREE.WebGLRenderer, x: number, y: number, w: number, h: number) {
+    if (w < 2 || h < 2) return;
     // WebGL viewports are measured from the bottom edge; flip so layout rects line up with
     // overlays. three.js applies the pixel ratio itself, so these stay in CSS pixels.
     const yGl = renderer.domElement.clientHeight - y - h;
@@ -162,7 +201,7 @@ export class BrainPanel {
     renderer.setScissor(x, yGl, w, h);
     renderer.setScissorTest(true);
     // orthographic: adjust left/right to preserve aspect without distortion
-    const half = 4.2;
+    const half = 3.5;
     if (w / h > 1) {
       this.camera.top = half * 1.3;
       this.camera.bottom = -half * 1.3;

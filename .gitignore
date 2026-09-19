@@ -35,3 +35,7 @@ Thumbs.db
 
 # third-party reference screenshots (other creators' content) -- local only, never pushed
 Untitled_Message/
+
+# Large replay binaries (Phase 6): kept locally, not committed
+/viewer/public/replays/trained_*/
+/viewer/public/replays/showcase*/

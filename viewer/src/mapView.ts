@@ -6,6 +6,9 @@ export const AGENT_COLORS = ["#ef4444", "#4ade80", "#60a5fa", "#facc15", "#c084f
 export class MapView {
   private floor: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
+  /** Agent whose panel is selected: drawn with a trail, its vision range and a ring. */
+  selected: number | null = null;
+  trailSeconds = 4;
 
   constructor(public canvas: HTMLCanvasElement, private replay: Replay) {
     this.ctx = canvas.getContext("2d")!;
@@ -47,6 +50,7 @@ export class MapView {
     const pad = 12;
     const hudH = 44;
     const scale = Math.min((W - 2 * pad) / m.map.width, (H - hudH - 2 * pad) / m.map.height);
+    if (!(scale > 0)) return; // window too small to draw the map
     const ox = (W - m.map.width * scale) / 2;
     const oy = hudH + pad + (H - hudH - 2 * pad - m.map.height * scale) / 2;
     const sx = (x: number) => ox + ((x - m.map.x0) / m.map.res + 0.5) * scale;
@@ -86,6 +90,23 @@ export class MapView {
       }
     }
 
+    // trails (last few seconds of each living agent's path; brighter for the selected one)
+    const trailTicks = Math.round((this.trailSeconds * 1000) / m.tick_ms);
+    for (let a = 0; a < m.n_agents; a++) {
+      if (rp.field(tick, a, "alive") <= 0.5) continue;
+      const color = AGENT_COLORS[a % AGENT_COLORS.length];
+      ctx.strokeStyle = color + (this.selected === a ? "cc" : "55");
+      ctx.lineWidth = this.selected === a ? 2 : 1;
+      ctx.beginPath();
+      let first = true;
+      for (let t = Math.max(0, tick - trailTicks); t <= tick; t += 3) {
+        const px = sx(rp.field(t, a, "x"));
+        const py = sy(rp.field(t, a, "y"));
+        if (first) { ctx.moveTo(px, py); first = false; } else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    }
+
     // agents
     for (let a = 0; a < m.n_agents; a++) {
       const x = rp.field(tick, a, "x");
@@ -107,11 +128,18 @@ export class MapView {
       }
       const hidden = rp.inVent(tick, a);
       const range = m.roles[a] === "seeker" ? m.vision_range.seeker_range_units : m.vision_range.hider_range_units;
-      ctx.strokeStyle = color + "33";
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = color + (this.selected === a ? "99" : "33");
+      ctx.lineWidth = this.selected === a ? 1.5 : 1;
       ctx.beginPath();
       ctx.arc(px, py, units(range), 0, Math.PI * 2);
       ctx.stroke();
+      if (this.selected === a) {
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(px, py, r + 4, 0, Math.PI * 2);
+        ctx.stroke();
+      }
 
       ctx.globalAlpha = hidden ? 0.3 : 1;
       ctx.fillStyle = color;
