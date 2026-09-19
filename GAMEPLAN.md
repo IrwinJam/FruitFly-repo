@@ -219,18 +219,18 @@ and rejected or accepted on held-out episodes:
   Useful knobs are lower `turn.scale_hz` (5–10) and higher `max_omega` (4.5–6): 26–28 deg.
 
 **5.5a Locomotion (in progress)**
-- [ ] `wall_slow`: cut forward thrust while in wall contact so the brain's turn can act. A/B on 40 held-out episodes.
-- [ ] Make `turn.max_omega_rad_per_s` trainable; A/B the best steering settings on The Skeld.
-- [ ] Keep whatever wins; re-train the explorer (~15 generations) with the new parameters and re-run the Phase 4 held-out comparison (untrained / trained / shuffled / PFL3-off).
+- [x] (rejected: rooms −0.60 to −1.38) `wall_slow`: cut forward thrust while in wall contact so the brain's turn can act. A/B on 40 held-out episodes.
+- [x] (6 rad/s: +1.05 rooms, p=0.004; now the default) Make `turn.max_omega_rad_per_s` trainable; A/B the best steering settings on The Skeld.
+- [x] Keep whatever wins; re-train the explorer (~15 generations) with the new parameters and re-run the Phase 4 held-out comparison (untrained / trained / shuffled / PFL3-off).
 
 **5.5b Roles, re-trained on fixed locomotion**
-- [ ] `seeker_navcore_v3` and `hider_navcore_v2` (8 matches per candidate for the seeker).
-- [ ] Controls with the same budget on `navcore_shuf0`, plus ablations (LC10a, PFL3 for the seeker;
+- [x] (ran as `seeker_v3`, `hider_v2`) `seeker_navcore_v3` and `hider_navcore_v2` (8 matches per candidate for the seeker).
+- [x] Controls with the same budget on `navcore_shuf0`, plus ablations (LC10a, PFL3 for the seeker;
       LC4+LPLC2, DNp01, PFL3 for hiders) on held-out matches. **Run these only after locomotion is frozen** —
       controls trained against the old locomotion would have to be redone.
 
 **5.5c Report**
-- [ ] `docs/PHASE5_REPORT.md` including the negative results: photoreceptors are nearly absent from
+- [x] [docs/PHASE5_REPORT.md](docs/PHASE5_REPORT.md) including the negative results: photoreceptors are nearly absent from
       navcore (16/9 neurons, zero steering output), looming drives only DNp01 and never DNa02/03/DNg13,
       the wall-aware goal did not help, and role training gives small gains at best.
 
