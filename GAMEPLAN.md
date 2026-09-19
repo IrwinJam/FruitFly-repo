@@ -238,12 +238,115 @@ and rejected or accepted on held-out episodes:
 and the re-trained roles beat their Phase 4 starting point on held-out matches, with shuffled-wiring and
 ablation controls reported either way.
 
-### Phase 6 — Showcase · ~1–2 sessions + a few hours of GPU
-- [ ] **6a — 1 Seeker + 3 Hiders** on the `full` graph with trained role adapters. Recorded match: ~20–40 min of compute per 5-minute match on the 2060 Super (estimate).
-- [ ] **6b — 1 Seeker + 5 Hiders**, reusing the same role adapters (no retraining). Evaluate briefly first; fine-tune the Hider adapter only if 5 Hiders crowd or collapse. ~30–60 min of compute per match.
-- [ ] Methods table and a results write-up (§6.2) alongside the video.
-- [ ] Viewer polish: IMG_0897 bloom, named-circuit labels ("LC10a — target spotted"), a highlight when the fly is selected, title card.
-- [ ] Capture a 60–90 s video.
+### Phase 6 — Showcase · plan revised 2026-09-19
+
+**Goal.** Publish watchable, honest Hide n Seek matches in which every fly is a connectome brain: first 1 Seeker + 3 Hiders, then 1 Seeker + 5 Hiders using the same role adapters. Ship them with outcome statistics, a methods/disclosure table, and a 60–90 s video.
+
+**Starting point (from [docs/PHASE5_REPORT.md](docs/PHASE5_REPORT.md)).**
+
+| Role | Adapter | Why this one |
+|---|---|---|
+| Seeker | `init:explore_navcore_v2` + default seeker policy | Best held-out seeker (1.06 fitness, 15/40 wins). None of the role-trained seekers beat it. |
+| Hider | `mean:hider_v2` | Best held-out hider: 45.4 s survival, better than the scripted hiders |
+
+**What is new and untested:**
+- **Brain vs brain.** Every Phase 5 number is brain vs *scripted* opponents.
+- **Full-length rules.** 10 s freeze, 300 s round, 120 s Final Hide. Training used the 90 s short preset.
+- **5 hiders.**
+- **The `full` graph.** Every adapter was trained on navcore.
+
+Each of these gets a check before anything is recorded.
+
+#### 6.0 Code: one role controller for training, evaluation and matches
+- [ ] `RoleController` (in `flyseek/agents/role_policy.py`). For any mix of brain seekers and brain hiders in one `FlyPopulation`, it:
+  - builds per-fly decoder values and channel gains from each role's adapter;
+  - runs `SeekerRolePolicy` on the seeker columns and `HiderRolePolicy` on the hider columns;
+  - returns goal directions and speed factors (camping).
+- [ ] `role_env`: add `role="both"`, where every agent is a brain and the controller is shared. This gives batched all-brain evaluation: dozens of matches in one GPU batch.
+- [ ] `match.py`: `--seeker-adapter` / `--hider-adapter` use the same controller, so recorded showcase matches behave exactly like the evaluated ones.
+  - **Consistency check:** same seed through both paths, with identical rules and policies → the same kind of outcome. Only brain noise from batch composition may differ.
+- [ ] `eval_role`: add `--hiders N`, `--preset full`, and brain-vs-brain conditions.
+
+#### 6.1 Validation on navcore (all held-out seeds; GPU estimates from measured batch speed)
+
+| Check | Matches | Estimate | Decision it drives |
+|---|---|---|---|
+| A. Full-length preset vs scripted opponents | 20 per role | ~30 min | If the short-preset adapters misbehave over 300 s (e.g. hiders camp forever, seeker memory too short), re-train with the full preset, or keep the short preset for the showcase and say so. |
+| B. All-brain, 3 hiders, short + full preset | 40 + 20 | ~40 min | Outcome statistics for the showcase |
+| C. All-brain, 5 hiders, short + full preset | 40 + 20 | ~60 min | **Crowding test:** per-hider survival vs the 3-hider case. Fine-tune `hider_v2` with 5 hiders only if per-hider survival drops by more than 25% |
+| D. Controls on the all-brain setting | 20 each | ~40 min | All-brain with PFL3 silenced, and shuffled wiring — the showcase has the same controls as the science |
+
+**Seed policy (pre-registered).** The showcase replays use seeds **6000, 6001, 6002** for each configuration. All three are published, whatever the outcome; there is no cherry-picking. The statistics table (B/C) says where each showcase match falls in the distribution.
+
+#### 6.2 Full-graph gate (the `full` graph has 165,122 neurons vs navcore's 22,686)
+- [ ] Speed: ticks/s with 4 and 6 active flies. It decides whether a 300 s full-graph match is practical (Phase 1 quiet-network estimate: ~1.7 h).
+- [ ] Transfer: the Phase 4 exploration test with the navcore-trained walker on `full` (8 flies, 45 s, same seeds as navcore).
+  - **Go:** rooms ≥ navcore − 1.
+  - **No-go:** the showcase stays on navcore, and the full-graph failure is reported.
+- [ ] Odor channels are off on `full` (mushroom-body ignition, PHASE1_REPORT §6.3), which removes the danger meter and pings. Disclosed in every replay.
+- [ ] If the gate passes: one clearly labelled full-graph match. **The primary showcase stays on navcore**, where every result was trained and validated.
+
+#### 6.3 Record the showcase replays (spikes recorded, exported to the viewer)
+- [ ] `showcase3_s6000..6002`: 1 Seeker + 3 Hiders, all brains, navcore, full-length preset
+- [ ] `showcase5_s6000..6002`: 1 Seeker + 5 Hiders, same
+- [ ] `showcase_full_*` if 6.2 passes
+- [ ] Size: navcore 90 s ≈ 7.5 MB, so 300 s × 6 flies ≈ 35–50 MB per replay. That's fine locally, but replay binaries are **not committed** (gitignored); only small ones and the index are.
+
+#### 6.4 Viewer polish (style reference: IMG_0897 — black ground, grey point cloud, coloured activity glow)
+- [ ] **Header per panel:** "165,122 neurons in layout · 22,686 simulated (navcore)", plus the activity window.
+- [ ] **Named-circuit legend with live bars per fly** from the existing display groups:
+  - vision · pursuit (LC10a) · looming/escape (LC4/LPLC2/DNp01) · navigation (EPG/FC2/PFL3) · steering DNs · olfaction.
+  - Short captions when a group fires ("LC10a — target in view", "PFL3 — steering to goal").
+- [ ] **Game HUD:**
+  - phase banner (HIDE / SEEK / FINAL HIDE) and timer;
+  - event feed (caught, vent, ping);
+  - danger meter per hider.
+- [ ] **Map:**
+  - trails, vision range for the selected fly, vents;
+  - click a panel to highlight that fly.
+  - Own drawings only, no Among Us art.
+- [ ] **Glow:** a halo pass for active neurons (bloom-like, without post-processing across viewports).
+- [ ] **Title and end cards:** project name, "connectome-constrained model, not a real fly", data credit.
+- [ ] **Reel + Record:**
+  - `reel.json` segments (replay, start/end tick, speed, caption);
+  - a Record button that composites WebGL, map and text into one canvas and saves a WebM via MediaRecorder.
+  - Fallback: Windows Game Bar (Win+Alt+R).
+
+#### 6.5 Video (60–90 s)
+Title card → the hide phase with the frozen seeker → first sighting, pursuit/navigation glow → a catch → Final Hide pings → the 5-hider match → end card.
+- The end card has the results table (real vs shuffled vs PFL3-silenced) and "what is engineered".
+- Captions come from the actual replay events, not written by hand.
+
+#### 6.6 Write-up and release
+- [ ] `docs/SHOWCASE.md`:
+  - methods table (connectome vs engineered, per component);
+  - showcase statistics (6.1 B–D);
+  - seeds;
+  - limitations.
+- [ ] README: overview, results by phase, how to run the viewer, citations:
+  - MaleCNS v1.0 (CC-BY 4.0);
+  - Shiu et al. 2024 LIF model;
+  - Westeinde et al. 2024 (PFL2/PFL3);
+  - a fan project, not affiliated with Innersloth.
+- [ ] Before pushing: secret scan; no third-party screenshots; large replay binaries gitignored.
+
+**Done when:**
+- the 3-hider and 5-hider showcase replays play in the viewer with live circuit labels;
+- the showcase statistics and controls are published alongside them;
+- a 60–90 s video exists;
+- the README tells a first-time reader what the connectome does and what is engineered.
+
+**Order and time:**
+
+| Step | What | Estimate |
+|---|---|---|
+| 1 | 6.0 code | 1 session |
+| 2 | 6.1 A–D | ~3 h GPU, runs while the viewer work happens |
+| 3 | 6.2 full-graph gate | ~1–2 h GPU |
+| 4 | 6.3 recordings | ~2–3 h GPU for navcore, more for full |
+| 5 | 6.4 viewer | 1–2 sessions |
+| 6 | 6.5 video | — |
+| 7 | 6.6 write-up | — |
 
 ### Stretch (any order after Phase 3)
 - Live WebSocket mode on navcore
