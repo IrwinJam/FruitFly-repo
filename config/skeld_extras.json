@@ -1,0 +1,245 @@
+{
+  "source": "walkable grid derived from skeld_map.json by amongusfly/world/skeld.py; vent coordinates from SkeldJS generated map data (MIT), snapped to the nearest standable node",
+  "vents": [
+    {
+      "group": 0,
+      "index": 0,
+      "game_name": "AdminVent",
+      "room": "Admin",
+      "links_to": [
+        "CafeVent",
+        "BigYVent"
+      ],
+      "x": 2.55,
+      "y": -9.9,
+      "game_x": 2.544,
+      "game_y": -9.955201,
+      "snap_distance": 0.056,
+      "clearance": 0.3,
+      "approximate": false
+    },
+    {
+      "group": 0,
+      "index": 1,
+      "game_name": "BigYVent",
+      "room": "O2",
+      "links_to": [
+        "AdminVent",
+        "CafeVent"
+      ],
+      "x": 9.45,
+      "y": -6.45,
+      "game_x": 9.384,
+      "game_y": -6.438,
+      "snap_distance": 0.067,
+      "clearance": 0.75,
+      "approximate": false
+    },
+    {
+      "group": 0,
+      "index": 2,
+      "game_name": "CafeVent",
+      "room": "Cafeteria",
+      "links_to": [
+        "AdminVent",
+        "BigYVent"
+      ],
+      "x": 4.2,
+      "y": -0.3,
+      "game_x": 4.2588,
+      "game_y": -0.27600002,
+      "snap_distance": 0.064,
+      "clearance": 0.9,
+      "approximate": false
+    },
+    {
+      "group": 1,
+      "index": 3,
+      "game_name": "ElecVent",
+      "room": "Electrical",
+      "links_to": [
+        "SecurityVent",
+        "MedVent"
+      ],
+      "x": -9.75,
+      "y": -8.1,
+      "game_x": -9.7764,
+      "game_y": -8.034,
+      "snap_distance": 0.071,
+      "clearance": 0.45,
+      "approximate": false
+    },
+    {
+      "group": 2,
+      "index": 4,
+      "game_name": "LEngineVent",
+      "room": "Upper Engine",
+      "links_to": [
+        "UpperReactorVent"
+      ],
+      "x": -15.299999999999999,
+      "y": 2.55,
+      "game_x": -15.288,
+      "game_y": 2.52,
+      "snap_distance": 0.032,
+      "clearance": 0.6,
+      "approximate": false
+    },
+    {
+      "group": 1,
+      "index": 5,
+      "game_name": "SecurityVent",
+      "room": "Security",
+      "links_to": [
+        "ElecVent",
+        "MedVent"
+      ],
+      "x": -12.6,
+      "y": -6.8999999999999995,
+      "game_x": -12.534,
+      "game_y": -6.949,
+      "snap_distance": 0.082,
+      "clearance": 0.3,
+      "approximate": false
+    },
+    {
+      "group": 1,
+      "index": 6,
+      "game_name": "MedVent",
+      "room": "MedBay",
+      "links_to": [
+        "ElecVent",
+        "SecurityVent"
+      ],
+      "x": -10.65,
+      "y": -4.2,
+      "game_x": -10.608,
+      "game_y": -4.176,
+      "snap_distance": 0.048,
+      "clearance": 0.6,
+      "approximate": false
+    },
+    {
+      "group": 3,
+      "index": 7,
+      "game_name": "WeaponsVent",
+      "room": "Weapons",
+      "links_to": [
+        "NavVentNorth"
+      ],
+      "x": 8.85,
+      "y": 3.3,
+      "game_x": 8.82,
+      "game_y": 3.324,
+      "snap_distance": 0.038,
+      "clearance": 0.6,
+      "approximate": false
+    },
+    {
+      "group": 4,
+      "index": 8,
+      "game_name": "ReactorVent",
+      "room": "Reactor",
+      "links_to": [
+        "REngineVent"
+      ],
+      "x": -20.849999999999998,
+      "y": -6.8999999999999995,
+      "game_x": -20.796,
+      "game_y": -6.953,
+      "snap_distance": 0.076,
+      "clearance": 0.335,
+      "approximate": false
+    },
+    {
+      "group": 4,
+      "index": 9,
+      "game_name": "REngineVent",
+      "room": "Lower Engine",
+      "links_to": [
+        "ReactorVent"
+      ],
+      "x": -15.299999999999999,
+      "y": -13.65,
+      "game_x": -15.2508,
+      "game_y": -13.656,
+      "snap_distance": 0.05,
+      "clearance": 0.3,
+      "approximate": false
+    },
+    {
+      "group": 5,
+      "index": 10,
+      "game_name": "ShieldsVent",
+      "room": "Shields",
+      "links_to": [
+        "NavVentSouth"
+      ],
+      "x": 9.45,
+      "y": -14.399999999999999,
+      "game_x": 9.5232,
+      "game_y": -14.338,
+      "snap_distance": 0.096,
+      "clearance": 0.424,
+      "approximate": false
+    },
+    {
+      "group": 2,
+      "index": 11,
+      "game_name": "UpperReactorVent",
+      "room": "Reactor",
+      "links_to": [
+        "LEngineVent"
+      ],
+      "x": -21.9,
+      "y": -3.0,
+      "game_x": -21.876,
+      "game_y": -3.052,
+      "snap_distance": 0.057,
+      "clearance": 0.949,
+      "approximate": false
+    },
+    {
+      "group": 3,
+      "index": 12,
+      "game_name": "NavVentNorth",
+      "room": "Navigation",
+      "links_to": [
+        "WeaponsVent"
+      ],
+      "x": 16.05,
+      "y": -3.15,
+      "game_x": 16.008,
+      "game_y": -3.168,
+      "snap_distance": 0.046,
+      "clearance": 0.6,
+      "approximate": false
+    },
+    {
+      "group": 5,
+      "index": 13,
+      "game_name": "NavVentSouth",
+      "room": "Navigation",
+      "links_to": [
+        "ShieldsVent"
+      ],
+      "x": 16.05,
+      "y": -6.3,
+      "game_x": 16.008,
+      "game_y": -6.384,
+      "snap_distance": 0.094,
+      "clearance": 0.3,
+      "approximate": false
+    }
+  ],
+  "spawn": {
+    "note": "Standard Among Us behavior: all players (including the Seeker) spawn in Cafeteria.",
+    "room": "Cafeteria",
+    "xy": [
+      -0.9699666339548577,
+      0.9391030421982335
+    ]
+  },
+  "tasks_modeled": false,
+  "tasks_note": "Hide n Seek's task rules are ambiguous across sources (Innersloth's own page describes tasks reducing the Final Hide timer via a 'Common Tasks' setting; other summaries state tasks are disabled entirely). Not resolved by further searching, so task stations are not modeled -- see config/game.yaml."
+}

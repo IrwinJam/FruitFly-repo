@@ -1,0 +1,7 @@
+# Obstacle sense: wall proximity from a fan of rays, as Poisson rates into LLPC1 on the side
+# opposite the wall (driving one side turns the fly toward that side).
+target_type: LLPC1
+laterality: contra
+max_hz: 40.0          # peak drive
+range_units: 1.0      # walls farther than this are not sensed
+ray_deg: [20, 40, 60, 80]   # rays each side of the heading

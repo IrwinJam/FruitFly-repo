@@ -1,0 +1,116 @@
+[
+  {
+    "name": "showcase_v4_5h_s6002",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "graph": "navcore",
+    "seconds": 197.6,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_5h_s6001",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "graph": "navcore",
+    "seconds": 202.6,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_5h_s6000",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "graph": "navcore",
+    "seconds": 83.9,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_3h_s6005",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 218.1,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_3h_s6004",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 300.0,
+    "winner": "hiders"
+  },
+  {
+    "name": "showcase_v4_3h_s6003",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 200.0,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_3h_s6002",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 196.8,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_3h_s6001",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 73.2,
+    "winner": "seeker"
+  },
+  {
+    "name": "showcase_v4_3h_s6000",
+    "brain_agents": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "graph": "navcore",
+    "seconds": 206.3,
+    "winner": "seeker"
+  }
+]

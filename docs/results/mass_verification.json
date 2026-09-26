@@ -1,0 +1,66 @@
+{
+  "3_hiders": {
+    "games": 200,
+    "seeker_wins": 182,
+    "win_rate": 0.91,
+    "win_rate_ci95": [
+      0.8622332538615105,
+      0.9423130212854665
+    ],
+    "hider_survival_s": 131.87746666667735,
+    "hider_survival_ci95": [
+      124.95057415579772,
+      138.804359177557
+    ],
+    "seeker_wall_contact_s": 24.12165000000026,
+    "checks": {
+      "showcase (6 recorded games)": {
+        "wins": 6,
+        "games": 6,
+        "p_vs_pooled": 1.0
+      },
+      "allbrain (20 games)": {
+        "wins": 19,
+        "games": 20,
+        "p_vs_pooled": 1.0
+      },
+      "replication (20 games)": {
+        "wins": 18,
+        "games": 20,
+        "p_vs_pooled": 0.7000430291315195
+      }
+    }
+  },
+  "5_hiders": {
+    "games": 100,
+    "seeker_wins": 76,
+    "win_rate": 0.76,
+    "win_rate_ci95": [
+      0.6676748127670786,
+      0.8330878873454004
+    ],
+    "hider_survival_s": 131.002120000008,
+    "hider_survival_ci95": [
+      123.14066065077378,
+      138.86357934924223
+    ],
+    "seeker_wall_contact_s": 22.327866666666797,
+    "checks": {
+      "showcase (3 recorded games)": {
+        "wins": 2,
+        "games": 3,
+        "p_vs_pooled": 0.561024
+      },
+      "allbrain (20 games)": {
+        "wins": 17,
+        "games": 20,
+        "p_vs_pooled": 0.4407560304422308
+      },
+      "replication (20 games)": {
+        "wins": 16,
+        "games": 20,
+        "p_vs_pooled": 0.7987648450437225
+      }
+    }
+  }
+}

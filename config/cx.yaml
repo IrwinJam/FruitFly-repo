@@ -1,0 +1,17 @@
+# Central-complex compass inputs: an EPG heading bump and an FC2 goal bump, von Mises over each
+# neuron's preferred angle (angles from amongusfly/brain/cx_map.py).
+
+# peak Poisson rate of both bumps (reference model default)
+r_max_hz: 150.0
+kappa: 2.0 # bump concentration
+
+# World angle -> preferred-angle frame:
+#   nominal_heading = heading_sign * world_heading
+#   nominal_goal    = heading_sign * world_goal + goal_offset_deg
+# set so turns have the right sign and PFL2 peaks with the goal behind the fly
+heading_sign: -1
+goal_offset_deg: 342.0
+
+# Bridge glomeruli are numbered outward from the midline on both sides, so preferred angles run in
+# opposite index directions ("mirror_R"). "same" gives L_k and R_k the same angle.
+pb_phase_convention: mirror_R

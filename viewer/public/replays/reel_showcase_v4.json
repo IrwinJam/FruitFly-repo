@@ -1,0 +1,61 @@
+{
+  "name": "reel_showcase_v4",
+  "segments": [
+    {
+      "replay": "showcase_v4_3h_s6000",
+      "start": 0,
+      "end": 14,
+      "speed": 2,
+      "caption": [
+        "Hide phase: the seeker is frozen while the hiders scatter",
+        "Each panel is one fly's simulated brain; glowing points just spiked"
+      ]
+    },
+    {
+      "replay": "showcase_v4_5h_s6000",
+      "start": 76.92,
+      "end": 82.28,
+      "speed": 1,
+      "caption": [
+        "The seeker spots a hider and gives chase",
+        "Watch the pursuit (LC10a) and steering (DNa02/03) bars in its panel"
+      ]
+    },
+    {
+      "replay": "showcase_v4_3h_s6000",
+      "start": 93.08,
+      "end": 100.08,
+      "speed": 1,
+      "caption": [
+        "A hider escapes through a vent",
+        "Vents sit at their real in-game positions and link as in the game"
+      ]
+    },
+    {
+      "replay": "showcase_v4_3h_s6004",
+      "start": 178.0,
+      "end": 194.0,
+      "speed": 2,
+      "caption": [
+        "Final Hide: every hider's position is pinged",
+        "Every 6 s the hiders are revealed and the seeker heads for them"
+      ]
+    },
+    {
+      "replay": "showcase_v4_3h_s6004",
+      "start": 292.0,
+      "speed": 1,
+      "caption": [
+        "Time runs out"
+      ]
+    },
+    {
+      "replay": "showcase_v4_5h_s6002",
+      "start": 191.6,
+      "speed": 1,
+      "caption": [
+        "The last hider is caught"
+      ]
+    }
+  ]
+}

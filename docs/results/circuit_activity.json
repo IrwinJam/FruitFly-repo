@@ -1,0 +1,142 @@
+{
+  "games": 18,
+  "pattern": "showcase_v[45]_*",
+  "circuits": {
+    "Compass (EPG)": {
+      "kind": "input",
+      "neurons": 46,
+      "seeker:frozen": 30.547902616348594,
+      "seeker:searching": 29.670445561700983,
+      "seeker:chasing": 29.504660279130608,
+      "hider:safe": 29.98624520837177,
+      "hider:threatened": 29.93202159955335,
+      "hider:seen": 29.541369008203297
+    },
+    "Goal (FC2)": {
+      "kind": "input",
+      "neurons": 92,
+      "seeker:frozen": 0.27251638207298995,
+      "seeker:searching": 34.14747320370465,
+      "seeker:chasing": 34.09707368058194,
+      "hider:safe": 21.612639990707144,
+      "hider:threatened": 21.673889053667388,
+      "hider:seen": 24.20827555448221
+    },
+    "Visual pursuit (LC10a)": {
+      "kind": "input",
+      "neurons": 275,
+      "seeker:frozen": 1.5461546154615462,
+      "seeker:searching": 0.006249614351639858,
+      "seeker:chasing": 2.79251141214955,
+      "hider:safe": 0.0,
+      "hider:threatened": 0.0,
+      "hider:seen": 0.0
+    },
+    "Looming (LC4, LPLC2)": {
+      "kind": "input",
+      "neurons": 311,
+      "seeker:frozen": 0.0,
+      "seeker:searching": 0.0,
+      "seeker:chasing": 0.0,
+      "hider:safe": 0.02701308256686946,
+      "hider:threatened": 0.0096256574091756,
+      "hider:seen": 5.209186139698829
+    },
+    "Delta7 (compass ring)": {
+      "kind": "computed",
+      "neurons": 42,
+      "seeker:frozen": 16.54905966787155,
+      "seeker:searching": 17.00270305671656,
+      "seeker:chasing": 16.70962448813638,
+      "hider:safe": 17.378819514604523,
+      "hider:threatened": 17.202906443476266,
+      "hider:seen": 16.734072234878543
+    },
+    "PFL3 (goal vs heading)": {
+      "kind": "computed",
+      "neurons": 24,
+      "seeker:frozen": 0.512009534286762,
+      "seeker:searching": 12.645706069374487,
+      "seeker:chasing": 12.810234126177408,
+      "hider:safe": 7.960782387762586,
+      "hider:threatened": 7.923730939004815,
+      "hider:seen": 9.000123185808995
+    },
+    "PFL2 (goal behind)": {
+      "kind": "computed",
+      "neurons": 12,
+      "seeker:frozen": 2.6613494682801613,
+      "seeker:searching": 13.019445337524857,
+      "seeker:chasing": 11.10024056380023,
+      "hider:safe": 9.733432867096234,
+      "hider:threatened": 9.326427902621722,
+      "hider:seen": 9.654407812220033
+    },
+    "Steering (DNa02, DNa03)": {
+      "kind": "computed",
+      "neurons": 4,
+      "seeker:frozen": 0.8333333333333333,
+      "seeker:searching": 1.4392883935269531,
+      "seeker:chasing": 2.132039032323643,
+      "hider:safe": 1.067067421027817,
+      "hider:threatened": 1.249247592295345,
+      "hider:seen": 2.2307830137968105
+    },
+    "DNg13": {
+      "kind": "computed",
+      "neurons": 2,
+      "seeker:frozen": 0.0,
+      "seeker:searching": 4.680455828242775,
+      "seeker:chasing": 1.8258284204106527,
+      "hider:safe": 10.902876001885902,
+      "hider:threatened": 11.203852327447832,
+      "hider:seen": 4.8669593262856115
+    },
+    "Escape (DNp01)": {
+      "kind": "computed",
+      "neurons": 2,
+      "seeker:frozen": 0.0,
+      "seeker:searching": 0.007144643303683063,
+      "seeker:chasing": 0.0,
+      "hider:safe": 0.2112997013987113,
+      "hider:threatened": 0.11687399678972712,
+      "hider:seen": 45.72321268589858
+    },
+    "Backward (MDN)": {
+      "kind": "computed",
+      "neurons": 4,
+      "seeker:frozen": 0.0,
+      "seeker:searching": 1.217625835030186,
+      "seeker:chasing": 0.2337873551534865,
+      "hider:safe": 0.8816203048876317,
+      "hider:threatened": 0.619983948635634,
+      "hider:seen": 0.45522755778534313
+    }
+  },
+  "readout_consistency": {
+    "seeker": {
+      "spearman_r": 0.730104291648945,
+      "p": 0.0,
+      "sign_agreement": 0.997323768795696,
+      "ticks": 159551
+    },
+    "hider": {
+      "spearman_r": 0.5837975349481973,
+      "p": 0.0,
+      "sign_agreement": 0.9932337469381199,
+      "ticks": 390224
+    }
+  },
+  "time_share": {
+    "seeker": {
+      "frozen": 0.053872732337270565,
+      "searching": 0.8295156195364218,
+      "chasing": 0.11661164812630756
+    },
+    "hider": {
+      "safe": 0.8151129603344999,
+      "threatened": 0.12769206331312738,
+      "seen": 0.0571949763523727
+    }
+  }
+}

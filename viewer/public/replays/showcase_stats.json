@@ -1,0 +1,14 @@
+{
+  "showcase_v4_3h": [
+    "Over 200 more games on fresh seeds the seeker wins 91% (95% CI 86%\u201394%).",
+    "Silence 24 PFL3 or 12 PFL2 steering neurons in the seeker: wins fall from 13/20 to 1/20 and 0/20.",
+    "Same wiring shuffled, same training: the seeker wins 1/40 and the hiders survive 77 s of 90.",
+    "Engineered: senses, route planning, forward speed, auto-vent, camping. Never trained: the connectome itself."
+  ],
+  "showcase_v4_5h": [
+    "Five hiders reuse the three-hider adapter with no retraining.",
+    "Over 100 more games on fresh seeds the seeker wins 76% (95% CI 67%\u201383%).",
+    "Same wiring shuffled, same training: the seeker wins 1/40.",
+    "Engineered: senses, route planning, forward speed, auto-vent, camping. Never trained: the connectome itself."
+  ]
+}

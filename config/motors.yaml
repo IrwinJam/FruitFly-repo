@@ -1,0 +1,42 @@
+# Motor decoder: descending-neuron rates -> body commands.
+# Turning comes from left-right differences of the steering neurons; forward speed is a constant
+# (the forward-drive neurons get no input in this model). omega > 0 turns left; somaSide "L" is
+# the fly's left. Starting values; training adjusts them within bounds (amongusfly/train/adapter.py).
+
+ema_tau_ms: 100.0
+
+forward:
+  base_speed_units_per_s: 1.5
+  max_speed_units_per_s: 3.0
+
+turn:
+  # trained within 3-7
+  max_omega_rad_per_s: 6.0
+  deadband_hz: 1.0 # |weighted L-R| below this is ignored
+  # omega = tanh(sum_i w_i * (rate_i_L - rate_i_R) / scale_hz) * max_omega
+  scale_hz: 20.0
+  weights:
+    DNa02: 1.0
+    DNa03: 0.5
+    DNg13: 0.5
+    DNa01: 0.0
+    DNp01: 0.0
+
+dash:
+  source: DNp01 # giant fibre
+  threshold_hz: 60.0 # mean of L+R
+  speed_multiplier: 1.8
+
+backward:
+  source: MDN
+  threshold_hz: 20.0
+  speed_units_per_s: -0.8
+
+# goal behind the fly: PFL3 steering fades and PFL2 peaks, so above this PFL2 rate the fly turns
+# (toward any remaining steering, else left) and slows
+goal_behind:
+  enabled: true
+  source: PFL2
+  threshold_hz: 20.0
+  turn_rad_per_s: 2.0
+  speed_factor: 0.4

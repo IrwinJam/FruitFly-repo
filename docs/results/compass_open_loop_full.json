@@ -1,0 +1,172 @@
+{
+  "summary": {
+    "PFL3_steerL_minus_steerR": {
+      "real_amp": 16.203,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.897,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "DNa02_L_minus_R": {
+      "real_amp": 37.659,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.713,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "DNa03_L_minus_R": {
+      "real_amp": 30.664,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.701,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "PFL3_mean": {
+      "real_amp": 3.194,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.607,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    },
+    "PFL2_mean": {
+      "real_amp": 10.612,
+      "shuffle_amp_max": null,
+      "p_amp": 1.0,
+      "real_r2_rel": 0.567,
+      "shuffle_r2_rel_max": null,
+      "p_r2": 1.0
+    }
+  },
+  "graphs": [
+    {
+      "tag": "full",
+      "replicates": 4,
+      "r_max_hz": 150.0,
+      "kappa": 2.0,
+      "measure_wall_s": 53.5,
+      "n_stim": {
+        "EPG": 46,
+        "FC2": 92,
+        "PFL3": 24
+      },
+      "fits": {
+        "PFL3_steerL_minus_steerR": {
+          "amp_rel": 16.203,
+          "pref_offset_deg": 245.2,
+          "r2_rel": 0.897,
+          "r2_goal_only": 0.008,
+          "r2_heading_only": 0.008,
+          "mean_by_offset": {
+            "0": -8.177,
+            "45": -15.625,
+            "90": -16.19,
+            "135": -7.12,
+            "180": 5.539,
+            "225": 14.391,
+            "270": 13.669,
+            "315": 3.836
+          }
+        },
+        "DNa02_L_minus_R": {
+          "amp_rel": 37.659,
+          "pref_offset_deg": 254.0,
+          "r2_rel": 0.713,
+          "r2_goal_only": 0.027,
+          "r2_heading_only": 0.001,
+          "mean_by_offset": {
+            "0": -1.719,
+            "45": -27.656,
+            "90": -45.812,
+            "135": -37.156,
+            "180": 21.0,
+            "225": 37.969,
+            "270": 25.062,
+            "315": 1.719
+          }
+        },
+        "DNa03_L_minus_R": {
+          "amp_rel": 30.664,
+          "pref_offset_deg": 251.3,
+          "r2_rel": 0.701,
+          "r2_goal_only": 0.024,
+          "r2_heading_only": 0.0,
+          "mean_by_offset": {
+            "0": -1.125,
+            "45": -22.125,
+            "90": -37.469,
+            "135": -27.344,
+            "180": 19.969,
+            "225": 32.438,
+            "270": 19.781,
+            "315": 1.438
+          }
+        },
+        "PFL3_mean": {
+          "amp_rel": 3.194,
+          "pref_offset_deg": 336.1,
+          "r2_rel": 0.607,
+          "r2_goal_only": 0.159,
+          "r2_heading_only": 0.056,
+          "mean_by_offset": {
+            "0": 15.836,
+            "45": 13.214,
+            "90": 10.819,
+            "135": 9.88,
+            "180": 9.993,
+            "225": 11.013,
+            "270": 13.277,
+            "315": 15.934
+          }
+        },
+        "PFL2_mean": {
+          "amp_rel": 10.612,
+          "pref_offset_deg": 153.9,
+          "r2_rel": 0.567,
+          "r2_goal_only": 0.042,
+          "r2_heading_only": 0.118,
+          "mean_by_offset": {
+            "0": 11.284,
+            "45": 20.125,
+            "90": 27.633,
+            "135": 30.966,
+            "180": 30.724,
+            "225": 26.797,
+            "270": 18.156,
+            "315": 11.242
+          }
+        }
+      },
+      "controls": {
+        "PFL3_steerL_minus_steerR": {
+          "epg_only": -0.813,
+          "fc2_only": -0.781,
+          "none": 0.0
+        },
+        "DNa02_L_minus_R": {
+          "epg_only": 0.094,
+          "fc2_only": -0.281,
+          "none": 0.0
+        },
+        "DNa03_L_minus_R": {
+          "epg_only": 0.0,
+          "fc2_only": 0.188,
+          "none": 0.0
+        },
+        "PFL3_mean": {
+          "epg_only": 1.826,
+          "fc2_only": 14.154,
+          "none": 0.0
+        },
+        "PFL2_mean": {
+          "epg_only": 7.039,
+          "fc2_only": 21.133,
+          "none": 0.0
+        }
+      }
+    }
+  ]
+}

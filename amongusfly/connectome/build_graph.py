@@ -1,0 +1,146 @@
+"""
+Build the brain graph from the raw MaleCNS v1.0 Feather files.
+
+Keeps edges between traced neurons only (165,122 neurons, 25,563,197 edges; weight = synapse
+count), and `pruned5`, the edges with at least 5 synapses. Each neuron's sign comes from its
+neurotransmitter: acetylcholine, dopamine, serotonin and octopamine +1; GABA, glutamate and
+histamine -1; unclear or missing +1, flagged `nt_confident = False`.
+"""
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+import yaml
+
+from amongusfly.paths import CACHE_DIR, CONFIG_DIR, RAW_DIR
+
+CONFIG_PATH = CONFIG_DIR / "brain.yaml"
+
+ANNOTATIONS_FILE = RAW_DIR / "body-annotations-male-cns-v1.0-minconf-0.5.feather"
+NT_FILE = RAW_DIR / "body-neurotransmitters-male-cns-v1.0.feather"
+WEIGHTS_FILE = RAW_DIR / "connectome-weights-male-cns-v1.0-minconf-0.5.feather"
+
+NT_SIGN = {
+    "acetylcholine": 1,
+    "dopamine": 1,
+    "serotonin": 1,
+    "octopamine": 1,
+    "gaba": -1,
+    "glutamate": -1,
+    "histamine": -1,
+}
+DEFAULT_SIGN = 1  # applied when NT is "unclear" or missing
+
+
+def _soma_xyz(v):
+    if hasattr(v, "__len__") and len(v) == 3:
+        return v[0], v[1], v[2]
+    return np.nan, np.nan, np.nan
+
+
+def load_neurons() -> pd.DataFrame:
+    """Traced neurons with type/superclass/soma/side + resolved NT sign."""
+    ann = pd.read_feather(ANNOTATIONS_FILE)
+    ann = ann[ann["status"] == "Traced"].copy()
+    ann = ann[["bodyId", "type", "superclass", "class", "somaSide", "somaLocation"]]
+
+    nt = pd.read_feather(NT_FILE)[
+        ["body", "consensus_nt", "celltype_predicted_nt", "predicted_nt"]
+    ].rename(columns={"body": "bodyId"})
+
+    df = ann.merge(nt, on="bodyId", how="left")
+
+    def usable(col):
+        return df[col].where(df[col].notna() & (df[col] != "unclear"))
+
+    # Priority: the dataset's consensus label, then the cell-type prediction, then the per-body
+    # prediction (the predictions alone mislabel all 4,062 Kenyon cells as dopaminergic).
+    predicted = usable("celltype_predicted_nt").fillna(df["predicted_nt"])
+    resolved_nt = usable("consensus_nt").fillna(predicted)
+    df["nt_predicted"] = predicted  # kept for audit/sensitivity analysis
+    df["nt"] = resolved_nt
+    df["nt_confident"] = resolved_nt.isin(NT_SIGN.keys())
+    df["sign"] = resolved_nt.map(NT_SIGN).fillna(DEFAULT_SIGN).astype(np.int8)
+
+    xyz = df["somaLocation"].apply(_soma_xyz)
+    df["soma_x"] = xyz.apply(lambda t: t[0])
+    df["soma_y"] = xyz.apply(lambda t: t[1])
+    df["soma_z"] = xyz.apply(lambda t: t[2])
+    df["has_soma"] = df["soma_x"].notna()
+
+    df = df.drop(columns=["somaLocation", "consensus_nt", "celltype_predicted_nt", "predicted_nt"])
+    df = df.sort_values("bodyId").reset_index(drop=True)
+    df["idx"] = np.arange(len(df), dtype=np.int32)
+    return df
+
+
+def load_edges(neurons: pd.DataFrame, min_synapses: int = 0) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Returns (edge_index[2,E] int32 using `idx` from `neurons`, edge_weight[E] float32
+    in millivolts, i.e. synapse_count * sign(presynaptic NT) * mv_per_synapse).
+    Only edges where both endpoints are in `neurons` (traced) are kept.
+    """
+    with open(CONFIG_PATH) as f:
+        cfg = yaml.safe_load(f)
+    mv_per_synapse = cfg["lif"]["mv_per_synapse"]
+
+    w = pd.read_feather(WEIGHTS_FILE)
+    if min_synapses > 0:
+        w = w[w["weight"] >= min_synapses]
+
+    body_to_idx = pd.Series(neurons["idx"].values, index=neurons["bodyId"].values)
+    traced_ids = set(neurons["bodyId"])
+    w = w[w["body_pre"].isin(traced_ids) & w["body_post"].isin(traced_ids)]
+
+    pre_idx = body_to_idx.loc[w["body_pre"]].to_numpy(dtype=np.int32)
+    post_idx = body_to_idx.loc[w["body_post"]].to_numpy(dtype=np.int32)
+
+    sign_by_idx = neurons.set_index("idx")["sign"].to_numpy()
+    signed_weight = (
+        w["weight"].to_numpy(dtype=np.float32)
+        * sign_by_idx[pre_idx].astype(np.float32)
+        * np.float32(mv_per_synapse)
+    )
+
+    edge_index = np.stack([pre_idx, post_idx], axis=0)
+    return edge_index, signed_weight
+
+
+def build_and_cache(min_synapses: int, tag: str) -> dict:
+    neurons = load_neurons()
+    edge_index, edge_weight = load_edges(neurons, min_synapses=min_synapses)
+
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    neurons.to_parquet(CACHE_DIR / "neurons.parquet")  # always rewrite: NT rules may have changed
+
+    np.save(CACHE_DIR / f"edge_index_{tag}.npy", edge_index)
+    np.save(CACHE_DIR / f"edge_weight_{tag}.npy", edge_weight)
+
+    stats = {
+        "tag": tag,
+        "min_synapses": min_synapses,
+        "n_neurons": len(neurons),
+        "n_edges": int(edge_index.shape[1]),
+        "n_with_soma": int(neurons["has_soma"].sum()),
+        "n_nt_confident": int(neurons["nt_confident"].sum()),
+    }
+    return stats
+
+
+def main():
+    all_stats = []
+    for tag, min_syn in [("full", 0), ("pruned5", 5)]:
+        stats = build_and_cache(min_syn, tag)
+        print(f"[{tag}] neurons={stats['n_neurons']:,} edges={stats['n_edges']:,} "
+              f"with_soma={stats['n_with_soma']:,} nt_confident={stats['n_nt_confident']:,}")
+        all_stats.append(stats)
+
+    (CACHE_DIR / "build_stats.json").write_text(json.dumps(all_stats, indent=2))
+    print(f"\nCached to {CACHE_DIR}")
+
+
+if __name__ == "__main__":
+    main()

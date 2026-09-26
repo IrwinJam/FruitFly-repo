@@ -1,0 +1,55 @@
+# Among Us Hide n Seek rules.
+# documented: Innersloth announcement or community wiki
+# undocumented default: no published number
+# by eye: set to look like the game
+
+players:
+  seekers: 1
+  hiders: 3
+
+timers:
+  hide_phase_s: 10 # undocumented default: seeker frozen at spawn while hiders scatter
+  round_length_s: 300 # undocumented default: total match length (including hide phase)
+  final_hide_s: 120 # documented: last part of the round
+  final_hide_speed_multiplier: 1.5 # documented boost; exact multiplier not published
+  ping_interval_s: 6 # documented: Final Hide pings reveal living hiders' locations
+
+# 90 s rounds (--preset short)
+presets:
+  short:
+    hide_phase_s: 5
+    round_length_s: 90
+    final_hide_s: 30
+
+vents:
+  max_uses_per_hider: 3 # undocumented default
+  max_time_inside_s: 5 # undocumented default
+  use_radius_units: 0.6 # by eye
+  # auto-vent: a hider on a vent with uses left vents when the seeker is within this range
+  auto_vent_danger_range_units: 4.0
+
+# tasks are not modeled
+tasks_enabled: false
+
+speed:
+  # map units of skeld_map.json; by eye (crossing The Skeld, about 41 units, takes 15-20 s in game)
+  hider_units_per_s: 2.0
+  seeker_units_per_s: 2.0
+
+kill_radius_units: 0.6 # by eye
+body_radius_units: 0.25 # by eye
+
+vision:
+  hider_range_units: 6.0 # by eye (radial vision, flashlight mode off)
+  seeker_range_units: 6.0 # by eye
+
+danger_meter:
+  max_range_units: 8.0 # undocumented default: meter starts filling inside this distance
+
+flashlight_mode: false # not modeled
+
+# reflexes for brain-driven flies (listed in each replay's metadata)
+reflexes:
+  # on wall contact, turn by a random angle in this range
+  wall_bump_turn: true
+  wall_bump_turn_deg: [60, 150]

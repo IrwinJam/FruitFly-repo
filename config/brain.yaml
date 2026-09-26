@@ -1,0 +1,40 @@
+# LIF neuron parameters, from the Shiu et al. (2024) reference model.
+
+lif:
+  v_rest_mv: -52.0 # v_0
+  v_threshold_mv: -45.0 # v_th
+  v_reset_mv: -52.0 # v_rst
+  tau_m_ms: 20.0 # t_mbr
+  tau_syn_ms: 5.0 # tau
+  refractory_ms: 2.2 # t_rfc
+  synaptic_delay_ms: 1.8 # t_dly
+  mv_per_synapse: 0.275 # w_syn
+  poisson_weight_factor: 250 # f_poi: a stimulus spike adds w_syn * f_poi = 68.75 mV to g
+
+# MaleCNS neurons receive about 698 input synapses each versus about 359 in FlyWire, where w_syn
+# was calibrated, so every connectome weight is scaled by 359/698 (the stimulus kick is not).
+connectome_weight_scale: 0.514
+# Sign of dopamine, serotonin and octopamine synapses: +1 (reference model) or 0 (excluded).
+modulatory_sign: 1
+
+sim:
+  # exact (v, g) update between spikes: 0.5 ms steps match the reference 0.1 ms
+  dt_ms: 0.5
+  brain_ms_per_game_tick: 20.0 # 1 game tick = 20 ms of brain time (40 steps)
+  dn_ema_tau_ms: 100.0 # smoothing window for descending-neuron rates
+  # spike propagation: "spmm" (sparse matmul each step), "event" (spiking neurons only) or "auto"
+  propagation: auto
+
+graphs:
+  full:
+    edge_min_synapses: 0
+    description: "All traced-to-traced MaleCNS edges (25.6M)."
+  pruned5:
+    edge_min_synapses: 5
+    description: "Edges with >=5 synapses (6.2M)."
+  navcore:
+    description: "Sensory roles to descending neurons (22,686 neurons). Used for all results. Built by amongusfly/brain/navcore.py."
+
+backend: torch
+device: cuda
+batch_max_flies: 6

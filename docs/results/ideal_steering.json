@@ -1,0 +1,79 @@
+{
+  "ideal": {
+    "contact_frac": 0.06741666666666667,
+    "slide_frac": 0.0013402777777777777,
+    "bounces_per_min": 6.520833333333333,
+    "wall_frac": 0.11746527777777778,
+    "speed_frac": 0.9121566661145922,
+    "spin_s_per_fly": 0.5,
+    "cafe_frac": 0.2152638888888889,
+    "turn_dps": 83.33478558794602,
+    "rooms": 14.916666666666666
+  },
+  "lagged 90 ms": {
+    "contact_frac": 0.07510416666666667,
+    "slide_frac": 0.0012638888888888888,
+    "bounces_per_min": 8.4375,
+    "wall_frac": 0.12711111111111112,
+    "speed_frac": 0.9097573991195017,
+    "spin_s_per_fly": 1.6666666666666667,
+    "cafe_frac": 0.24238194444444444,
+    "turn_dps": 89.96114753966161,
+    "rooms": 14.875
+  },
+  "lagged 200 ms": {
+    "contact_frac": 0.1071875,
+    "slide_frac": 0.0017430555555555556,
+    "bounces_per_min": 14.125,
+    "wall_frac": 0.17565972222222223,
+    "speed_frac": 0.8847344253449729,
+    "spin_s_per_fly": 4.25,
+    "cafe_frac": 0.1665486111111111,
+    "turn_dps": 111.77774142521183,
+    "rooms": 15.0
+  },
+  "ideal, dead zone 10 deg": {
+    "contact_frac": 0.059541666666666666,
+    "slide_frac": 0.0015069444444444444,
+    "bounces_per_min": 4.895833333333333,
+    "wall_frac": 0.10799305555555555,
+    "speed_frac": 0.9151288464136786,
+    "spin_s_per_fly": 0.5833333333333334,
+    "cafe_frac": 0.22247916666666667,
+    "turn_dps": 74.0268216254531,
+    "rooms": 15.0
+  },
+  "ideal, dead zone 20 deg": {
+    "contact_frac": 0.08363888888888889,
+    "slide_frac": 0.005666666666666667,
+    "bounces_per_min": 3.6875,
+    "wall_frac": 0.14627777777777778,
+    "speed_frac": 0.8920652007518494,
+    "spin_s_per_fly": 0.5833333333333334,
+    "cafe_frac": 0.22021527777777777,
+    "turn_dps": 69.96741773530373,
+    "rooms": 15.0
+  },
+  "ideal, dead zone 30 deg": {
+    "contact_frac": 0.1309861111111111,
+    "slide_frac": 0.024027777777777776,
+    "bounces_per_min": 4.25,
+    "wall_frac": 0.21397916666666666,
+    "speed_frac": 0.8574829614809979,
+    "spin_s_per_fly": 0.0,
+    "cafe_frac": 0.20131944444444444,
+    "turn_dps": 63.25053799094165,
+    "rooms": 14.958333333333334
+  },
+  "ideal, dead zone 40 deg": {
+    "contact_frac": 0.21811111111111112,
+    "slide_frac": 0.06197222222222222,
+    "bounces_per_min": 5.541666666666667,
+    "wall_frac": 0.3264652777777778,
+    "speed_frac": 0.8095787624346862,
+    "spin_s_per_fly": 0.16666666666666666,
+    "cafe_frac": 0.21463888888888888,
+    "turn_dps": 55.01302819089955,
+    "rooms": 15.0
+  }
+}

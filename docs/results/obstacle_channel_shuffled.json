@@ -1,0 +1,27 @@
+{
+  "graph": "navcore_shuf0",
+  "rate_hz": 40.0,
+  "reps": 4,
+  "baseline_lr_hz": -1.5625,
+  "rule": "max |index| among types not in ['LC10a', 'LC4', 'LPLC2'], |index| >= 5.0 Hz, DNp01 rise < 5.0 Hz; else LC10a",
+  "selected": "LC10a",
+  "laterality": "contra",
+  "types": {
+    "LLPC1": {
+      "index_hz": -2.5,
+      "lr_left_drive": -1.25,
+      "lr_right_drive": 1.25,
+      "dnp01_rise_hz": 0.39,
+      "n_L": 57,
+      "n_R": 38
+    },
+    "LC10a": {
+      "index_hz": 16.25,
+      "lr_left_drive": -2.5,
+      "lr_right_drive": -18.75,
+      "dnp01_rise_hz": 5.47,
+      "n_L": 135,
+      "n_R": 140
+    }
+  }
+}
